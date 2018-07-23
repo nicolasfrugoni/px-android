@@ -3,6 +3,7 @@ package com.mercadopago.android.px.services.core;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import com.mercadopago.android.px.model.BankDeal;
 import com.mercadopago.android.px.model.CardToken;
 import com.mercadopago.android.px.model.Customer;
@@ -172,15 +173,19 @@ public class MercadoPagoServices {
 
     public void getIdentificationTypes(Callback<List<IdentificationType>> callback) {
         IdentificationService service = getDefaultRetrofit(mContext).create(IdentificationService.class);
-        service.getIdentificationTypes(this.mPublicKey, this.mPrivateKey).enqueue(callback);
+        service.getIdentificationTypes(mPublicKey, mPrivateKey).enqueue(callback);
     }
 
-    public void getInstallments(String bin, BigDecimal amount, Long issuerId, String paymentMethodId,
+    public void getInstallments(final String bin,
+        final BigDecimal amount,
+        final Long issuerId,
+        final String paymentMethodId,
+        @Nullable final Integer differentialPricingId,
         Callback<List<Installment>> callback) {
         PaymentService service = getDefaultRetrofit(mContext).create(PaymentService.class);
-        service.getInstallments(Settings.servicesVersion, this.mPublicKey, mPrivateKey, bin, amount, issuerId,
+        service.getInstallments(Settings.servicesVersion, mPublicKey, mPrivateKey, bin, amount, issuerId,
             paymentMethodId,
-            LocaleUtil.getLanguage(mContext), mProcessingMode).enqueue(callback);
+            LocaleUtil.getLanguage(mContext), mProcessingMode, differentialPricingId).enqueue(callback);
     }
 
     public void getIssuers(String paymentMethodId, String bin, final Callback<List<Issuer>> callback) {

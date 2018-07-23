@@ -11,6 +11,7 @@ import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.model.Campaign;
 import com.mercadopago.android.px.model.CardInfo;
+import com.mercadopago.android.px.model.DifferentialPricing;
 import com.mercadopago.android.px.model.Discount;
 import com.mercadopago.android.px.model.Installment;
 import com.mercadopago.android.px.model.Issuer;
@@ -115,8 +116,10 @@ public class InstallmentsPresenter extends MvpPresenter<InstallmentsActivityView
 
     private void getInstallmentsAsync() {
         getView().showLoadingView();
-
+        final DifferentialPricing differentialPricing = configuration.getCheckoutPreference().getDifferentialPricing();
+        final Integer differentialPricingId = differentialPricing == null ? null : differentialPricing.getId();
         getResourcesProvider().getInstallments(bin, amountRepository.getAmountToPay(), issuerId, paymentMethod.getId(),
+            differentialPricingId,
             new TaggedCallback<List<Installment>>(ApiUtil.RequestOrigin.GET_INSTALLMENTS) {
                 @Override
                 public void onSuccess(final List<Installment> installments) {

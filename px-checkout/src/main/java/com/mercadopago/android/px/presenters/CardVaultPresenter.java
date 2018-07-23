@@ -9,6 +9,7 @@ import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.CardInfo;
 import com.mercadopago.android.px.model.Cause;
+import com.mercadopago.android.px.model.DifferentialPricing;
 import com.mercadopago.android.px.model.Installment;
 import com.mercadopago.android.px.model.Issuer;
 import com.mercadopago.android.px.model.PayerCost;
@@ -21,9 +22,9 @@ import com.mercadopago.android.px.mvp.TaggedCallback;
 import com.mercadopago.android.px.providers.CardVaultProvider;
 import com.mercadopago.android.px.services.exceptions.ApiException;
 import com.mercadopago.android.px.tracking.utils.TrackingUtil;
-import com.mercadopago.android.px.views.CardVaultView;
 import com.mercadopago.android.px.util.ApiUtil;
 import com.mercadopago.android.px.util.TextUtils;
+import com.mercadopago.android.px.views.CardVaultView;
 import java.util.List;
 
 public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultProvider> {
@@ -247,11 +248,13 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
     }
 
     private void getInstallmentsForCardAsync(final Card card) {
-        String bin = TextUtils.isEmpty(cardInfo.getFirstSixDigits()) ? "" : cardInfo.getFirstSixDigits();
-        Long issuerId = this.card.getIssuer() == null ? null : this.card.getIssuer().getId();
+        final String bin = TextUtils.isEmpty(cardInfo.getFirstSixDigits()) ? "" : cardInfo.getFirstSixDigits();
+        final Long issuerId = this.card.getIssuer() == null ? null : this.card.getIssuer().getId();
         String paymentMethodId = card.getPaymentMethod() == null ? "" : card.getPaymentMethod().getId();
-
+        final DifferentialPricing differentialPricing = configuration.getCheckoutPreference().getDifferentialPricing();
+        final Integer differentialPricingId = differentialPricing == null ? null : differentialPricing.getId();
         getResourcesProvider().getInstallmentsAsync(bin, issuerId, paymentMethodId, amountRepository.getAmountToPay(),
+            differentialPricingId,
             new TaggedCallback<List<Installment>>(ApiUtil.RequestOrigin.GET_INSTALLMENTS) {
                 @Override
                 public void onSuccess(final List<Installment> installments) {
