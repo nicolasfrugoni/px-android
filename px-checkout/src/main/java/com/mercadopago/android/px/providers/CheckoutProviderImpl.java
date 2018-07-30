@@ -216,11 +216,12 @@ public class CheckoutProviderImpl implements CheckoutProvider {
         paymentBody.setPaymentMethodId(paymentData.getPaymentMethod().getId());
         paymentBody.setBinaryMode(binaryMode);
 
-        Payer payer = paymentData.getPayer();
+        final Payer payer = paymentData.getPayer();
         if (!TextUtils.isEmpty(customerId) &&
             MercadoPagoUtil.isCard(paymentData.getPaymentMethod().getPaymentTypeId())) {
             payer.setId(customerId);
         }
+
         paymentBody.setPayer(payer);
 
         if (paymentData.getToken() != null) {

@@ -16,6 +16,8 @@ import com.mercadopago.android.px.util.ApiUtil;
 import com.mercadopago.android.px.util.ErrorUtil;
 import com.mercadopago.android.px.util.JsonUtil;
 
+import static com.mercadopago.android.px.core.MercadoPagoCheckout.EXTRA_ERROR;
+
 public class ErrorActivity extends MercadoPagoBaseActivity {
 
     private MercadoPagoError mMercadoPagoError;
@@ -25,7 +27,7 @@ public class ErrorActivity extends MercadoPagoBaseActivity {
     private View mExit;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         animateErrorScreenLaunch();
 
@@ -57,7 +59,7 @@ public class ErrorActivity extends MercadoPagoBaseActivity {
 
     private void getActivityParameters() {
         mMercadoPagoError = JsonUtil.getInstance()
-            .fromJson(getIntent().getStringExtra(ErrorUtil.ERROR_EXTRA_KEY), MercadoPagoError.class);
+            .fromJson(getIntent().getStringExtra(EXTRA_ERROR), MercadoPagoError.class);
         mPublicKey = getIntent().getStringExtra(ErrorUtil.PUBLIC_KEY_EXTRA);
     }
 
@@ -137,9 +139,8 @@ public class ErrorActivity extends MercadoPagoBaseActivity {
 
     @Override
     public void onBackPressed() {
-
-        Intent intent = new Intent();
-        intent.putExtra(ErrorUtil.ERROR_EXTRA_KEY, JsonUtil.getInstance().toJson(mMercadoPagoError));
+        final Intent intent = new Intent();
+        intent.putExtra(EXTRA_ERROR, JsonUtil.getInstance().toJson(mMercadoPagoError));
         setResult(RESULT_CANCELED, intent);
         finish();
     }
