@@ -3,7 +3,7 @@ package com.mercadopago.android.px.util;
 import android.app.Activity;
 import android.content.Intent;
 import com.mercadopago.android.px.ErrorActivity;
-import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.internal.di.Session;
 
 import static com.mercadopago.android.px.core.MercadoPagoCheckout.EXTRA_ERROR;

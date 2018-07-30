@@ -11,7 +11,7 @@ import com.mercadopago.android.px.components.LoadingComponent;
 import com.mercadopago.android.px.components.LoadingRenderer;
 import com.mercadopago.android.px.components.RendererFactory;
 import com.mercadopago.android.px.core.MercadoPagoComponents;
-import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.model.PaymentResult;
 import com.mercadopago.android.px.paymentresult.components.AccreditationComment;

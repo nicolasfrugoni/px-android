@@ -22,8 +22,8 @@ import com.mercadopago.android.px.callbacks.card.CardSecurityCodeEditTextCallbac
 import com.mercadopago.android.px.controllers.CheckoutTimer;
 import com.mercadopago.android.px.customviews.MPEditText;
 import com.mercadopago.android.px.customviews.MPTextView;
-import com.mercadopago.android.px.exceptions.ExceptionHandler;
-import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.model.exceptions.ExceptionHandler;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.listeners.card.CardSecurityCodeTextWatcher;
 import com.mercadopago.android.px.model.Card;

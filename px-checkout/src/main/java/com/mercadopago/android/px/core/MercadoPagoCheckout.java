@@ -92,7 +92,7 @@ public class MercadoPagoCheckout implements Serializable {
      * Starts checkout experience.
      * When the flows ends it returns a {@link PaymentResult} object that
      * will be returned on {@link Activity#onActivityResult(int, int, Intent)} if success or
-     * {@link com.mercadopago.android.px.exceptions.MercadoPagoError}
+     * {@link com.mercadopago.android.px.model.exceptions.MercadoPagoError}
      * <p>
      * will return on {@link Activity#onActivityResult(int, int, Intent)}
      *
