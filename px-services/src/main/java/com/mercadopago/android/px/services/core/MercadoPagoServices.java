@@ -104,7 +104,8 @@ public class MercadoPagoServices {
     @SuppressLint("unused")
     public void getPaymentMethodSearch(final BigDecimal amount, final List<String> excludedPaymentTypes,
         final List<String> excludedPaymentMethods, final List<String> cardsWithEsc, final List<String> supportedPlugins,
-        final Payer payer, final Site site, final Callback<PaymentMethodSearch> callback) {
+        final Payer payer, final Site site, @Nullable final Integer differentialPricing,
+        final Callback<PaymentMethodSearch> callback) {
         final PayerIntent payerIntent = new PayerIntent(payer);
         final CheckoutService service = getDefaultRetrofit(mContext).create(CheckoutService.class);
 
@@ -117,7 +118,8 @@ public class MercadoPagoServices {
         service.getPaymentMethodSearch(Settings.servicesVersion,
             mContext.getResources().getConfiguration().locale.getLanguage(), this.mPublicKey, amount,
             excludedPaymentTypesAppended, excludedPaymentMethodsAppended, payerIntent, site.getId(),
-            PAYMENT_METHODS_OPTIONS_API_VERSION, mProcessingMode, cardsWithEscAppended, supportedPluginsAppended).
+            PAYMENT_METHODS_OPTIONS_API_VERSION, mProcessingMode, cardsWithEscAppended, supportedPluginsAppended,
+            differentialPricing).
             enqueue(callback);
     }
 
