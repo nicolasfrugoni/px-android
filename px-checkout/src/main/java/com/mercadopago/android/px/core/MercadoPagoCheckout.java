@@ -12,6 +12,7 @@ import com.mercadopago.android.px.hooks.CheckoutHooks;
 import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.model.Campaign;
 import com.mercadopago.android.px.model.Discount;
+import com.mercadopago.android.px.model.DiscountConfiguration;
 import com.mercadopago.android.px.model.PaymentData;
 import com.mercadopago.android.px.model.PaymentResult;
 import com.mercadopago.android.px.model.commission.ChargeRule;
@@ -70,6 +71,9 @@ public class MercadoPagoCheckout implements Serializable {
     @Nullable
     private final Campaign campaign;
 
+    @Nullable
+    private final DiscountConfiguration discountConfiguration;
+
     private final boolean binaryMode;
 
     @Nullable
@@ -93,6 +97,7 @@ public class MercadoPagoCheckout implements Serializable {
         paymentData = builder.paymentData;
         preferenceId = builder.preferenceId;
         privateKey = builder.privateKey;
+        discountConfiguration = builder.discountConfiguration;
         configureCheckoutStore(builder);
         configureFlowHandler();
     }
@@ -211,6 +216,11 @@ public class MercadoPagoCheckout implements Serializable {
         return campaign;
     }
 
+    @Nullable
+    public DiscountConfiguration getDiscountConfiguration() {
+        return discountConfiguration;
+    }
+
     @NonNull
     public List<ChargeRule> getCharges() {
         return charges;
@@ -273,6 +283,7 @@ public class MercadoPagoCheckout implements Serializable {
         PaymentResult paymentResult;
         Discount discount;
         Campaign campaign;
+        DiscountConfiguration discountConfiguration;
         CheckoutHooks checkoutHooks;
         DataInitializationTask dataInitializationTask;
         String regularFontPath;
@@ -304,20 +315,6 @@ public class MercadoPagoCheckout implements Serializable {
             this.publicKey = publicKey;
             this.preferenceId = preferenceId;
             checkoutPreference = null;
-        }
-
-        /**
-         * Set Mercado Pago discount that will be applied to total amount.
-         * When you set a discount with its campaign, we do not check in discount service.
-         * You have to set a payment processor for discount be applied.
-         *
-         * @param discount Mercado Pago discount.
-         * @param campaign Discount campaign with discount data.
-         */
-        public Builder setDiscount(@NonNull final Discount discount, @NonNull final Campaign campaign) {
-            this.discount = discount;
-            this.campaign = campaign;
-            return this;
         }
 
         /**
@@ -422,6 +419,36 @@ public class MercadoPagoCheckout implements Serializable {
             @NonNull final PaymentProcessor paymentProcessor) {
             paymentMethodPluginList.add(paymentMethodPlugin);
             paymentPlugins.put(paymentMethodPlugin.getId(), paymentProcessor);
+            return this;
+        }
+
+        /**
+         * Set Mercado Pago discount that will be applied to total amount.
+         * When you set a discount with its campaign, we do not check in discount service.
+         * You have to set a payment processor for discount be applied.
+         *
+         * @param discount Mercado Pago discount.
+         * @param campaign Discount campaign with discount data.
+         */
+        //TODO borrar cuando cambie firma.
+        @Deprecated
+        public Builder setDiscount(@NonNull final Discount discount, @NonNull final Campaign campaign) {
+            this.discount = discount;
+            this.campaign = campaign;
+            return this;
+        }
+
+        /**
+         * To set a discount configuration you must use this method.
+         * You have to set a payment processor for discount to be applied.
+         *
+         * @param paymentProcessor
+         * @param discountConfiguration can contain a Mercado Pago's discount and a MercadoPago's Campaign or a CampaignError when used up discount.
+         */
+        @SuppressWarnings("unused")
+        public Builder setPaymentProcessor(@NonNull final PaymentProcessor paymentProcessor, @NonNull final DiscountConfiguration discountConfiguration) {
+            setPaymentProcessor(paymentProcessor);
+            this.discountConfiguration = discountConfiguration;
             return this;
         }
 

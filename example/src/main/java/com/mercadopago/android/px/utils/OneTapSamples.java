@@ -6,6 +6,7 @@ import android.support.v4.util.Pair;
 import com.mercadopago.android.px.core.MercadoPagoCheckout;
 import com.mercadopago.android.px.model.Campaign;
 import com.mercadopago.android.px.model.Discount;
+import com.mercadopago.android.px.model.DiscountConfiguration;
 import com.mercadopago.android.px.model.Item;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentData;
@@ -104,10 +105,9 @@ public final class OneTapSamples {
 
         return new MercadoPagoCheckout.Builder(ONE_TAP_MERCHANT_PUBLIC_KEY,
             getCheckoutPreferenceWithPayerEmail(new ArrayList<String>(), 120))
-            .setPaymentProcessor(mainPaymentProcessor)
+            .setPaymentProcessor(mainPaymentProcessor, new DiscountConfiguration(discount, campaign))
             .addPaymentMethodPlugin(new SamplePaymentMethodPlugin(), mainPaymentProcessor)
-            .setPrivateKey(ONE_TAP_PAYER_1_ACCESS_TOKEN)
-            .setDiscount(discount, campaign);
+            .setPrivateKey(ONE_TAP_PAYER_1_ACCESS_TOKEN);
     }
 
     // It should suggest one tap with account money

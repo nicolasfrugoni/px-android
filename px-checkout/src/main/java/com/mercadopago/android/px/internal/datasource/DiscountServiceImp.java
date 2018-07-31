@@ -7,6 +7,7 @@ import com.mercadopago.android.px.core.CheckoutStore;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.model.Campaign;
 import com.mercadopago.android.px.model.Discount;
+import com.mercadopago.android.px.model.DiscountConfiguration;
 import com.mercadopago.android.px.services.adapters.MPCall;
 import com.mercadopago.android.px.services.callbacks.Callback;
 import com.mercadopago.android.px.services.exceptions.ApiException;
@@ -31,17 +32,17 @@ public class DiscountServiceImp implements DiscountRepository {
     }
 
     @Override
-    public void configureMerchantDiscountManually(@Nullable final Discount discount, @Nullable final Campaign campaign) {
+    public void configureMerchantDiscountManually(@Nullable final DiscountConfiguration config) {
         final CheckoutStore store = CheckoutStore.getInstance();
         //TODO remove when discount signature change.
         if (store.hasPaymentProcessor() || !store.getPaymentMethodPluginList().isEmpty()) {
-            discountStorageService.configureDiscountManually(discount, campaign);
+            discountStorageService.configureDiscountManually(config.getDiscount(), config.getCampaign(), config.getCampaignError());
         }
     }
 
     @Override
     public void configureDiscountManually(@Nullable final Discount discount, @Nullable final Campaign campaign) {
-        discountStorageService.configureDiscountManually(discount, campaign);
+        discountStorageService.configureDiscountManually(discount, campaign, null);
     }
 
     @Override
@@ -90,6 +91,12 @@ public class DiscountServiceImp implements DiscountRepository {
     @Override
     public Campaign getCampaign(final String discountId) {
         return discountStorageService.getCampaign(discountId);
+    }
+
+    @Nullable
+    @Override
+    public DiscountConfiguration getDiscountConfiguration() {
+        return discountStorageService.getDiscountConfiguration();
     }
 
     @Override
@@ -238,7 +245,7 @@ public class DiscountServiceImp implements DiscountRepository {
             return new Callback<Discount>() {
                 @Override
                 public void success(final Discount discount) {
-                    discountStorageService.configureDiscountManually(discount, directCampaign);
+                    discountStorageService.configureDiscountManually(discount, directCampaign, null);
                     callback.success(true);
                 }
 
