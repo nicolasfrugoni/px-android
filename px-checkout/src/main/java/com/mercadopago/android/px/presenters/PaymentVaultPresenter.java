@@ -9,7 +9,6 @@ import com.mercadopago.android.px.core.MercadoPagoComponents;
 import com.mercadopago.android.px.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.hooks.Hook;
 import com.mercadopago.android.px.hooks.HookHelper;
-import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.GroupsRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
