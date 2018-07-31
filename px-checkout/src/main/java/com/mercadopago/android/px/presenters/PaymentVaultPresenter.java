@@ -9,6 +9,7 @@ import com.mercadopago.android.px.core.MercadoPagoComponents;
 import com.mercadopago.android.px.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.hooks.Hook;
 import com.mercadopago.android.px.hooks.HookHelper;
+import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.GroupsRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
@@ -170,6 +171,15 @@ public class PaymentVaultPresenter extends MvpPresenter<PaymentVaultView, Paymen
     private void resolveAvailablePaymentMethods() {
         if (noPaymentMethodsAvailable()) {
             showEmptyPaymentMethodsError();
+        } else if (userSelectionRepository.getPaymentMethod() != null) {
+            final PaymentMethod selectedMethod = userSelectionRepository.getPaymentMethod();
+            if(PaymentTypes.isCardPaymentType(selectedMethod.getPaymentTypeId())){
+                CustomSearchItem selectedCard = getCustomSearchItemWithId(selectedMethod.getId());
+                selectCard(selectedCard);
+            } else if (paymentMethodSearch.getGroups() != null && !paymentMethodSearch.getGroups().isEmpty()) {
+                final PaymentMethodSearchItem selectedItem = getItemInGroupWithId(selectedMethod.getId());
+                selectItem(selectedItem);
+            }
         } else if (isOnlyOneItemAvailable()) {
             if (CheckoutStore.getInstance().hasEnabledPaymentMethodPlugin()) {
                 selectPluginPaymentMethod(CheckoutStore.getInstance().getFirstEnabledPlugin());
@@ -255,6 +265,19 @@ public class PaymentVaultPresenter extends MvpPresenter<PaymentVaultView, Paymen
         }
     }
 
+    private PaymentMethodSearchItem getItemInGroupWithId(final String defaultPaymentMethodId) {
+        PaymentMethodSearchItem paymentMethodItem = null;
+        if (paymentMethodSearch.getGroups() != null
+            && !paymentMethodSearch.getGroups().isEmpty()) {
+            for (PaymentMethodSearchItem item : paymentMethodSearch.getGroups()) {
+                if(item.getId().equals(defaultPaymentMethodId)){
+                    paymentMethodItem = item;
+                }
+            }
+        }
+        return paymentMethodItem;
+    }
+    
     private Card getCardWithPaymentMethod(final CustomSearchItem searchItem) {
         final PaymentMethod paymentMethod = paymentMethodSearch.getPaymentMethodById(searchItem.getPaymentMethodId());
         final Card selectedCard = getCardById(paymentMethodSearch.getCards(), searchItem.getId());
@@ -267,6 +290,19 @@ public class PaymentVaultPresenter extends MvpPresenter<PaymentVaultView, Paymen
         }
         userSelectionRepository.select(paymentMethod);
         return selectedCard;
+    }
+
+    private CustomSearchItem getCustomSearchItemWithId(final String selectedCardId) {
+        CustomSearchItem selectedSearchItem = null;
+        if (paymentMethodSearch.getCustomSearchItems() != null
+            && !paymentMethodSearch.getCustomSearchItems().isEmpty()) {
+            for (CustomSearchItem searchItem : paymentMethodSearch.getCustomSearchItems()) {
+                if(searchItem.getId().equals(selectedCardId)){
+                    selectedSearchItem = searchItem;
+                }
+            }
+        }
+        return selectedSearchItem;
     }
 
     private Card getCardById(final List<Card> savedCards, final String cardId) {
@@ -498,4 +534,9 @@ public class PaymentVaultPresenter extends MvpPresenter<PaymentVaultView, Paymen
     public void onPaymentMethodReturned() {
         getView().finishPaymentMethodSelection(userSelectionRepository.getPaymentMethod());
     }
+
+    public boolean isPaymentMethodSelectedInRepository() {
+        return userSelectionRepository.getPaymentMethod() != null;
+    }
+
 }
