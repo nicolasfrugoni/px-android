@@ -15,7 +15,6 @@ public final class CheckoutStateModel implements Serializable {
 
     public final PaymentResultScreenPreference paymentResultScreenPreference;
 
-    public final boolean isBinary;
     public Issuer selectedIssuer;
     public Token createdToken;
     public Card selectedCard;
@@ -30,6 +29,5 @@ public final class CheckoutStateModel implements Serializable {
 
     public CheckoutStateModel(@NonNull final MercadoPagoCheckout config) {
         paymentResultScreenPreference = config.getPaymentResultScreenPreference();
-        isBinary = config.isBinaryMode();
     }
 }

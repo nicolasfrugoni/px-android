@@ -62,8 +62,6 @@ public class MercadoPagoCheckout implements Serializable {
     @Nullable
     private final Campaign campaign;
 
-    private final boolean binaryMode;
-
     @Nullable
     private final String privateKey;
 
@@ -77,7 +75,6 @@ public class MercadoPagoCheckout implements Serializable {
         checkoutPreference = builder.checkoutPreference;
         advancedConfiguration = builder.advancedConfiguration;
         paymentResultScreenPreference = builder.paymentResultScreenPreference;
-        binaryMode = builder.binaryMode;
         discount = builder.discount;
         campaign = builder.campaign;
         charges = builder.charges;
@@ -135,10 +132,6 @@ public class MercadoPagoCheckout implements Serializable {
         return advancedConfiguration;
     }
 
-    public boolean isBinaryMode() {
-        return binaryMode;
-    }
-
     @Nullable
     public Discount getDiscount() {
         return discount;
@@ -188,8 +181,6 @@ public class MercadoPagoCheckout implements Serializable {
         final Map<String, PaymentProcessor> paymentPlugins = new HashMap<>();
 
         final List<PaymentMethodPlugin> paymentMethodPluginList = new ArrayList<>();
-
-        Boolean binaryMode = false;
 
         @NonNull
         AdvancedConfiguration advancedConfiguration = new AdvancedConfiguration.Builder().build();
@@ -289,20 +280,6 @@ public class MercadoPagoCheckout implements Serializable {
         public Builder setPaymentResultScreenPreference(
             @NonNull final PaymentResultScreenPreference paymentResultScreenPreference) {
             this.paymentResultScreenPreference = paymentResultScreenPreference;
-            return this;
-        }
-
-        /**
-         * If enableBinaryMode is called, processed payment can only be APPROVED or REJECTED.
-         * <p>
-         * Non compatible with PaymentProcessor.
-         * <p>
-         * Non compatible with off payments methods
-         *
-         * @return builder
-         */
-        public Builder enableBinaryMode() {
-            binaryMode = true;
             return this;
         }
 
