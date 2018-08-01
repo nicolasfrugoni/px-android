@@ -109,6 +109,17 @@ public class PaymentMethodSearch implements Serializable {
         return requiredItem;
     }
 
+    public CustomSearchItem getCustomSearchItemWithId(final PaymentMethod paymentMethod) {
+        if (hasCustomSearchItems() && paymentMethod != null) {
+            for (CustomSearchItem searchItem : customSearchItems) {
+                if(searchItem.getId().equals(paymentMethod.getId())){
+                    return searchItem;
+                }
+            }
+        }
+        return null;
+    }
+
     @Nullable
     public PaymentMethod getPaymentMethodById(String paymentMethodId) {
         PaymentMethod foundPaymentMethod = null;

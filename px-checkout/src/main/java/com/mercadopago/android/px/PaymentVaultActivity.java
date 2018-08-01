@@ -426,7 +426,7 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
                 || (presenter.getSelectedSearchItem() == null &&
                 presenter.isOnlyOneItemAvailable()) ||
                 (data != null) && (data.getStringExtra("mercadoPagoError") != null)) ||
-            presenter.isPaymentMethodSelectedInRepository();
+            Session.getSession(this).getConfigurationModule().getUserSelectionRepository().getPaymentMethod() != null;
     }
 
     @Override

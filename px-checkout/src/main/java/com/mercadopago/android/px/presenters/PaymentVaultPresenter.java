@@ -171,14 +171,7 @@ public class PaymentVaultPresenter extends MvpPresenter<PaymentVaultView, Paymen
         if (noPaymentMethodsAvailable()) {
             showEmptyPaymentMethodsError();
         } else if (userSelectionRepository.getPaymentMethod() != null) {
-            final PaymentMethod selectedMethod = userSelectionRepository.getPaymentMethod();
-            if(PaymentTypes.isCardPaymentType(selectedMethod.getPaymentTypeId())){
-                CustomSearchItem selectedCard = getCustomSearchItemWithId(selectedMethod.getId());
-                selectCard(selectedCard);
-            } else if (paymentMethodSearch.getGroups() != null && !paymentMethodSearch.getGroups().isEmpty()) {
-                final PaymentMethodSearchItem selectedItem = getItemInGroupWithId(selectedMethod.getId());
-                selectItem(selectedItem);
-            }
+            resolveSelectedPaymentMethod();
         } else if (isOnlyOneItemAvailable()) {
             if (CheckoutStore.getInstance().hasEnabledPaymentMethodPlugin()) {
                 selectPluginPaymentMethod(CheckoutStore.getInstance().getFirstEnabledPlugin());
@@ -264,19 +257,6 @@ public class PaymentVaultPresenter extends MvpPresenter<PaymentVaultView, Paymen
         }
     }
 
-    private PaymentMethodSearchItem getItemInGroupWithId(final String defaultPaymentMethodId) {
-        PaymentMethodSearchItem paymentMethodItem = null;
-        if (paymentMethodSearch.getGroups() != null
-            && !paymentMethodSearch.getGroups().isEmpty()) {
-            for (PaymentMethodSearchItem item : paymentMethodSearch.getGroups()) {
-                if(item.getId().equals(defaultPaymentMethodId)){
-                    paymentMethodItem = item;
-                }
-            }
-        }
-        return paymentMethodItem;
-    }
-    
     private Card getCardWithPaymentMethod(final CustomSearchItem searchItem) {
         final PaymentMethod paymentMethod = paymentMethodSearch.getPaymentMethodById(searchItem.getPaymentMethodId());
         final Card selectedCard = getCardById(paymentMethodSearch.getCards(), searchItem.getId());
@@ -289,19 +269,6 @@ public class PaymentVaultPresenter extends MvpPresenter<PaymentVaultView, Paymen
         }
         userSelectionRepository.select(paymentMethod);
         return selectedCard;
-    }
-
-    private CustomSearchItem getCustomSearchItemWithId(final String selectedCardId) {
-        CustomSearchItem selectedSearchItem = null;
-        if (paymentMethodSearch.getCustomSearchItems() != null
-            && !paymentMethodSearch.getCustomSearchItems().isEmpty()) {
-            for (CustomSearchItem searchItem : paymentMethodSearch.getCustomSearchItems()) {
-                if(searchItem.getId().equals(selectedCardId)){
-                    selectedSearchItem = searchItem;
-                }
-            }
-        }
-        return selectedSearchItem;
     }
 
     private Card getCardById(final List<Card> savedCards, final String cardId) {
@@ -514,6 +481,16 @@ public class PaymentVaultPresenter extends MvpPresenter<PaymentVaultView, Paymen
         }
     }
 
+    private void resolveSelectedPaymentMethod() {
+        // we use the payment method cached in UserSelectionRepository to select it automatically
+        final PaymentMethod selectedMethod = userSelectionRepository.getPaymentMethod();
+        if(PaymentTypes.isCardPaymentType(selectedMethod.getPaymentTypeId())){
+            selectCard(paymentMethodSearch.getCustomSearchItemWithId(selectedMethod));
+        } else if (paymentMethodSearch.hasSearchItems()) {
+            selectItem(paymentMethodSearch.getSearchItemByPaymentMethod(selectedMethod));
+        }
+    }
+
     public void onPluginHookOneResult() {
         // we assume that the last selected payment method was this.
         final PaymentMethodPlugin plugin =
@@ -533,9 +510,4 @@ public class PaymentVaultPresenter extends MvpPresenter<PaymentVaultView, Paymen
     public void onPaymentMethodReturned() {
         getView().finishPaymentMethodSelection(userSelectionRepository.getPaymentMethod());
     }
-
-    public boolean isPaymentMethodSelectedInRepository() {
-        return userSelectionRepository.getPaymentMethod() != null;
-    }
-
 }
