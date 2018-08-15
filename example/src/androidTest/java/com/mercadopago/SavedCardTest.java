@@ -16,6 +16,9 @@ import static org.junit.Assert.assertNotNull;
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class SavedCardTest {
+    private static final String VALID_SAVED_CARD_ID = "260077840";
+    private static final String INVALID_CARD_ID = "01010";
+    private static final String DEBIT_CABAL_PAYMENT_METHOD_ID = "debcabal";
     @Rule
     public HttpResource httpResource = new CheckoutResource();
 
@@ -27,7 +30,7 @@ public class SavedCardTest {
     public void withValidVisaDefaultCardIdWithSavedDebitCardFlowIsOk() {
 
         final SavedCardTestFlow savedCardTestFlow =
-            new SavedCardTestFlow("260077840", "debcabal", activityRule.getActivity());
+            new SavedCardTestFlow(VALID_SAVED_CARD_ID, DEBIT_CABAL_PAYMENT_METHOD_ID, activityRule.getActivity());
         CongratsPage congratsPageSavedCard = savedCardTestFlow.runDefaultCardIdPaymentFlow();
         assertNotNull(congratsPageSavedCard);
     }
@@ -35,7 +38,7 @@ public class SavedCardTest {
     @Test
     public void withInvalidVisaDefaultCardIdWithPaymentVaultFlowIsOk() {
         final SavedCardTestFlow savedCardTestFlow =
-            new SavedCardTestFlow("01010", "debcabal", activityRule.getActivity());
+            new SavedCardTestFlow(INVALID_CARD_ID, DEBIT_CABAL_PAYMENT_METHOD_ID, activityRule.getActivity());
         CongratsPage congratsPageSavedCard = savedCardTestFlow.runInvalidDefaultCardIdPaymentFlow();
         assertNotNull(congratsPageSavedCard);
     }
