@@ -188,7 +188,7 @@ public class PaymentService implements PaymentRepository {
         } else {
             final CheckoutPreference checkoutPreference = paymentSettingRepository.getCheckoutPreference();
             final PaymentProcessor.CheckoutData checkoutData =
-                new PaymentProcessor.CheckoutData(getPaymentData(), checkoutPreference);
+                new PaymentProcessor.CheckoutData(getPaymentData(), paymentSettingRepository.getCheckoutPreference());
             paymentProcessor.startPayment(checkoutData, context, handlerWrapper);
         }
     }

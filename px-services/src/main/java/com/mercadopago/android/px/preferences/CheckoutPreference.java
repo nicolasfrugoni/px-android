@@ -78,7 +78,7 @@ public class CheckoutPreference implements Serializable {
         differentialPricing = builder.differentialPricing;
         conceptAmount = builder.conceptAmount;
         conceptId = builder.conceptId;
-        payer = new Payer();
+        payer = builder.payer;
         payer.setEmail(builder.payerEmail);
         isBinaryMode = builder.isBinaryMode;
 
@@ -254,6 +254,7 @@ public class CheckoutPreference implements Serializable {
         /* default */ BigDecimal conceptAmount;
         /* default */ String conceptId;
         /* default */ boolean isBinaryMode = false;
+            /* default */ Payer payer = new Payer();
 
         /**
          * Builder for custom CheckoutPreference construction.
@@ -453,6 +454,18 @@ public class CheckoutPreference implements Serializable {
          */
         public Builder setConceptId(final String conceptId) {
             this.conceptId = conceptId;
+            return this;
+        }
+
+        /**
+         * Is used to know if should request payer info or not
+         * Note: Payer's email will be override with email in constructor
+         *
+         * @param payer payer object
+         * @return builder
+         */
+        public Builder setPayer(final Payer payer) {
+            this.payer = payer;
             return this;
         }
 
