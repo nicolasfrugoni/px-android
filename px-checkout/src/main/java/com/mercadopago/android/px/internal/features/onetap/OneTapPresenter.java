@@ -3,7 +3,6 @@ package com.mercadopago.android.px.internal.features.onetap;
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.internal.base.MvpPresenter;
 import com.mercadopago.android.px.internal.base.ResourcesProvider;
-import com.mercadopago.android.px.internal.callbacks.PaymentServiceHandler;
 import com.mercadopago.android.px.internal.features.explode.ExplodeDecoratorMapper;
 import com.mercadopago.android.px.internal.features.explode.ExplodingFragment;
 import com.mercadopago.android.px.internal.repository.PaymentRepository;
@@ -12,10 +11,11 @@ import com.mercadopago.android.px.model.BusinessPayment;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.GenericPayment;
 import com.mercadopago.android.px.model.Payment;
+import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 
 /* default */ class OneTapPresenter extends MvpPresenter<OneTap.View, ResourcesProvider>
-    implements OneTap.Actions, PaymentServiceHandler {
+    implements OneTap.Actions {
 
     @NonNull private final OneTapModel model;
     @NonNull private final PaymentRepository paymentRepository;
@@ -38,10 +38,13 @@ import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
         //TODO persist this data.
         this.yButtonPosition = yButtonPosition;
         this.buttonHeight = buttonHeight;
-
         getView().hideToolbar();
-        getView().hideConfirmButton();
-        getView().startLoadingButton(yButtonPosition, buttonHeight, paymentRepository.getPaymentTimeout());
+
+        if (paymentRepository.isExplodingAnimationCompatible()) {
+            getView().startLoadingButton(yButtonPosition, buttonHeight, paymentRepository.getPaymentTimeout());
+            getView().hideConfirmButton();
+        }
+
         paymentRepository.startOneTapPayment(model);
     }
 
@@ -57,31 +60,25 @@ import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
     }
 
     public void cancel() {
-        if (isViewAttached()) {
-            getView().cancel();
-            getView().trackCancel();
-        }
+        getView().cancel();
+        getView().trackCancel();
     }
 
     @Override
     public void onTokenResolved() {
-        if (isViewAttached()) {
-            //TODO fix yButtonPosition and buttonHeight persistance
-            confirmPayment(yButtonPosition, buttonHeight);
-        }
+        //TODO fix yButtonPosition and buttonHeight persistance
+        confirmPayment(yButtonPosition, buttonHeight);
     }
 
     @Override
     public void onPaymentFinished(@NonNull final Payment payment) {
-        if (isViewAttached()) {
-            getView().showLoadingFor(explodeDecoratorMapper.map(payment),
-                new ExplodingFragment.ExplodingAnimationListener() {
-                    @Override
-                    public void onAnimationFinished() {
-                        getView().showPaymentResult(payment);
-                    }
-                });
-        }
+        getView().showLoadingFor(explodeDecoratorMapper.map(payment),
+            new ExplodingFragment.ExplodingAnimationListener() {
+                @Override
+                public void onAnimationFinished() {
+                    getView().showPaymentResult(payment);
+                }
+            });
     }
 
     /**
@@ -91,15 +88,13 @@ import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
      */
     @Override
     public void onPaymentFinished(@NonNull final GenericPayment genericPayment) {
-        if (isViewAttached()) {
-            getView().showLoadingFor(explodeDecoratorMapper.map(genericPayment),
-                new ExplodingFragment.ExplodingAnimationListener() {
-                    @Override
-                    public void onAnimationFinished() {
-                        getView().showPaymentResult(genericPayment);
-                    }
-                });
-        }
+        getView().showLoadingFor(explodeDecoratorMapper.map(genericPayment),
+            new ExplodingFragment.ExplodingAnimationListener() {
+                @Override
+                public void onAnimationFinished() {
+                    getView().showPaymentResult(genericPayment);
+                }
+            });
     }
 
     /**
@@ -109,47 +104,40 @@ import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
      */
     @Override
     public void onPaymentFinished(@NonNull final BusinessPayment businessPayment) {
-        if (isViewAttached()) {
-            getView().showLoadingFor(explodeDecoratorMapper.map(businessPayment),
-                new ExplodingFragment.ExplodingAnimationListener() {
-                    @Override
-                    public void onAnimationFinished() {
-                        getView().showPaymentResult(businessPayment);
-                    }
-                });
-        }
+        getView().showLoadingFor(explodeDecoratorMapper.map(businessPayment),
+            new ExplodingFragment.ExplodingAnimationListener() {
+                @Override
+                public void onAnimationFinished() {
+                    getView().showPaymentResult(businessPayment);
+                }
+            });
     }
 
     @Override
     public void onPaymentError(@NonNull final MercadoPagoError error) {
-        //This method calls to Checkout activity to manage esc, it's important to check
-        // all this behaviour ahead.
-        if (isViewAttached()) {
-            getView().cancelLoading();
-            getView().showErrorView(error);
+        getView().cancelLoading();
+
+        if (error.isInternalServerError() || error.isNoConnectivityError()) {
+            getView().showErrorSnackBar(error);
+        } else {
+            getView().showErrorScreen(error);
         }
     }
 
     @Override
     public void onVisualPayment() {
-        if (isViewAttached()) {
-            getView().showPaymentProcessor();
-        }
+        getView().showPaymentProcessor();
     }
 
     @Override
     public void onCvvRequired(@NonNull final Card card) {
-        if (isViewAttached()) {
-            getView().cancelLoading();
-            getView().showCardFlow(model, card);
-        }
+        getView().cancelLoading();
+        getView().showCardFlow(model, card);
     }
 
     @Override
-    public void onRecoverPaymentEscInvalid() {
-        if(isViewAttached()){
-            getView().onRecoverPaymentEscInvalid();
-        }
+    public void onRecoverPaymentEscInvalid(final PaymentRecovery recovery) {
+        getView().onRecoverPaymentEscInvalid(recovery);
     }
 
     @Override
@@ -161,5 +149,11 @@ import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
     @Override
     public void onViewPaused() {
         paymentRepository.detach();
+    }
+
+    @Override
+    public void detachView() {
+        onViewPaused();
+        super.detachView();
     }
 }

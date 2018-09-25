@@ -9,7 +9,6 @@ ext {
     groupName = "com.mercadopago.android.px"
 }
 
-
 group = groupName
 archivesBaseName = artifactLib
 
