@@ -63,7 +63,7 @@ import java.util.List;
 import static com.mercadopago.android.px.core.MercadoPagoCheckout.EXTRA_ERROR;
 
 public class PaymentVaultActivity extends MercadoPagoBaseActivity
-    implements PaymentVaultView, DiscountListener {
+        implements PaymentVaultView, DiscountListener {
 
     public static final int COLUMN_SPACING_DP_VALUE = 20;
     public static final int COLUMNS = 2;
@@ -243,7 +243,7 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
     }
 
     private List<PaymentMethodSearchViewController> createPluginItemsViewControllers(
-        final List<PaymentMethodInfo> infoItems) {
+            final List<PaymentMethodInfo> infoItems) {
         final PluginRepository pluginRepository = Session.getSession(this).getPluginRepository();
         final List<PaymentMethodSearchViewController> controllers = new ArrayList<>();
         for (final PaymentMethodInfo infoItem : infoItems) {
@@ -378,12 +378,12 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
 
     private boolean shouldFinishOnBack(final Intent data) {
         return !Session.getSession(this).getPluginRepository().hasEnabledPaymentMethodPlugin() &&
-            (presenter.getSelectedSearchItem() != null &&
-                (!presenter.getSelectedSearchItem().hasChildren()
-                    || (presenter.getSelectedSearchItem().getChildren().size() == 1))
-                || (presenter.getSelectedSearchItem() == null &&
-                presenter.isOnlyOneItemAvailable()) ||
-                (data != null) && (data.getStringExtra(EXTRA_ERROR) != null));
+                (presenter.getSelectedSearchItem() != null &&
+                        (!presenter.getSelectedSearchItem().hasChildren()
+                                || (presenter.getSelectedSearchItem().getChildren().size() == 1))
+                        || (presenter.getSelectedSearchItem() == null &&
+                        presenter.isOnlyOneItemAvailable()) ||
+                        (data != null) && (data.getStringExtra(EXTRA_ERROR) != null));
     }
 
     @Override
