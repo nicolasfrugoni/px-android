@@ -14,7 +14,6 @@ import com.mercadopago.android.px.internal.util.textformatter.AmountFormatter;
 import com.mercadopago.android.px.internal.util.textformatter.CurrencyFormatter;
 import com.mercadopago.android.px.internal.util.textformatter.TextFormatter;
 import com.mercadopago.android.px.internal.view.CompactComponent;
-import com.mercadopago.android.px.internal.viewmodel.OneTapModel;
 import com.mercadopago.android.px.model.Campaign;
 import com.mercadopago.android.px.model.CardPaymentMetadata;
 import com.mercadopago.android.px.model.PayerCost;
@@ -22,13 +21,13 @@ import java.math.BigDecimal;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-class Amount extends CompactComponent<Amount.Props, OneTap.Actions> {
+/* default */ class Amount extends CompactComponent<Amount.Props, OneTap.Actions> {
 
     /* default */ static class Props {
-        /* default */ @NonNull final DiscountRepository discountRepository;
         /* default */ @Nullable final PayerCost payerCost;
-        /* default */ final int installment;
+        /* default */ @NonNull final DiscountRepository discountRepository;
         /* default */ @NonNull final PaymentSettingRepository config;
+        /* default */ final int installment;
 
         /* default */ Props(@NonNull final DiscountRepository discountRepository,
             @NonNull final PaymentSettingRepository config,
@@ -41,10 +40,9 @@ class Amount extends CompactComponent<Amount.Props, OneTap.Actions> {
         }
 
         /* default */
-        static Props from(final OneTapModel props,
+        static Props from(final CardPaymentMetadata card,
             final PaymentSettingRepository config,
             final DiscountRepository discountRepository) {
-            final CardPaymentMetadata card = props.getPaymentMethods().getOneTapMetadata().getCard();
             final PayerCost payerCost = card != null ? card.getAutoSelectedInstallment() : null;
             return new Amount.Props(
                 discountRepository,
@@ -192,7 +190,6 @@ class Amount extends CompactComponent<Amount.Props, OneTap.Actions> {
     }
 
     private BigDecimal resolveAmountWithDiscount(@NonNull final BigDecimal amount) {
-        return !props.hasDiscount() ? amount
-            : amount.subtract(props.discountRepository.getDiscount().getCouponAmount());
+        return props.hasDiscount() ? amount.subtract(props.discountRepository.getDiscount().getCouponAmount()) : amount;
     }
 }

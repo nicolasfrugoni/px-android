@@ -1,6 +1,6 @@
 package com.mercadopago.android.px.internal.features.plugins;
 
-import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -22,30 +22,28 @@ import com.mercadopago.android.px.model.BusinessPayment;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.GenericPayment;
 import com.mercadopago.android.px.model.Payment;
+import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 
+import static com.mercadopago.android.px.internal.features.Constants.RESULT_FAIL_ESC;
+import static com.mercadopago.android.px.internal.features.Constants.RESULT_PAYMENT;
 import static com.mercadopago.android.px.internal.util.ErrorUtil.ERROR_REQUEST_CODE;
 
-public final class PaymentProcessorPluginActivity extends AppCompatActivity
+public final class PaymentProcessorActivity extends AppCompatActivity
     implements PaymentProcessor.OnPaymentListener {
 
+    private static final String TAG_PROCESSOR_FRAGMENT = "TAG_PROCESSOR_FRAGMENT";
     private static final String EXTRA_BUSINESS_PAYMENT = "extra_business_payment";
     private static final String EXTRA_GENERIC_PAYMENT = "extra_generic_payment";
     private static final String EXTRA_PAYMENT = "extra_payment";
-    private static final String PROCESSOR_FRAGMENT = "PROCESSOR_FRAGMENT";
-    public static final int RESULT_FAIL_ESC = 0x09;
+    private static final String EXTRA_RECOVERY = "extra_recovery";
 
     private PaymentServiceHandlerWrapper paymentServiceHandlerWrapper;
+    private PaymentServiceHandler wrapper;
 
-    public static void start(@NonNull final Activity activity, final int reqCode) {
-        final Intent intent = new Intent(activity, PaymentProcessorPluginActivity.class);
-        activity.startActivityForResult(intent, reqCode);
-    }
-
-    public static void start(@NonNull final Fragment fragment, final int reqCode) {
-        final Intent intent = new Intent(fragment.getContext(), PaymentProcessorPluginActivity.class);
-        fragment.startActivityForResult(intent, reqCode);
+    public static Intent getIntent(@NonNull final Context context) {
+        return new Intent(context, PaymentProcessorActivity.class);
     }
 
     public static boolean isBusiness(@Nullable final Intent intent) {
@@ -71,6 +69,11 @@ public final class PaymentProcessorPluginActivity extends AppCompatActivity
         return (GenericPayment) intent.getExtras().get(EXTRA_GENERIC_PAYMENT);
     }
 
+    @Nullable
+    public static PaymentRecovery getPaymentRecovery(final Intent intent) {
+        return (PaymentRecovery) intent.getExtras().get(EXTRA_RECOVERY);
+    }
+
     @Override
     public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,7 +90,7 @@ public final class PaymentProcessorPluginActivity extends AppCompatActivity
                 .getPaymentProcessor();
 
         paymentServiceHandlerWrapper = new PaymentServiceHandlerWrapper(session.getPaymentRepository(),
-            new EscManagerImp(session.getMercadoPagoESC()));
+            new EscManagerImp(session.getMercadoPagoESC()), session.getInstructionsRepository());
 
         final CheckoutPreference checkoutPreference = configurationModule.getPaymentSettings().getCheckoutPreference();
         final PaymentProcessor.CheckoutData checkoutData =
@@ -103,7 +106,7 @@ public final class PaymentProcessorPluginActivity extends AppCompatActivity
             }
 
             getSupportFragmentManager().beginTransaction()
-                .replace(R.id.px_main_container, fragment, PROCESSOR_FRAGMENT)
+                .replace(R.id.px_main_container, fragment, TAG_PROCESSOR_FRAGMENT)
                 .commit();
         }
     }
@@ -111,13 +114,14 @@ public final class PaymentProcessorPluginActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        paymentServiceHandlerWrapper.setHandler(createWrapper());
+        wrapper = createWrapper();
+        paymentServiceHandlerWrapper.setHandler(wrapper);
         paymentServiceHandlerWrapper.processMessages();
     }
 
     @Override
     protected void onPause() {
-        paymentServiceHandlerWrapper.setHandler(null);
+        paymentServiceHandlerWrapper.detach(wrapper);
         super.onPause();
     }
 
@@ -135,8 +139,10 @@ public final class PaymentProcessorPluginActivity extends AppCompatActivity
             }
 
             @Override
-            public void onRecoverPaymentEscInvalid() {
-                setResult(RESULT_FAIL_ESC);
+            public void onRecoverPaymentEscInvalid(final PaymentRecovery recovery) {
+                final Intent intent = new Intent();
+                intent.putExtra(EXTRA_RECOVERY, recovery);
+                setResult(RESULT_FAIL_ESC, intent);
                 finish();
             }
 
@@ -144,7 +150,7 @@ public final class PaymentProcessorPluginActivity extends AppCompatActivity
             public void onPaymentFinished(@NonNull final Payment payment) {
                 final Intent intent = new Intent();
                 intent.putExtra(EXTRA_PAYMENT, payment);
-                setResult(RESULT_OK, intent);
+                setResult(RESULT_PAYMENT, intent);
                 finish();
             }
 
@@ -152,7 +158,7 @@ public final class PaymentProcessorPluginActivity extends AppCompatActivity
             public void onPaymentFinished(@NonNull final GenericPayment genericPayment) {
                 final Intent intent = new Intent();
                 intent.putExtra(EXTRA_GENERIC_PAYMENT, (Parcelable) genericPayment);
-                setResult(RESULT_OK, intent);
+                setResult(RESULT_PAYMENT, intent);
                 finish();
             }
 
@@ -160,14 +166,14 @@ public final class PaymentProcessorPluginActivity extends AppCompatActivity
             public void onPaymentFinished(@NonNull final BusinessPayment businessPayment) {
                 final Intent intent = new Intent();
                 intent.putExtra(EXTRA_BUSINESS_PAYMENT, (Parcelable) businessPayment);
-                setResult(RESULT_OK, intent);
+                setResult(RESULT_PAYMENT, intent);
                 finish();
             }
 
             @Override
             public void onPaymentError(@NonNull final MercadoPagoError error) {
                 //TODO verify error handling
-                ErrorUtil.startErrorActivity(PaymentProcessorPluginActivity.this, error);
+                ErrorUtil.startErrorActivity(PaymentProcessorActivity.this, error);
             }
         };
     }

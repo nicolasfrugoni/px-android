@@ -8,7 +8,6 @@ apply plugin:'com.github.dcendents.android-maven'
 
 def versionToDeploy = version_to_deploy as String
 versionToDeploy = project.hasProperty('production') ? versionToDeploy : 'EXPERIMENTAL-' + versionToDeploy + '-' + dateNow
-
 version = versionToDeploy
 
 task javadoc(type:Javadoc) {
@@ -112,7 +111,6 @@ install {
         }
     }
 }
-
 
 bintray {
     version = versionToDeploy

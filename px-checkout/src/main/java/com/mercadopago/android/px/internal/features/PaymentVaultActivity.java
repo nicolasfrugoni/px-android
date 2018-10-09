@@ -68,6 +68,7 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
     public static final int COLUMN_SPACING_DP_VALUE = 20;
     public static final int COLUMNS = 2;
     private static final int PAYER_INFORMATION_REQUEST_CODE = 22;
+    private static final int REQ_CARD_VAULT = 102;
 
     // Local vars
     protected boolean mActivityActive;
@@ -267,7 +268,7 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
     @Override
     public void showPaymentMethodPluginActivity() {
         startActivityForResult(PaymentMethodPluginActivity.getIntent(this),
-            MercadoPagoComponents.Activities.PLUGIN_PAYMENT_METHOD_REQUEST_CODE);
+            Constants.Activities.PLUGIN_PAYMENT_METHOD_REQUEST_CODE);
         overrideTransitionIn();
     }
 
@@ -276,30 +277,30 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
         final Intent intent = new Intent(this, PaymentVaultActivity.class);
         intent.putExtras(getIntent());
         intent.putExtra("selectedSearchItem", JsonUtil.getInstance().toJson(item));
-        startActivityForResult(intent, MercadoPagoComponents.Activities.PAYMENT_VAULT_REQUEST_CODE);
+        startActivityForResult(intent, Constants.Activities.PAYMENT_VAULT_REQUEST_CODE);
         overridePendingTransition(R.anim.px_slide_right_to_left_in, R.anim.px_slide_right_to_left_out);
     }
 
     @Override
     public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         presenter.initializeAmountRow();
-        if (requestCode == MercadoPagoComponents.Activities.CARD_VAULT_REQUEST_CODE) {
+        if (requestCode == REQ_CARD_VAULT) {
             resolveCardRequest(resultCode, data);
-        } else if (requestCode == MercadoPagoComponents.Activities.PAYMENT_METHODS_REQUEST_CODE) {
+        } else if (requestCode == Constants.Activities.PAYMENT_METHODS_REQUEST_CODE) {
             presenter.onPaymentMethodReturned();
-        } else if (requestCode == MercadoPagoComponents.Activities.PAYMENT_VAULT_REQUEST_CODE) {
+        } else if (requestCode == Constants.Activities.PAYMENT_VAULT_REQUEST_CODE) {
             resolvePaymentVaultRequest(resultCode, data);
         } else if (requestCode == PAYER_INFORMATION_REQUEST_CODE) {
             resolvePayerInformationRequest(resultCode);
-        } else if (requestCode == MercadoPagoComponents.Activities.PLUGIN_PAYMENT_METHOD_REQUEST_CODE) {
+        } else if (requestCode == Constants.Activities.PLUGIN_PAYMENT_METHOD_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 presenter.onPluginAfterHookOne();
             } else {
                 overrideTransitionOut();
             }
-        } else if (requestCode == MercadoPagoComponents.Activities.HOOK_1) {
+        } else if (requestCode == Constants.Activities.HOOK_1) {
             resolveHook1Request(resultCode);
-        } else if (requestCode == MercadoPagoComponents.Activities.HOOK_1_PLUGIN) {
+        } else if (requestCode == Constants.Activities.HOOK_1_PLUGIN) {
             presenter.onPluginHookOneResult();
         } else if (requestCode == ErrorUtil.ERROR_REQUEST_CODE) {
             resolveErrorRequest(resultCode, data);
@@ -345,10 +346,8 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
 
     protected void resolveCardRequest(final int resultCode, final Intent data) {
         presenter.onHookReset();
-
         if (resultCode == RESULT_OK) {
             showProgress();
-
             mToken = JsonUtil.getInstance().fromJson(data.getStringExtra("token"), Token.class);
             mSelectedIssuer = JsonUtil.getInstance().fromJson(data.getStringExtra("issuer"), Issuer.class);
             mSelectedPayerCost = JsonUtil.getInstance().fromJson(data.getStringExtra("payerCost"), PayerCost.class);
@@ -423,13 +422,11 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
     @Override
     public void showProgress() {
         mProgressLayout.setVisibility(View.VISIBLE);
-        mAppBar.setVisibility(View.GONE);
     }
 
     @Override
     public void hideProgress() {
         mProgressLayout.setVisibility(View.GONE);
-        mAppBar.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -441,23 +438,23 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
 
     @Override
     public void startSavedCardFlow(final Card card) {
-        new MercadoPagoComponents.Activities.CardVaultActivityBuilder()
+        new Constants.Activities.CardVaultActivityBuilder()
             .setCard(card)
-            .startActivity(this, MercadoPagoComponents.Activities.CARD_VAULT_REQUEST_CODE);
+            .startActivity(this, REQ_CARD_VAULT);
         overrideTransitionIn();
     }
 
     @Override
     public void startCardFlow(final Boolean automaticSelection) {
-        new MercadoPagoComponents.Activities.CardVaultActivityBuilder()
+        new Constants.Activities.CardVaultActivityBuilder()
             .setAutomaticSelection(automaticSelection)
-            .startActivity(this, MercadoPagoComponents.Activities.CARD_VAULT_REQUEST_CODE);
+            .startActivity(this, REQ_CARD_VAULT);
         overrideTransitionIn();
     }
 
     @Override
     public void startPaymentMethodsSelection(final PaymentPreference paymentPreference) {
-        new MercadoPagoComponents.Activities.PaymentMethodsActivityBuilder()
+        new Constants.Activities.PaymentMethodsActivityBuilder()
             .setActivity(this)
             .setPaymentPreference(paymentPreference)
             .startActivity();

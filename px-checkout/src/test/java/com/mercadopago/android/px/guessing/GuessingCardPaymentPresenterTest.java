@@ -35,15 +35,18 @@ import com.mercadopago.android.px.model.PaymentMethodSearch;
 import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.PaymentType;
 import com.mercadopago.android.px.model.PaymentTypes;
+import com.mercadopago.android.px.model.SavedESCCardToken;
 import com.mercadopago.android.px.model.Token;
 import com.mercadopago.android.px.model.exceptions.ApiException;
 import com.mercadopago.android.px.model.exceptions.CardTokenException;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.preferences.PaymentPreference;
 import com.mercadopago.android.px.utils.CardTestUtils;
 import com.mercadopago.android.px.utils.StubSuccessMpCall;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
@@ -75,10 +78,14 @@ public class GuessingCardPaymentPresenterTest {
     @Mock private PaymentMethodSearch paymentMethodSearch;
     @Mock private AdvancedConfiguration advancedConfiguration;
     @Mock private PaymentSettingRepository paymentSettingRepository;
+    @Mock private CheckoutPreference checkoutPreference;
+    @Mock private PaymentPreference paymentPreference;
 
     @Before
     public void setUp() {
         // No charge initialization.
+        when(paymentSettingRepository.getCheckoutPreference()).thenReturn(checkoutPreference);
+        when(checkoutPreference.getPaymentPreference()).thenReturn(paymentPreference);
         final List<PaymentMethod> pm = PaymentMethods.getPaymentMethodListMLA();
         when(groupsRepository.getGroups()).thenReturn(new StubSuccessMpCall<>(paymentMethodSearch));
         when(paymentMethodSearch.getPaymentMethods()).thenReturn(pm);
@@ -86,7 +93,7 @@ public class GuessingCardPaymentPresenterTest {
         presenter =
             new GuessingCardPaymentPresenter(amountRepository, userSelectionRepository, paymentSettingRepository,
                 groupsRepository,
-                advancedConfiguration, new PaymentPreference(), buildMockedPaymentRecovery());
+                advancedConfiguration, buildMockedPaymentRecovery());
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
     }
@@ -99,9 +106,6 @@ public class GuessingCardPaymentPresenterTest {
 
     @Test
     public void ifPaymentRecoverySetThenSaveCardholderNameAndIdentification() {
-
-        final PaymentPreference paymentPreference = new PaymentPreference();
-        presenter.setPaymentPreference(paymentPreference);
 
         final PaymentRecovery mockedPaymentRecovery = buildMockedPaymentRecovery();
         presenter.setPaymentRecovery(mockedPaymentRecovery);
@@ -123,9 +127,6 @@ public class GuessingCardPaymentPresenterTest {
         final List<IdentificationType> identificationTypesList = IdentificationTypes.getIdentificationTypes();
         provider.setIdentificationTypesResponse(identificationTypesList);
 
-        final PaymentPreference paymentPreference = new PaymentPreference();
-        presenter.setPaymentPreference(paymentPreference);
-
         presenter.initialize();
 
         final List<PaymentMethod> mockedGuessedPaymentMethods = new ArrayList<>();
@@ -141,8 +142,7 @@ public class GuessingCardPaymentPresenterTest {
 
         final List<IdentificationType> identificationTypesList = IdentificationTypes.getIdentificationTypes();
         provider.setIdentificationTypesResponse(identificationTypesList);
-        final PaymentPreference paymentPreference = new PaymentPreference();
-        presenter.setPaymentPreference(paymentPreference);
+
         presenter.initialize();
 
         final List<PaymentMethod> mockedGuessedPaymentMethods = new ArrayList<>();
@@ -160,9 +160,6 @@ public class GuessingCardPaymentPresenterTest {
         final List<IdentificationType> identificationTypesList = IdentificationTypes.getIdentificationTypes();
         provider.setIdentificationTypesResponse(identificationTypesList);
 
-        final PaymentPreference paymentPreference = new PaymentPreference();
-        presenter.setPaymentPreference(paymentPreference);
-
         presenter.initialize();
 
         final List<PaymentMethod> mockedGuessedPaymentMethods = new ArrayList<>();
@@ -177,9 +174,6 @@ public class GuessingCardPaymentPresenterTest {
 
         final List<IdentificationType> identificationTypesList = IdentificationTypes.getIdentificationTypes();
         provider.setIdentificationTypesResponse(identificationTypesList);
-
-        final PaymentPreference paymentPreference = new PaymentPreference();
-        presenter.setPaymentPreference(paymentPreference);
 
         presenter.initialize();
 
@@ -202,9 +196,6 @@ public class GuessingCardPaymentPresenterTest {
 
         final List<IdentificationType> identificationTypesList = IdentificationTypes.getIdentificationTypes();
         provider.setIdentificationTypesResponse(identificationTypesList);
-
-        final PaymentPreference paymentPreference = new PaymentPreference();
-        presenter.setPaymentPreference(paymentPreference);
 
         presenter.initialize();
 
@@ -229,9 +220,6 @@ public class GuessingCardPaymentPresenterTest {
         final List<IdentificationType> identificationTypesList = IdentificationTypes.getIdentificationTypes();
         provider.setIdentificationTypesResponse(identificationTypesList);
 
-        final PaymentPreference paymentPreference = new PaymentPreference();
-        presenter.setPaymentPreference(paymentPreference);
-
         presenter.initialize();
 
         final List<PaymentMethod> mockedGuessedPaymentMethods = new ArrayList<>();
@@ -254,9 +242,6 @@ public class GuessingCardPaymentPresenterTest {
         final List<IdentificationType> identificationTypesList = IdentificationTypes.getIdentificationTypes();
         provider.setIdentificationTypesResponse(identificationTypesList);
 
-        final PaymentPreference paymentPreference = new PaymentPreference();
-        presenter.setPaymentPreference(paymentPreference);
-
         presenter.initialize();
 
         final List<PaymentMethod> mockedGuessedPaymentMethods = new ArrayList<>();
@@ -274,9 +259,6 @@ public class GuessingCardPaymentPresenterTest {
 
         final List<IdentificationType> identificationTypesList = IdentificationTypes.getIdentificationTypes();
         provider.setIdentificationTypesResponse(identificationTypesList);
-
-        final PaymentPreference paymentPreference = new PaymentPreference();
-        presenter.setPaymentPreference(paymentPreference);
 
         presenter.initialize();
 
@@ -297,9 +279,6 @@ public class GuessingCardPaymentPresenterTest {
         final List<IdentificationType> identificationTypesList = IdentificationTypes.getIdentificationTypes();
         provider.setIdentificationTypesResponse(identificationTypesList);
 
-        final PaymentPreference paymentPreference = new PaymentPreference();
-        presenter.setPaymentPreference(paymentPreference);
-
         presenter.initialize();
 
         assertTrue(mockedView.showInputContainer);
@@ -313,8 +292,6 @@ public class GuessingCardPaymentPresenterTest {
         final List<IdentificationType> identificationTypesList = IdentificationTypes.getIdentificationTypes();
         provider.setIdentificationTypesResponse(identificationTypesList);
 
-        final PaymentPreference paymentPreference = new PaymentPreference();
-        presenter.setPaymentPreference(paymentPreference);
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
 
@@ -330,8 +307,6 @@ public class GuessingCardPaymentPresenterTest {
         final MercadoPagoError mpException = new MercadoPagoError(apiException, GET_PAYMENT_METHODS);
         provider.setPaymentMethodsResponse(mpException);
 
-        final PaymentPreference paymentPreference = new PaymentPreference();
-        presenter.setPaymentPreference(paymentPreference);
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
 
@@ -346,11 +321,7 @@ public class GuessingCardPaymentPresenterTest {
         final List<PaymentMethod> paymentMethodList = PaymentMethods.getPaymentMethodListMLM();
         final List<IdentificationType> identificationTypesList = IdentificationTypes.getIdentificationTypes();
         provider.setIdentificationTypesResponse(identificationTypesList);
-
-        final PaymentPreference paymentPreference = new PaymentPreference();
-        paymentPreference.setDefaultPaymentTypeId(PaymentTypes.DEBIT_CARD);
-
-        presenter.setPaymentPreference(paymentPreference);
+        when(userSelectionRepository.getPaymentType()).thenReturn(PaymentTypes.DEBIT_CARD);
 
         presenter.initialize();
 
@@ -375,8 +346,6 @@ public class GuessingCardPaymentPresenterTest {
         final List<IdentificationType> identificationTypesList = IdentificationTypes.getIdentificationTypes();
         provider.setIdentificationTypesResponse(identificationTypesList);
 
-        final PaymentPreference paymentPreference = new PaymentPreference();
-        presenter.setPaymentPreference(paymentPreference);
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
 
@@ -396,8 +365,6 @@ public class GuessingCardPaymentPresenterTest {
         final List<IdentificationType> identificationTypesList = IdentificationTypes.getIdentificationTypes();
         provider.setIdentificationTypesResponse(identificationTypesList);
 
-        final PaymentPreference paymentPreference = new PaymentPreference();
-        presenter.setPaymentPreference(paymentPreference);
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
 
@@ -419,8 +386,7 @@ public class GuessingCardPaymentPresenterTest {
         final ApiException apiException = IdentificationTypes.getDoNotFindIdentificationTypesException();
         final MercadoPagoError mpException =
             new MercadoPagoError(apiException, GET_IDENTIFICATION_TYPES);
-        final PaymentPreference paymentPreference = new PaymentPreference();
-        presenter.setPaymentPreference(paymentPreference);
+
         provider.setIdentificationTypesResponse(mpException);
 
         presenter.initialize();
@@ -434,12 +400,10 @@ public class GuessingCardPaymentPresenterTest {
         final List<IdentificationType> identificationTypes = new ArrayList<>();
         provider.setIdentificationTypesResponse(identificationTypes);
 
-        final PaymentPreference paymentPreference = new PaymentPreference();
-
         when(userSelectionRepository.getPaymentMethod()).thenReturn(null);
 
         final List<PaymentMethod> paymentMethodList = PaymentMethods.getPaymentMethodListMLA();
-        presenter.setPaymentPreference(paymentPreference);
+
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
         presenter.initialize();
@@ -457,8 +421,6 @@ public class GuessingCardPaymentPresenterTest {
         final List<BankDeal> bankDeals = BankDeals.getBankDealsListMLA();
         provider.setBankDealsResponse(bankDeals);
 
-        final PaymentPreference paymentPreference = new PaymentPreference();
-        presenter.setPaymentPreference(paymentPreference);
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
 
@@ -478,8 +440,7 @@ public class GuessingCardPaymentPresenterTest {
 
         final PaymentMethod mockedPaymentMethod = PaymentMethods.getPaymentMethodOnMaster();
         when(userSelectionRepository.getPaymentMethod()).thenReturn(mockedPaymentMethod);
-        final PaymentPreference paymentPreference = new PaymentPreference();
-        presenter.setPaymentPreference(paymentPreference);
+
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
 
@@ -504,8 +465,6 @@ public class GuessingCardPaymentPresenterTest {
 
         final PaymentMethod mockedPaymentMethod = PaymentMethods.getPaymentMethodOnMaster();
 
-        final PaymentPreference paymentPreference = new PaymentPreference();
-        presenter.setPaymentPreference(paymentPreference);
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
 
@@ -529,8 +488,6 @@ public class GuessingCardPaymentPresenterTest {
 
         final PaymentMethod mockedPaymentMethod = PaymentMethods.getPaymentMethodOnMaster();
 
-        final PaymentPreference paymentPreference = new PaymentPreference();
-        presenter.setPaymentPreference(paymentPreference);
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
 
@@ -558,9 +515,8 @@ public class GuessingCardPaymentPresenterTest {
 
         final PaymentMethod mockedPaymentMethod = PaymentMethods.getPaymentMethodOnMaster();
 
-        final PaymentPreference paymentPreference = new PaymentPreference();
         when(userSelectionRepository.getPaymentMethod()).thenReturn(mockedPaymentMethod);
-        presenter.setPaymentPreference(paymentPreference);
+
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
 
@@ -591,8 +547,7 @@ public class GuessingCardPaymentPresenterTest {
 
         final Identification identification = new Identification();
         presenter.setIdentification(identification);
-        final PaymentPreference paymentPreference = new PaymentPreference();
-        presenter.setPaymentPreference(paymentPreference);
+
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
 
@@ -630,8 +585,7 @@ public class GuessingCardPaymentPresenterTest {
 
         final Identification identification = new Identification();
         presenter.setIdentification(identification);
-        final PaymentPreference paymentPreference = new PaymentPreference();
-        presenter.setPaymentPreference(paymentPreference);
+
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
         when(userSelectionRepository.getPaymentMethod()).thenReturn(mockedPaymentMethod);
@@ -659,19 +613,12 @@ public class GuessingCardPaymentPresenterTest {
         assertEquals(presenter.getToken(), mockedToken);
     }
 
+    //TODO check this test, should not happen and does nothing.
     @Test
     public void ifPaymentMethodExclusionSetAndUserSelectsItThenShowErrorMessage() {
 
         final List<IdentificationType> identificationTypesList = IdentificationTypes.getIdentificationTypes();
         provider.setIdentificationTypesResponse(identificationTypesList);
-
-        //We exclude master
-        final List<String> excludedPaymentMethodIds = new ArrayList<>();
-        excludedPaymentMethodIds.add("master");
-        final PaymentPreference paymentPreference = new PaymentPreference();
-        paymentPreference.setExcludedPaymentMethodIds(excludedPaymentMethodIds);
-
-        presenter.setPaymentPreference(paymentPreference);
 
         presenter.initialize();
 
@@ -711,17 +658,20 @@ public class GuessingCardPaymentPresenterTest {
         final List<String> excludedPaymentMethodIds = new ArrayList<>();
         excludedPaymentMethodIds.add("master");
 
-        final PaymentPreference paymentPreference = new PaymentPreference();
-        paymentPreference.setExcludedPaymentMethodIds(excludedPaymentMethodIds);
+        when(userSelectionRepository.getPaymentType()).thenReturn(PaymentTypes.CREDIT_CARD);
 
-        presenter =
-            new GuessingCardPaymentPresenter(amountRepository, userSelectionRepository, paymentSettingRepository,
-                groupsRepository,
-                advancedConfiguration, new PaymentPreference(), buildMockedPaymentRecovery());
+        when(paymentPreference.getSupportedPaymentMethods(paymentMethodSearch.getPaymentMethods()))
+            .thenReturn(Collections.singletonList(paymentMethodList.get(0)));
+
+        presenter = new GuessingCardPaymentPresenter(amountRepository,
+            userSelectionRepository,
+            paymentSettingRepository,
+            groupsRepository,
+            advancedConfiguration,
+            buildMockedPaymentRecovery());
+
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
-
-        presenter.setPaymentPreference(paymentPreference);
 
         presenter.initialize();
 
@@ -908,6 +858,21 @@ public class GuessingCardPaymentPresenterTest {
         @Override
         public void finishCardFlow(final PaymentMethod paymentMethod, final Token token, final Issuer issuer,
             final PayerCost payerCost) {
+            // Empty body
+        }
+
+        @Override
+        public void finishCardStorageFlowWithSuccess() {
+            // Empty body
+        }
+
+        @Override
+        public void finishCardStorageFlowWithError(final String accessToken) {
+            // Empty body
+        }
+
+        @Override
+        public void showProgress() {
             // Empty body
         }
 
@@ -1246,6 +1211,16 @@ public class GuessingCardPaymentPresenterTest {
 
         @Override
         public void getIdentificationTypesAsync(final TaggedCallback<List<IdentificationType>> taggedCallback) {
+            if (shouldFail) {
+                taggedCallback.onFailure(failedResponse);
+            } else {
+                taggedCallback.onSuccess(successfulIdentificationTypesResponse);
+            }
+        }
+
+        @Override
+        public void getIdentificationTypesAsync(final String accessToken,
+            final TaggedCallback<List<IdentificationType>> taggedCallback) {
             if (shouldFail) {
                 taggedCallback.onFailure(failedResponse);
             } else {

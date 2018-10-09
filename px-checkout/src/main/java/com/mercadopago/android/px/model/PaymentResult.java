@@ -6,11 +6,8 @@ import java.io.Serializable;
 
 public class PaymentResult implements Serializable {
 
-    public static final String SELECT_OTHER_PAYMENT_METHOD = "select_other_payment_method";
-    public static final String RECOVER_PAYMENT = "recover_payment";
-
     private final PaymentData paymentData;
-    private final Long paymentId;
+    @Nullable private final Long paymentId;
     private final String paymentStatus;
     private final String paymentStatusDetail;
     private final String statementDescription;
@@ -35,7 +32,7 @@ public class PaymentResult implements Serializable {
         return paymentStatus;
     }
 
-    public boolean isStatusApproved() {
+    public boolean isApproved() {
         return Payment.StatusCodes.STATUS_APPROVED.equals(paymentStatus);
     }
 
@@ -49,6 +46,14 @@ public class PaymentResult implements Serializable {
 
     public boolean isStatusInProcess() {
         return Payment.StatusCodes.STATUS_IN_PROCESS.equals(paymentStatus);
+    }
+
+    /**
+     * @return if status is pending and status detail pending_waiting_payment.
+     */
+    public boolean isOffPayment() {
+        return paymentId != null && Payment.StatusCodes.STATUS_PENDING.equalsIgnoreCase(paymentStatus) &&
+            Payment.StatusDetail.STATUS_DETAIL_PENDING_WAITING_PAYMENT.equalsIgnoreCase(paymentStatusDetail);
     }
 
     public String getPaymentStatusDetail() {
@@ -92,7 +97,7 @@ public class PaymentResult implements Serializable {
             return this;
         }
 
-        public Builder setPaymentId(@NonNull final Long paymentId) {
+        public Builder setPaymentId(@Nullable final Long paymentId) {
             this.paymentId = paymentId;
             return this;
         }

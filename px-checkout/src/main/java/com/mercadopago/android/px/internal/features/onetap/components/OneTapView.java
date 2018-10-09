@@ -21,16 +21,16 @@ import com.mercadopago.android.px.internal.util.ViewUtils;
 import com.mercadopago.android.px.internal.view.Button;
 import com.mercadopago.android.px.internal.view.ButtonPrimary;
 import com.mercadopago.android.px.internal.view.TermsAndConditionsComponent;
-import com.mercadopago.android.px.internal.viewmodel.OneTapModel;
 import com.mercadopago.android.px.model.Action;
 import com.mercadopago.android.px.model.Campaign;
 import com.mercadopago.android.px.model.Discount;
+import com.mercadopago.android.px.model.PaymentMethodSearch;
+import com.mercadopago.android.px.model.exceptions.ApiException;
+import com.mercadopago.android.px.services.Callback;
 
 public class OneTapView extends LinearLayout {
 
-    public OneTapModel oneTapModel;
-    public OneTap.Actions actions;
-
+    public OneTap.Actions actionCallback;
     private View amountContainer;
     private View paymentMethodContainer;
     private View termsContainer;
@@ -53,27 +53,35 @@ public class OneTapView extends LinearLayout {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 
-    public void setOneTapModel(@NonNull final OneTapModel model, @NonNull final OneTap.Actions callBack) {
-        oneTapModel = model;
-        actions = callBack;
-
+    public void setOneTapModel(@NonNull final OneTap.Actions callBack) {
+        actionCallback = callBack;
         final Session session = Session.getSession(getContext());
         final ConfigurationModule configurationModule = session.getConfigurationModule();
         final PaymentSettingRepository configuration = configurationModule.getPaymentSettings();
-
+        final DiscountRepository discountRepository = session.getDiscountRepository();
         final ReviewAndConfirmConfiguration reviewAndConfirmConfiguration =
             configuration.getAdvancedConfiguration().getReviewAndConfirmConfiguration();
-        final DiscountRepository discountRepository = session.getDiscountRepository();
 
-        addItems(reviewAndConfirmConfiguration, configuration);
-        amountContainer = createAmountView(configuration, discountRepository);
-        termsContainer = createTermsView(discountRepository);
-        addView(amountContainer);
-        addPaymentMethod(configuration, discountRepository);
-        if (termsContainer != null) {
-            addView(termsContainer);
-        }
-        confirmButton = addConfirmButton(discountRepository);
+        session.getGroupsRepository().getGroups().execute(new Callback<PaymentMethodSearch>() {
+            @Override
+            public void success(final PaymentMethodSearch paymentMethodSearch) {
+
+                addItems(reviewAndConfirmConfiguration, configuration);
+                amountContainer = createAmountView(configuration, discountRepository, paymentMethodSearch);
+                addView(amountContainer);
+                addPaymentMethod(configuration, discountRepository, paymentMethodSearch);
+                termsContainer = createTermsView(discountRepository);
+                if (termsContainer != null) {
+                    addView(termsContainer);
+                }
+                confirmButton = addConfirmButton(discountRepository);
+            }
+
+            @Override
+            public void failure(final ApiException apiException) {
+                throw new IllegalStateException("groups missing rendering one tap");
+            }
+        });
     }
 
     private void addItems(@NonNull final ReviewAndConfirmConfiguration reviewAndConfirmConfiguration,
@@ -89,27 +97,34 @@ public class OneTapView extends LinearLayout {
         addView(view);
     }
 
-    public void update(@NonNull final OneTapModel model) {
-        oneTapModel = model;
-
+    public void update() {
         final Session session = Session.getSession(getContext());
         final ConfigurationModule configurationModule = session.getConfigurationModule();
         final PaymentSettingRepository configuration = configurationModule.getPaymentSettings();
         final DiscountRepository discountRepository = session.getDiscountRepository();
+        session.getGroupsRepository().getGroups().execute(new Callback<PaymentMethodSearch>() {
+            @Override
+            public void success(final PaymentMethodSearch paymentMethodSearch) {
+                for (int i = 0; i < getChildCount(); i++) {
+                    updateAmount(i, getChildAt(i), configuration, discountRepository, paymentMethodSearch);
+                    updateTerms(i, getChildAt(i), discountRepository);
+                }
+            }
 
-        for (int i = 0; i < getChildCount(); i++) {
-            updateAmount(i, getChildAt(i), configuration, discountRepository);
-            updateTerms(i, getChildAt(i), discountRepository);
-        }
+            @Override
+            public void failure(final ApiException apiException) {
+                throw new IllegalStateException("groups missing rendering one tap");
+            }
+        });
     }
 
     private void updateAmount(final int indexView, @NonNull final View view,
         @NonNull final PaymentSettingRepository configuration,
-        @NonNull final DiscountRepository discountRepository) {
-
+        @NonNull final DiscountRepository discountRepository,
+        final PaymentMethodSearch paymentMethodSearch) {
         if (view.equals(amountContainer)) {
             removeViewAt(indexView);
-            amountContainer = createAmountView(configuration, discountRepository);
+            amountContainer = createAmountView(configuration, discountRepository, paymentMethodSearch);
             addView(amountContainer, indexView);
         }
     }
@@ -138,26 +153,34 @@ public class OneTapView extends LinearLayout {
     }
 
     private View createAmountView(@NonNull final PaymentSettingRepository configuration,
-        @NonNull final DiscountRepository discountRepository) {
-        final Amount.Props props = Amount.Props.from(oneTapModel, configuration, discountRepository);
-        return new Amount(props, actions).render(this);
+        @NonNull final DiscountRepository discountRepository,
+        @NonNull final PaymentMethodSearch paymentMethodSearch) {
+        final Amount.Props props = Amount.Props
+            .from(paymentMethodSearch.getOneTapMetadata().getCard(),
+                configuration,
+                discountRepository
+            );
+        return new Amount(props, actionCallback).render(this);
     }
 
     private void addPaymentMethod(@NonNull final PaymentSettingRepository configuration,
-        @NonNull final DiscountRepository discountRepository) {
+        @NonNull final DiscountRepository discountRepository,
+        final PaymentMethodSearch paymentMethodSearch) {
         paymentMethodContainer =
-            new PaymentMethod(PaymentMethod.Props.createFrom(oneTapModel, configuration, discountRepository),
-                actions).render(this);
+            new PaymentMethod(
+                PaymentMethod.Props.createFrom(configuration.getCheckoutPreference().getSite().getCurrencyId(),
+                    discountRepository.getDiscount(),
+                    paymentMethodSearch), actionCallback)
+                .render(this);
         addView(paymentMethodContainer);
     }
 
     private View createTermsView(@NonNull final DiscountRepository discountRepository) {
         final Campaign campaign = discountRepository.getCampaign();
         if (campaign != null) {
-            TermsAndConditionsModel model = new TermsAndConditionsModel(campaign.getCampaignTermsUrl(),
+            final TermsAndConditionsModel model = new TermsAndConditionsModel(campaign.getCampaignTermsUrl(),
                 getContext().getString(R.string.px_discount_terms_and_conditions_message),
                 getContext().getString(R.string.px_discount_terms_and_conditions_linked_message),
-                oneTapModel.getPublicKey(),
                 LineSeparatorType.NONE);
             return new TermsAndConditionsComponent(model)
                 .render(this);
@@ -172,20 +195,16 @@ public class OneTapView extends LinearLayout {
         final Button.Actions buttonActions = new Button.Actions() {
             @Override
             public void onClick(final Action action) {
-                //Do nothing
-            }
-
-            @Override
-            public void onClick(final int yButtonPosition, final int buttonHeight) {
-                if (actions != null) {
-                    actions.confirmPayment(yButtonPosition, buttonHeight);
+                if (actionCallback != null) {
+                    actionCallback.confirmPayment();
                 }
             }
+
         };
 
         final Button button = new ButtonPrimary(new Button.Props(confirm), buttonActions);
         final View view = button.render(this);
-        final int resMargin = discount != null ? R.dimen.px_zero_height : R.dimen.px_m_margin;
+        final int resMargin = discount == null ? R.dimen.px_m_margin : R.dimen.px_zero_height;
         ViewUtils.setMarginTopInView(view, getContext().getResources().getDimensionPixelSize(resMargin));
         addView(view);
         return view;

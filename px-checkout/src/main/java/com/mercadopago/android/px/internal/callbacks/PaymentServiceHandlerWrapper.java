@@ -3,15 +3,22 @@ package com.mercadopago.android.px.internal.callbacks;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.mercadopago.android.px.internal.repository.EscManager;
+import com.mercadopago.android.px.internal.repository.InstructionsRepository;
 import com.mercadopago.android.px.internal.repository.PaymentRepository;
 import com.mercadopago.android.px.model.BusinessPayment;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.GenericPayment;
 import com.mercadopago.android.px.model.IPayment;
+import com.mercadopago.android.px.model.Instruction;
 import com.mercadopago.android.px.model.Payment;
+import com.mercadopago.android.px.model.PaymentRecovery;
+import com.mercadopago.android.px.model.PaymentResult;
+import com.mercadopago.android.px.model.exceptions.ApiException;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.services.Callback;
 import java.lang.ref.WeakReference;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 public final class PaymentServiceHandlerWrapper implements PaymentServiceHandler {
@@ -19,21 +26,27 @@ public final class PaymentServiceHandlerWrapper implements PaymentServiceHandler
     @Nullable private WeakReference<PaymentServiceHandler> handler;
     @NonNull private final PaymentRepository paymentRepository;
     @NonNull private final EscManager escManager;
+    @NonNull private final InstructionsRepository instructionsRepository;
     @NonNull private final Queue<Message> messages;
 
     public PaymentServiceHandlerWrapper(
         @NonNull final PaymentRepository paymentRepository,
-        @NonNull final EscManager escManager) {
+        @NonNull final EscManager escManager,
+        @NonNull final InstructionsRepository instructionsRepository) {
         this.paymentRepository = paymentRepository;
         this.escManager = escManager;
+        this.instructionsRepository = instructionsRepository;
         messages = new LinkedList<>();
     }
 
     public void setHandler(@Nullable final PaymentServiceHandler handler) {
-        if (handler == null) {
+        this.handler = new WeakReference<>(handler);
+    }
+
+    public void detach(@Nullable final PaymentServiceHandler handler) {
+        if (handler != null && this.handler != null && this.handler.get() != null &&
+            this.handler.get().hashCode() == handler.hashCode()) {
             this.handler = null;
-        } else {
-            this.handler = new WeakReference<>(handler);
         }
     }
 
@@ -48,38 +61,73 @@ public final class PaymentServiceHandlerWrapper implements PaymentServiceHandler
     }
 
     @Override
-    public void onRecoverPaymentEscInvalid() {
-        addAndProcess(new RecoverPaymentEscInvalidMessage());
+    public void onRecoverPaymentEscInvalid(final PaymentRecovery recovery) {
+        addAndProcess(new RecoverPaymentEscInvalidMessage(recovery));
     }
 
     @Override
     public void onPaymentFinished(@NonNull final Payment payment) {
         if (handleEsc(payment)) {
-            onRecoverPaymentEscInvalid();
+            onRecoverPaymentEscInvalid(paymentRepository.createRecoveryForInvalidESC());
         } else {
-            addAndProcess(new PaymentMessage(payment));
+            //Must be after store
+            paymentRepository.storePayment(payment);
+            final PaymentResult paymentResult = paymentRepository.createPaymentResult(payment);
+            if (paymentResult.isOffPayment()) {
+                instructionsRepository.getInstructions(paymentResult).enqueue(new Callback<List<Instruction>>() {
+                    @Override
+                    public void success(final List<Instruction> instructions) {
+                        addAndProcess(new PaymentMessage(payment));
+                    }
+
+                    @Override
+                    public void failure(final ApiException apiException) {
+                        addAndProcess(new PaymentMessage(payment));
+                    }
+                });
+            } else {
+                addAndProcess(new PaymentMessage(payment));
+            }
         }
     }
 
     @Override
     public void onPaymentFinished(@NonNull final GenericPayment genericPayment) {
         if (handleEsc(genericPayment)) {
-            onRecoverPaymentEscInvalid();
+            onRecoverPaymentEscInvalid(paymentRepository.createRecoveryForInvalidESC());
         } else {
-            addAndProcess(new GenericPaymentMessage(genericPayment));
+            paymentRepository.storePayment(genericPayment);
+            //Must be after store
+            final PaymentResult paymentResult = paymentRepository.createPaymentResult(genericPayment);
+            if (paymentResult.isOffPayment()) {
+                instructionsRepository.getInstructions(paymentResult).enqueue(new Callback<List<Instruction>>() {
+                    @Override
+                    public void success(final List<Instruction> instructions) {
+                        addAndProcess(new GenericPaymentMessage(genericPayment));
+                    }
+
+                    @Override
+                    public void failure(final ApiException apiException) {
+                        addAndProcess(new GenericPaymentMessage(genericPayment));
+                    }
+                });
+            } else {
+                addAndProcess(new GenericPaymentMessage(genericPayment));
+            }
         }
     }
 
     @Override
     public void onPaymentFinished(@NonNull final BusinessPayment businessPayment) {
         handleEsc(businessPayment);
+        paymentRepository.storePayment(businessPayment);
         addAndProcess(new BusinessPaymentMessage(businessPayment));
     }
 
     @Override
     public void onPaymentError(@NonNull final MercadoPagoError error) {
         if (handleEsc(error)) {
-            onRecoverPaymentEscInvalid();
+            onRecoverPaymentEscInvalid(paymentRepository.createRecoveryForInvalidESC());
         } else {
             addAndProcess(new ErrorMessage(error));
         }
@@ -132,9 +180,16 @@ public final class PaymentServiceHandlerWrapper implements PaymentServiceHandler
     }
 
     private static class RecoverPaymentEscInvalidMessage implements Message {
+
+        private final PaymentRecovery recovery;
+
+        /* default */ RecoverPaymentEscInvalidMessage(final PaymentRecovery recovery) {
+            this.recovery = recovery;
+        }
+
         @Override
         public void processMessage(@NonNull final PaymentServiceHandler handler) {
-            handler.onRecoverPaymentEscInvalid();
+            handler.onRecoverPaymentEscInvalid(recovery);
         }
     }
 

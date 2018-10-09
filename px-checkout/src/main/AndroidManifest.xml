@@ -70,7 +70,7 @@
             android:name=".internal.features.plugins.PaymentMethodPluginActivity"
             android:theme="@style/Theme.MercadoPagoTheme.NoActionBar"/>
         <activity
-            android:name=".internal.features.plugins.PaymentProcessorPluginActivity"
+            android:name=".internal.features.plugins.PaymentProcessorActivity"
             android:theme="@style/Theme.MercadoPagoTheme.NoActionBar"/>
         <activity
             android:name=".internal.features.business_result.BusinessPaymentResultActivity"
@@ -80,6 +80,12 @@
             android:theme="@style/Theme.MercadoPagoTheme.NoActionBar"/>
         <activity
             android:name=".internal.features.BankDealDetailActivity"
+            android:theme="@style/Theme.MercadoPagoTheme.NoActionBar"/>
+        <activity
+            android:name=".internal.features.guessing_card.card_association_result.CardAssociationResultSuccessActivity"
+            android:theme="@style/Theme.MercadoPagoTheme.NoActionBar"/>
+        <activity
+            android:name=".internal.features.guessing_card.card_association_result.CardAssociationResultErrorActivity"
             android:theme="@style/Theme.MercadoPagoTheme.NoActionBar"/>
     </application>
 

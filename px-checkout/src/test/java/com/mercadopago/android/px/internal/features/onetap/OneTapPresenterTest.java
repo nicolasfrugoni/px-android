@@ -2,7 +2,6 @@ package com.mercadopago.android.px.internal.features.onetap;
 
 import com.mercadopago.android.px.internal.repository.PaymentRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
-import com.mercadopago.android.px.internal.viewmodel.OneTapModel;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.CardPaymentMetadata;
 import com.mercadopago.android.px.model.Issuer;
@@ -32,9 +31,6 @@ public class OneTapPresenterTest {
     private static final String OTHER_ID = "other";
 
     @Mock
-    private OneTapModel model;
-
-    @Mock
     private Card card;
 
     @Mock
@@ -62,7 +58,7 @@ public class OneTapPresenterTest {
 
     @Before
     public void setUp() {
-        oneTapPresenter = new OneTapPresenter(model, paymentRepository);
+        oneTapPresenter = new OneTapPresenter(paymentRepository);
         oneTapPresenter.attachView(view);
     }
 
@@ -72,7 +68,7 @@ public class OneTapPresenterTest {
     public void whenConfirmStartPayment() {
 //        configPlugin();
 //        oneTapPresenter.confirmPayment();
-        verify(view).trackConfirm(model);
+        verify(view).trackConfirm();
         //TODO fix
 //        verify(paymentRepository).doPayment(model, oneTapPresenter);
         verifyNoMoreInteractions(view);
@@ -119,8 +115,8 @@ public class OneTapPresenterTest {
     @Test
     public void onAmountShowMore() {
         oneTapPresenter.onAmountShowMore();
-        verify(view).showDetailModal(model);
-        verify(view).trackModal(model);
+        verify(view).showDetailModal();
+        verify(view).trackModal();
         verifyNoMoreInteractions(view);
     }
 
@@ -130,4 +126,14 @@ public class OneTapPresenterTest {
         verify(view).cancel();
         verify(view).trackCancel();
     }
+
+
+    @Test
+    public void whenPresenterDetachedThenPaymentRepositoryIsDetached(){
+        verify(paymentRepository).attach(oneTapPresenter);
+        oneTapPresenter.detachView();
+        verify(paymentRepository).detach(oneTapPresenter);
+        verifyNoMoreInteractions(paymentRepository);
+    }
+
 }
