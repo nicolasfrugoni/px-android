@@ -13,9 +13,7 @@ import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.repository.PluginRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.internal.viewmodel.BusinessPaymentModel;
-import com.mercadopago.android.px.internal.viewmodel.ChangePaymentMethodPostPaymentAction;
 import com.mercadopago.android.px.internal.viewmodel.CheckoutStateModel;
-import com.mercadopago.android.px.internal.viewmodel.OneTapModel;
 import com.mercadopago.android.px.internal.viewmodel.PostPaymentAction;
 import com.mercadopago.android.px.internal.viewmodel.RecoverPaymentPostPaymentAction;
 import com.mercadopago.android.px.mocks.PaymentMethodSearchs;
@@ -40,7 +38,7 @@ import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.preferences.PaymentPreference;
 import com.mercadopago.android.px.utils.PluginInitializationSuccess;
 import com.mercadopago.android.px.utils.StubSuccessMpCall;
-import com.mercadopago.android.px.viewmodel.mappers.BusinessModelMapper;
+import com.mercadopago.android.px.internal.viewmodel.mappers.BusinessModelMapper;
 import java.util.ArrayList;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -527,7 +525,7 @@ public class CheckoutPresenterTest {
         }
 
         @Override
-        public void showOneTap(@NonNull final OneTapModel oneTapModel) {
+        public void showOneTap() {
             //Do nothing
         }
 

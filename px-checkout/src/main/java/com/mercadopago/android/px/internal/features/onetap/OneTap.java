@@ -5,11 +5,9 @@ import com.mercadopago.android.px.internal.base.MvpView;
 import com.mercadopago.android.px.internal.callbacks.PaymentServiceHandler;
 import com.mercadopago.android.px.internal.features.explode.ExplodeDecorator;
 import com.mercadopago.android.px.internal.features.explode.ExplodingFragment;
-import com.mercadopago.android.px.internal.viewmodel.OneTapModel;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.IPayment;
 import com.mercadopago.android.px.model.PaymentRecovery;
-import com.mercadopago.android.px.model.PaymentResult;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 
 public interface OneTap {
@@ -20,15 +18,15 @@ public interface OneTap {
 
         void changePaymentMethod();
 
-        void showCardFlow(@NonNull final OneTapModel oneTapModel, @NonNull final Card card);
+        void showCardFlow(@NonNull final Card card);
 
-        void showDetailModal(@NonNull final OneTapModel model);
+        void showDetailModal();
 
-        void trackConfirm(final OneTapModel model);
+        void trackConfirm();
 
         void trackCancel();
 
-        void trackModal(final OneTapModel model);
+        void trackModal();
 
         void showPaymentProcessor();
 
@@ -37,7 +35,7 @@ public interface OneTap {
 
         void cancelLoading();
 
-        void startLoadingButton(int yButtonPosition, final int buttonHeight, final int paymentTimeout);
+        void startLoadingButton(final int paymentTimeout);
 
         //TODO shared with Checkout activity
 
@@ -53,14 +51,14 @@ public interface OneTap {
 
         void hideConfirmButton();
 
-        void updateViews(OneTapModel model);
+        void updateViews();
 
         void showErrorSnackBar(@NonNull final MercadoPagoError error);
     }
 
     interface Actions extends PaymentServiceHandler {
 
-        void confirmPayment(int yButtonPosition, final int buttonHeight);
+        void confirmPayment();
 
         void onTokenResolved();
 
@@ -68,7 +66,7 @@ public interface OneTap {
 
         void onAmountShowMore();
 
-        void onViewResumed(final OneTapModel model);
+        void onViewResumed();
 
         void onViewPaused();
     }

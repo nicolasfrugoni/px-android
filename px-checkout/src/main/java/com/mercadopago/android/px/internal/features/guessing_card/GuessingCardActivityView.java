@@ -101,6 +101,12 @@ public interface GuessingCardActivityView extends MvpView {
     void finishCardFlow(@Nullable PaymentMethod paymentMethod, Token token, Issuer issuer,
         PayerCost payerCost);
 
+    void finishCardStorageFlowWithSuccess();
+
+    void finishCardStorageFlowWithError(String accessToken);
+
+    void showProgress();
+
     void hideProgress();
 
     void setExclusionWithOneElementInfoView(PaymentMethod supportedPaymentMethod, boolean withAnimation);

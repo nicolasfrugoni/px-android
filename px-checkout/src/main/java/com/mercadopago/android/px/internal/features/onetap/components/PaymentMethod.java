@@ -6,10 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.internal.features.onetap.OneTap;
-import com.mercadopago.android.px.internal.repository.DiscountRepository;
-import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.view.CompactComponent;
-import com.mercadopago.android.px.internal.viewmodel.OneTapModel;
 import com.mercadopago.android.px.model.CardPaymentMetadata;
 import com.mercadopago.android.px.model.Discount;
 import com.mercadopago.android.px.model.OneTapMetadata;
@@ -18,7 +15,7 @@ import com.mercadopago.android.px.model.PaymentTypes;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-class PaymentMethod extends CompactComponent<PaymentMethod.Props, OneTap.Actions> {
+/* default */ class PaymentMethod extends CompactComponent<PaymentMethod.Props, OneTap.Actions> {
 
     static class Props {
         /* default */ @NonNull final String paymentMethodType;
@@ -68,14 +65,13 @@ class PaymentMethod extends CompactComponent<PaymentMethod.Props, OneTap.Actions
         }
 
         /* default */
-        static Props createFrom(final OneTapModel props,
-            @NonNull final PaymentSettingRepository configuration,
-            @NonNull final DiscountRepository discountRepository) {
-            final OneTapMetadata oneTapMetadata = props.getPaymentMethods().getOneTapMetadata();
-
+        static Props createFrom(@NonNull final String currencyId,
+            @Nullable final Discount discount,
+            final PaymentMethodSearch paymentMethodSearch) {
+            final OneTapMetadata oneTapMetadata = paymentMethodSearch.getOneTapMetadata();
             return new Props(oneTapMetadata.getPaymentTypeId(), oneTapMetadata.getPaymentMethodId(),
-                oneTapMetadata.getCard(), props.getPaymentMethods(),
-                configuration.getCheckoutPreference().getSite().getCurrencyId(), discountRepository.getDiscount());
+                oneTapMetadata.getCard(), paymentMethodSearch,
+                currencyId, discount);
         }
     }
 

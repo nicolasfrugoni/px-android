@@ -14,6 +14,7 @@ import com.mercadopago.android.px.internal.datasource.DiscountStorageService;
 import com.mercadopago.android.px.internal.datasource.EscManagerImp;
 import com.mercadopago.android.px.internal.datasource.GroupsService;
 import com.mercadopago.android.px.internal.datasource.InstallmentService;
+import com.mercadopago.android.px.internal.datasource.InstructionsService;
 import com.mercadopago.android.px.internal.datasource.MercadoPagoESC;
 import com.mercadopago.android.px.internal.datasource.MercadoPagoESCImpl;
 import com.mercadopago.android.px.internal.datasource.MercadoPagoServicesAdapter;
@@ -27,6 +28,7 @@ import com.mercadopago.android.px.internal.datasource.cache.GroupsMemCache;
 import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.GroupsRepository;
+import com.mercadopago.android.px.internal.repository.InstructionsRepository;
 import com.mercadopago.android.px.internal.repository.PaymentRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.repository.PluginRepository;
@@ -34,10 +36,11 @@ import com.mercadopago.android.px.internal.repository.TokenRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.internal.services.CheckoutService;
 import com.mercadopago.android.px.internal.services.GatewayService;
+import com.mercadopago.android.px.internal.services.InstructionsClient;
 import com.mercadopago.android.px.internal.util.LocaleUtil;
 import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.model.Device;
-import com.mercadopago.android.px.viewmodel.mappers.BusinessModelMapper;
+import com.mercadopago.android.px.internal.viewmodel.mappers.BusinessModelMapper;
 
 public final class Session extends ApplicationModule
     implements AmountComponent {
@@ -57,6 +60,7 @@ public final class Session extends ApplicationModule
     private GroupsCache groupsCache;
     private PluginService pluginRepository;
     private InternalConfiguration internalConfiguration;
+    private InstructionsService instructionsRepository;
 
     private Session(@NonNull final Context context) {
         super(context.getApplicationContext());
@@ -117,6 +121,7 @@ public final class Session extends ApplicationModule
         groupsCache = null;
         pluginRepository = null;
         internalConfiguration = null;
+        instructionsRepository = null;
     }
 
     public GroupsRepository getGroupsRepository() {
@@ -217,7 +222,9 @@ public final class Session extends ApplicationModule
                 paymentProcessor,
                 getContext(),
                 new EscManagerImp(getMercadoPagoESC()),
-                getTokenRepository());
+                getTokenRepository(),
+                getInstructionsRepository(),
+                getGroupsRepository());
         }
 
         return paymentRepository;
@@ -230,6 +237,11 @@ public final class Session extends ApplicationModule
             getMercadoPagoESC(), getDevice());
     }
 
+    @NonNull
+    public InternalConfiguration getInternalConfiguration() {
+        return internalConfiguration == null ? new InternalConfiguration(false) : internalConfiguration;
+    }
+
     /**
      * Set internal configuration after building MercadoPagoCheckout.
      *
@@ -240,16 +252,22 @@ public final class Session extends ApplicationModule
         this.internalConfiguration = internalConfiguration;
     }
 
-    @NonNull
-    public InternalConfiguration getInternalConfiguration() {
-        return internalConfiguration == null ? new InternalConfiguration(false) : internalConfiguration;
-    }
-
     //TODO move.
     @NonNull
     public BusinessModelMapper getBusinessModelMapper() {
         return new BusinessModelMapper(getDiscountRepository(), getConfigurationModule().getPaymentSettings(),
             getAmountRepository(),
             getPaymentRepository());
+    }
+
+    @NonNull
+    public InstructionsRepository getInstructionsRepository() {
+        if (instructionsRepository == null) {
+            instructionsRepository =
+                new InstructionsService(getConfigurationModule().getPaymentSettings(),
+                    getRetrofitClient().create(InstructionsClient.class),
+                    LocaleUtil.getLanguage(getContext()));
+        }
+        return instructionsRepository;
     }
 }

@@ -152,7 +152,9 @@ public final class CurrenciesUtil {
         if (hasZeroDecimals(currencyId, amount)) {
             final Character decimalSeparator = currenciesList.get(currencyId).getDecimalSeparator();
             final int decimalIndex = localized.indexOf(decimalSeparator);
-            localized = localized.substring(0, decimalIndex);
+            if (decimalIndex >= 0) {
+                localized = localized.substring(0, decimalIndex);
+            }
         }
         return localized;
     }

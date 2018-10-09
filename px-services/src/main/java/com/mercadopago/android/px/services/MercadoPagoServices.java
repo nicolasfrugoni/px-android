@@ -10,6 +10,7 @@ import com.mercadopago.android.px.internal.services.CheckoutService;
 import com.mercadopago.android.px.internal.services.DiscountService;
 import com.mercadopago.android.px.internal.services.GatewayService;
 import com.mercadopago.android.px.internal.services.IdentificationService;
+import com.mercadopago.android.px.internal.services.InstructionsClient;
 import com.mercadopago.android.px.internal.services.PaymentService;
 import com.mercadopago.android.px.internal.util.LocaleUtil;
 import com.mercadopago.android.px.internal.util.RetrofitUtil;
@@ -35,17 +36,10 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
-import static com.mercadopago.android.px.internal.core.Settings.PAYMENT_METHODS_OPTIONS_API_VERSION;
-import static com.mercadopago.android.px.internal.core.Settings.PAYMENT_RESULT_API_VERSION;
-
 /**
  * MercadoPagoServices provides an interface to access to our main API methods.
  */
 public class MercadoPagoServices {
-
-    private static final int DEFAULT_PAYMENT_CONNECT_TIMEOUT = 10;
-    private static final int DEFAULT_PAYMENT_READ_TIMEOUT = 20;
-    private static final int DEFAULT_PAYMENT_WRITE_TIMEOUT = 20;
 
     /* default */ final Context context;
     /* default */ final String publicKey;
@@ -54,7 +48,8 @@ public class MercadoPagoServices {
 
     /**
      * @param context context to obtain connection interceptor and cache.
-     * @param publicKey merchant public key / collector public key {@see <a href="https://www.mercadopago.com/mla/account/credentials">credentials</a>}
+     * @param publicKey merchant public key / collector public key
+     * {@see <a href="https://www.mercadopago.com/mla/account/credentials">credentials</a>}
      * @param privateKey user private key / access_token if you have it.
      */
     public MercadoPagoServices(@NonNull final Context context,
@@ -73,11 +68,11 @@ public class MercadoPagoServices {
 
     public void getInstructions(final Long paymentId, final String paymentTypeId,
         final Callback<Instructions> callback) {
-        final CheckoutService service = RetrofitUtil.getRetrofitClient(context).create(CheckoutService.class);
-        service.getPaymentResult(Settings.servicesVersion,
-            context.getResources().getConfiguration().locale.getLanguage(),
+        final InstructionsClient service = RetrofitUtil.getRetrofitClient(context).create(InstructionsClient.class);
+        service.getInstructions(Settings.servicesVersion,
+            LocaleUtil.getLanguage(context),
             paymentId,
-            publicKey, privateKey, paymentTypeId, PAYMENT_RESULT_API_VERSION)
+            publicKey, privateKey, paymentTypeId)
             .enqueue(callback);
     }
 
@@ -95,55 +90,40 @@ public class MercadoPagoServices {
         final String supportedPluginsAppended = getListAsString(supportedPlugins, separator);
 
         service.getPaymentMethodSearch(Settings.servicesVersion,
-            context.getResources().getConfiguration().locale.getLanguage(), this.publicKey, amount,
+            LocaleUtil.getLanguage(context), publicKey, amount,
             excludedPaymentTypesAppended, excludedPaymentMethodsAppended, groupsIntent, site.getId(),
-            PAYMENT_METHODS_OPTIONS_API_VERSION, processingMode, cardsWithEscAppended, supportedPluginsAppended,
+            processingMode, cardsWithEscAppended, supportedPluginsAppended,
             differentialPricing).
             enqueue(callback);
     }
 
     public void createToken(final SavedCardToken savedCardToken, final Callback<Token> callback) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                savedCardToken.setDevice(context);
-                final GatewayService service = RetrofitUtil.getRetrofitClient(context).create(GatewayService.class);
-                service.getToken(publicKey, privateKey, savedCardToken).enqueue(callback);
-            }
-        }).start();
+        savedCardToken.setDevice(context);
+        final GatewayService service = RetrofitUtil.getRetrofitClient(context).create(GatewayService.class);
+        service.createToken(publicKey, privateKey, savedCardToken).enqueue(callback);
     }
 
     public void createToken(final CardToken cardToken, final Callback<Token> callback) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                cardToken.setDevice(context);
-                final GatewayService service = RetrofitUtil.getRetrofitClient(context).create(GatewayService.class);
-                service.getToken(publicKey, privateKey, cardToken).enqueue(callback);
-            }
-        }).start();
+        cardToken.setDevice(context);
+        final GatewayService service = RetrofitUtil.getRetrofitClient(context).create(GatewayService.class);
+        service.createToken(publicKey, privateKey, cardToken).enqueue(callback);
     }
 
     public void createToken(final SavedESCCardToken savedESCCardToken, final Callback<Token> callback) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                savedESCCardToken.setDevice(context);
-                final GatewayService service = RetrofitUtil.getRetrofitClient(context).create(GatewayService.class);
-                service.getToken(publicKey, privateKey, savedESCCardToken).enqueue(callback);
-            }
-        }).start();
+        savedESCCardToken.setDevice(context);
+        final GatewayService service = RetrofitUtil.getRetrofitClient(context).create(GatewayService.class);
+        service.createToken(publicKey, privateKey, savedESCCardToken).enqueue(callback);
     }
 
     public void cloneToken(final String tokenId, final Callback<Token> callback) {
         final GatewayService service = RetrofitUtil.getRetrofitClient(context).create(GatewayService.class);
-        service.getToken(tokenId, publicKey, privateKey).enqueue(callback);
+        service.cloneToken(tokenId, publicKey, privateKey).enqueue(callback);
     }
 
     public void putSecurityCode(final String tokenId, final SecurityCodeIntent securityCodeIntent,
         final Callback<Token> callback) {
         final GatewayService service = RetrofitUtil.getRetrofitClient(context).create(GatewayService.class);
-        service.getToken(tokenId, publicKey, privateKey, securityCodeIntent).enqueue(callback);
+        service.updateToken(tokenId, publicKey, privateKey, securityCodeIntent).enqueue(callback);
     }
 
     public void getBankDeals(final Callback<List<BankDeal>> callback) {
@@ -156,6 +136,12 @@ public class MercadoPagoServices {
         final IdentificationService service =
             RetrofitUtil.getRetrofitClient(context).create(IdentificationService.class);
         service.getIdentificationTypes(publicKey, privateKey).enqueue(callback);
+    }
+
+    public void getIdentificationTypes(final String accessToken, final Callback<List<IdentificationType>> callback) {
+        final IdentificationService service =
+            RetrofitUtil.getRetrofitClient(context).create(IdentificationService.class);
+        service.getIdentificationTypes(null, accessToken).enqueue(callback);
     }
 
     public void getInstallments(final String bin,

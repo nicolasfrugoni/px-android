@@ -104,10 +104,12 @@ public final class ApiUtil {
         public static final String GET_MERCHANT_DIRECT_DISCOUNT = "GET_MERCHANT_DIRECT_DISCOUNT";
         public static final String CREATE_PAYMENT = "CREATE_PAYMENT";
         public static final String CREATE_TOKEN = "CREATE_TOKEN";
+        public static final String ASSOCIATE_CARD = "ASSOCIATE_CARD";
         public static final String GET_CUSTOMER = "GET_CUSTOMER";
         public static final String GET_CODE_DISCOUNT = "GET_CODE_DISCOUNT";
         public static final String GET_CAMPAIGNS = "GET_CAMPAIGNS";
         public static final String GET_PAYMENT_METHODS = "GET_PAYMENT_METHODS";
+        public static final String GET_CARD_PAYMENT_METHODS = "GET_CARD_PAYMENT_METHODS";
         public static final String GET_IDENTIFICATION_TYPES = "GET_IDENTIFICATION_TYPES";
         public static final String GET_BANK_DEALS = "GET_BANK_DEALS";
         public static final String GET_INSTRUCTIONS = "GET_INSTRUCTIONS";

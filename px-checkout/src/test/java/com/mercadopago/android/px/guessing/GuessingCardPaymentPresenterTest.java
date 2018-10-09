@@ -35,6 +35,7 @@ import com.mercadopago.android.px.model.PaymentMethodSearch;
 import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.PaymentType;
 import com.mercadopago.android.px.model.PaymentTypes;
+import com.mercadopago.android.px.model.SavedESCCardToken;
 import com.mercadopago.android.px.model.Token;
 import com.mercadopago.android.px.model.exceptions.ApiException;
 import com.mercadopago.android.px.model.exceptions.CardTokenException;
@@ -90,9 +91,9 @@ public class GuessingCardPaymentPresenterTest {
         when(paymentMethodSearch.getPaymentMethods()).thenReturn(pm);
         when(advancedConfiguration.isBankDealsEnabled()).thenReturn(true);
         presenter =
-                new GuessingCardPaymentPresenter(amountRepository, userSelectionRepository, paymentSettingRepository,
-                        groupsRepository,
-                        advancedConfiguration, buildMockedPaymentRecovery());
+            new GuessingCardPaymentPresenter(amountRepository, userSelectionRepository, paymentSettingRepository,
+                groupsRepository,
+                advancedConfiguration, buildMockedPaymentRecovery());
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
     }
@@ -114,10 +115,10 @@ public class GuessingCardPaymentPresenterTest {
         assertTrue(mockedView.validStart);
         assertEquals(presenter.getCardholderName(), mockedPaymentRecovery.getToken().getCardHolder().getName());
         assertEquals(presenter.getIdentificationNumber(),
-                mockedPaymentRecovery.getToken().getCardHolder().getIdentification().getNumber());
+            mockedPaymentRecovery.getToken().getCardHolder().getIdentification().getNumber());
         assertEquals(mockedView.savedCardholderName, mockedPaymentRecovery.getToken().getCardHolder().getName());
         assertEquals(mockedView.savedIdentificationNumber,
-                mockedPaymentRecovery.getToken().getCardHolder().getIdentification().getNumber());
+            mockedPaymentRecovery.getToken().getCardHolder().getIdentification().getNumber());
     }
 
     @Test
@@ -325,10 +326,10 @@ public class GuessingCardPaymentPresenterTest {
         presenter.initialize();
 
         final PaymentMethodGuessingController controller = new PaymentMethodGuessingController(
-                paymentMethodList, PaymentTypes.DEBIT_CARD, null);
+            paymentMethodList, PaymentTypes.DEBIT_CARD, null);
 
         final List<PaymentMethod> paymentMethodsWithExclusionsList =
-                controller.guessPaymentMethodsByBin(Cards.MOCKED_BIN_MASTER);
+            controller.guessPaymentMethodsByBin(Cards.MOCKED_BIN_MASTER);
 
         presenter.resolvePaymentMethodListSet(paymentMethodsWithExclusionsList, Cards.MOCKED_BIN_MASTER);
 
@@ -384,13 +385,13 @@ public class GuessingCardPaymentPresenterTest {
 
         final ApiException apiException = IdentificationTypes.getDoNotFindIdentificationTypesException();
         final MercadoPagoError mpException =
-                new MercadoPagoError(apiException, GET_IDENTIFICATION_TYPES);
+            new MercadoPagoError(apiException, GET_IDENTIFICATION_TYPES);
 
         provider.setIdentificationTypesResponse(mpException);
 
         presenter.initialize();
         assertEquals(MockedProvider.IDENTIFICATION_TYPES_NOT_FOUND,
-                provider.failedResponse.getApiException().getError());
+            provider.failedResponse.getApiException().getError());
     }
 
     @Test
@@ -503,7 +504,7 @@ public class GuessingCardPaymentPresenterTest {
         assertTrue(presenter.validateExpiryDate());
         assertEquals(presenter.getCardToken().getExpirationMonth(), Integer.valueOf(CardTestUtils.DUMMY_EXPIRY_MONTH));
         assertEquals(presenter.getCardToken().getExpirationYear(),
-                Integer.valueOf(CardTestUtils.DUMMY_EXPIRY_YEAR_LONG));
+            Integer.valueOf(CardTestUtils.DUMMY_EXPIRY_YEAR_LONG));
     }
 
     @Test
@@ -565,7 +566,7 @@ public class GuessingCardPaymentPresenterTest {
 
         assertTrue(presenter.validateIdentificationNumber());
         assertEquals(CardTestUtils.DUMMY_IDENTIFICATION_NUMBER_DNI,
-                presenter.getCardToken().getCardholder().getIdentification().getNumber());
+            presenter.getCardToken().getCardholder().getIdentification().getNumber());
     }
 
     @Test
@@ -603,8 +604,8 @@ public class GuessingCardPaymentPresenterTest {
         presenter.saveIdentificationType(IdentificationTypes.getIdentificationType());
 
         final boolean valid =
-                presenter.validateCardNumber() && presenter.validateCardName() && presenter.validateExpiryDate()
-                        && presenter.validateSecurityCode() && presenter.validateIdentificationNumber();
+            presenter.validateCardNumber() && presenter.validateCardName() && presenter.validateExpiryDate()
+                && presenter.validateSecurityCode() && presenter.validateIdentificationNumber();
 
         assertTrue(valid);
         presenter.checkFinishWithCardToken();
@@ -660,14 +661,14 @@ public class GuessingCardPaymentPresenterTest {
         when(userSelectionRepository.getPaymentType()).thenReturn(PaymentTypes.CREDIT_CARD);
 
         when(paymentPreference.getSupportedPaymentMethods(paymentMethodSearch.getPaymentMethods()))
-                .thenReturn(Collections.singletonList(paymentMethodList.get(0)));
+            .thenReturn(Collections.singletonList(paymentMethodList.get(0)));
 
         presenter = new GuessingCardPaymentPresenter(amountRepository,
-                userSelectionRepository,
-                paymentSettingRepository,
-                groupsRepository,
-                advancedConfiguration,
-                buildMockedPaymentRecovery());
+            userSelectionRepository,
+            paymentSettingRepository,
+            groupsRepository,
+            advancedConfiguration,
+            buildMockedPaymentRecovery());
 
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
@@ -750,7 +751,7 @@ public class GuessingCardPaymentPresenterTest {
         final String paymentStatusDetail = Payment.StatusDetail.STATUS_DETAIL_CC_REJECTED_CALL_FOR_AUTHORIZE;
 
         return new PaymentRecovery(mockedToken, mockedPaymentMethod, mockedPayerCost, mockedIssuer, paymentStatus,
-                paymentStatusDetail);
+            paymentStatusDetail);
     }
 
     @SuppressWarnings("WeakerAccess")
@@ -788,8 +789,8 @@ public class GuessingCardPaymentPresenterTest {
 
         @Override
         public void recoverCardViews(final boolean lowResActive, final String cardNumber, final String cardHolderName,
-                                     final String expiryMonth, final String expiryYear, final String identificationNumber,
-                                     final IdentificationType identificationType) {
+            final String expiryMonth, final String expiryYear, final String identificationNumber,
+            final IdentificationType identificationType) {
             // Empty body
         }
 
@@ -800,7 +801,7 @@ public class GuessingCardPaymentPresenterTest {
 
         @Override
         public void askForPaymentType(final List<PaymentMethod> paymentMethods, final List<PaymentType> paymentTypes,
-                                      final CardInfo cardInfo) {
+            final CardInfo cardInfo) {
             // Empty body
         }
 
@@ -856,13 +857,28 @@ public class GuessingCardPaymentPresenterTest {
 
         @Override
         public void finishCardFlow(final PaymentMethod paymentMethod, final Token token, final Issuer issuer,
-                                   final PayerCost payerCost) {
+            final PayerCost payerCost) {
+            // Empty body
+        }
+
+        @Override
+        public void finishCardStorageFlowWithSuccess() {
+            // Empty body
+        }
+
+        @Override
+        public void finishCardStorageFlowWithError(final String accessToken) {
+            // Empty body
+        }
+
+        @Override
+        public void showProgress() {
             // Empty body
         }
 
         @Override
         public void finishCardFlow(final PaymentMethod paymentMethod, final Token token, final Issuer issuer,
-                                   final List<PayerCost> payerCosts) {
+            final List<PayerCost> payerCosts) {
             // Empty body
         }
 
@@ -899,7 +915,7 @@ public class GuessingCardPaymentPresenterTest {
 
         @Override
         public void setExclusionWithOneElementInfoView(final PaymentMethod supportedPaymentMethod,
-                                                       final boolean withAnimation) {
+            final boolean withAnimation) {
             onlyOnePMErrorViewShown = true;
             supportedPaymentMethodId = supportedPaymentMethod.getId();
         }
@@ -1183,9 +1199,9 @@ public class GuessingCardPaymentPresenterTest {
 
         @Override
         public void getInstallmentsAsync(final String bin, final BigDecimal amount, final Long issuerId,
-                                         final String paymentMethodId,
-                                         final Integer diff,
-                                         final TaggedCallback<List<Installment>> taggedCallback) {
+            final String paymentMethodId,
+            final Integer diff,
+            final TaggedCallback<List<Installment>> taggedCallback) {
             if (shouldFail) {
                 taggedCallback.onFailure(failedResponse);
             } else {
@@ -1195,6 +1211,16 @@ public class GuessingCardPaymentPresenterTest {
 
         @Override
         public void getIdentificationTypesAsync(final TaggedCallback<List<IdentificationType>> taggedCallback) {
+            if (shouldFail) {
+                taggedCallback.onFailure(failedResponse);
+            } else {
+                taggedCallback.onSuccess(successfulIdentificationTypesResponse);
+            }
+        }
+
+        @Override
+        public void getIdentificationTypesAsync(final String accessToken,
+            final TaggedCallback<List<IdentificationType>> taggedCallback) {
             if (shouldFail) {
                 taggedCallback.onFailure(failedResponse);
             } else {
@@ -1222,7 +1248,7 @@ public class GuessingCardPaymentPresenterTest {
 
         @Override
         public void getIssuersAsync(final String paymentMethodId, final String bin,
-                                    final TaggedCallback<List<Issuer>> taggedCallback) {
+            final TaggedCallback<List<Issuer>> taggedCallback) {
             if (shouldFail) {
                 taggedCallback.onFailure(failedResponse);
             } else {

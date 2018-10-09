@@ -27,10 +27,9 @@ import com.mercadopago.android.px.internal.util.ErrorUtil;
 import com.mercadopago.android.px.internal.util.JsonUtil;
 import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.internal.util.ViewUtils;
-import com.mercadopago.android.px.internal.viewmodel.PostPaymentAction;
 import com.mercadopago.android.px.internal.viewmodel.BusinessPaymentModel;
 import com.mercadopago.android.px.internal.viewmodel.CheckoutStateModel;
-import com.mercadopago.android.px.internal.viewmodel.OneTapModel;
+import com.mercadopago.android.px.internal.viewmodel.PostPaymentAction;
 import com.mercadopago.android.px.model.ActionEvent;
 import com.mercadopago.android.px.model.BusinessPayment;
 import com.mercadopago.android.px.model.Card;
@@ -174,14 +173,21 @@ public class CheckoutActivity extends MercadoPagoBaseActivity implements Checkou
     }
 
     @Override
-    public void showOneTap(@NonNull final OneTapModel oneTapModel) {
-        final OneTapFragment instance = OneTapFragment.getInstance(oneTapModel);
+    public void showOneTap() {
+
+        final FragmentManager supportFragmentManager = getSupportFragmentManager();
+
+        Fragment fragment = supportFragmentManager.findFragmentByTag(TAG_ONETAP_FRAGMENT);
+
+        if (fragment == null) {
+            fragment = OneTapFragment.getInstance();
+        }
+
         getSupportFragmentManager()
             .beginTransaction()
             .setCustomAnimations(R.anim.px_slide_right_to_left_in, R.anim.px_slide_right_to_left_out)
-            .replace(R.id.one_tap_fragment, instance, TAG_ONETAP_FRAGMENT)
-            .commit();
-        getSupportFragmentManager().executePendingTransactions();
+            .replace(R.id.one_tap_fragment, fragment, TAG_ONETAP_FRAGMENT)
+            .commitNowAllowingStateLoss();
     }
 
     @Override
@@ -233,9 +239,7 @@ public class CheckoutActivity extends MercadoPagoBaseActivity implements Checkou
 
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-
         super.onActivityResult(requestCode, resultCode, data);
-
         switch (requestCode) {
         case ErrorUtil.ERROR_REQUEST_CODE:
             resolveErrorRequest(resultCode, data);

@@ -1,6 +1,7 @@
 package com.mercadopago.android.px.internal.features.review_and_confirm;
 
 import android.support.annotation.NonNull;
+import com.mercadopago.android.px.core.DynamicDialogCreator;
 import com.mercadopago.android.px.internal.base.MvpView;
 import com.mercadopago.android.px.internal.callbacks.PaymentServiceHandler;
 import com.mercadopago.android.px.internal.features.explode.ExplodeDecorator;
@@ -44,6 +45,9 @@ public interface ReviewAndConfirm {
         void showConfirmButton();
 
         void showErrorSnackBar(@NonNull final MercadoPagoError error);
+
+        void showDynamicDialog(@NonNull final DynamicDialogCreator creator,
+            @NonNull final DynamicDialogCreator.CheckoutData checkoutData);
     }
 
     interface Action extends PaymentServiceHandler {
@@ -59,8 +63,8 @@ public interface ReviewAndConfirm {
 
         void recoverFromFailure();
 
-
-
         void executePostPaymentAction(@NonNull PostPaymentAction postPaymentAction);
+
+        void onViewResumed(View view);
     }
 }

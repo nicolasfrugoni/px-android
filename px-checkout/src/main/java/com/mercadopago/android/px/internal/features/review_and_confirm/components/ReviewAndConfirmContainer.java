@@ -2,6 +2,7 @@ package com.mercadopago.android.px.internal.features.review_and_confirm.componen
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import com.mercadopago.android.px.configuration.DynamicFragmentConfiguration;
 import com.mercadopago.android.px.configuration.ReviewAndConfirmConfiguration;
 import com.mercadopago.android.px.internal.features.review_and_confirm.models.ItemsModel;
 import com.mercadopago.android.px.internal.features.review_and_confirm.models.PaymentModel;
@@ -40,6 +41,7 @@ public class ReviewAndConfirmContainer extends Component<ReviewAndConfirmContain
         /* default */ @Nullable final Payer payer;
         /* default */ @NonNull final SummaryModel summaryModel;
         /* default */ @NonNull final ReviewAndConfirmConfiguration preferences;
+        /* default */ @NonNull final DynamicFragmentConfiguration dynamicFragments;
         /* default */ @NonNull final ItemsModel itemsModel;
         /* default */ @Nullable final TermsAndConditionsModel discountTermsAndConditionsModel;
 
@@ -48,6 +50,7 @@ public class ReviewAndConfirmContainer extends Component<ReviewAndConfirmContain
             @Nullable final Payer payer,
             @NonNull final SummaryModel summaryModel,
             @NonNull final ReviewAndConfirmConfiguration preferences,
+            @NonNull final DynamicFragmentConfiguration dynamicFragments,
             @NonNull final ItemsModel itemsModel,
             @Nullable final TermsAndConditionsModel discountTermsAndConditionsModel) {
 
@@ -56,6 +59,7 @@ public class ReviewAndConfirmContainer extends Component<ReviewAndConfirmContain
             this.payer = payer;
             this.summaryModel = summaryModel;
             this.preferences = preferences;
+            this.dynamicFragments = dynamicFragments;
             this.itemsModel = itemsModel;
             this.discountTermsAndConditionsModel = discountTermsAndConditionsModel;
         }

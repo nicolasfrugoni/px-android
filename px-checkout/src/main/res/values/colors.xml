@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
 
     <!-- Colors needed fot UILib V5 -->
     <color name="ui_components_android_color_primary">#009EE3</color>
@@ -150,7 +150,7 @@
     <color name="px_discount_description">#64c574</color>
 
     <!-- Inputs -->
-    <color name="px_input">@color/px_colorPrimary</color>
+    <color name="px_input">@color/ui_components_primary_color</color>
 
     <!-- R&C toolbar -->
     <color name="px_review_background">@color/ui_components_white_color</color>
@@ -167,7 +167,6 @@
 
     <!-- Spinner -->
     <color name="px_background_loading">@color/ui_components_white_color</color>
-    <color name="px_tint_loading">@color/px_colorPrimary</color>
 
     <color name="px_paymentMethodTint">@color/px_colorPrimary</color>
 

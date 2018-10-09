@@ -1,19 +1,15 @@
 package com.mercadopago.android.px.internal.features;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import com.mercadopago.android.px.internal.base.MvpView;
 import com.mercadopago.android.px.internal.features.hooks.Hook;
 import com.mercadopago.android.px.internal.viewmodel.BusinessPaymentModel;
-import com.mercadopago.android.px.internal.viewmodel.OneTapModel;
 import com.mercadopago.android.px.internal.viewmodel.PostPaymentAction;
 import com.mercadopago.android.px.model.Card;
-import com.mercadopago.android.px.model.Discount;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.PaymentResult;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
-import java.math.BigDecimal;
 
 public interface CheckoutView extends MvpView {
 
@@ -57,7 +53,7 @@ public interface CheckoutView extends MvpView {
 
     void showBusinessResult(BusinessPaymentModel model);
 
-    void showOneTap(@NonNull final OneTapModel oneTapModel);
+    void showOneTap();
 
     void hideProgress();
 

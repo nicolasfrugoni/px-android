@@ -6,10 +6,10 @@ import com.mercadopago.android.px.internal.base.ResourcesProvider;
 import com.mercadopago.android.px.internal.features.explode.ExplodeDecoratorMapper;
 import com.mercadopago.android.px.internal.features.explode.ExplodingFragment;
 import com.mercadopago.android.px.internal.repository.PaymentRepository;
-import com.mercadopago.android.px.internal.viewmodel.OneTapModel;
 import com.mercadopago.android.px.model.BusinessPayment;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.GenericPayment;
+import com.mercadopago.android.px.model.IPayment;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
@@ -17,35 +17,27 @@ import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 /* default */ class OneTapPresenter extends MvpPresenter<OneTap.View, ResourcesProvider>
     implements OneTap.Actions {
 
-    @NonNull private final OneTapModel model;
     @NonNull private final PaymentRepository paymentRepository;
     private final ExplodeDecoratorMapper explodeDecoratorMapper;
 
-    //TODO refactor
-    private int yButtonPosition;
-    private int buttonHeight;
-
-    /* default */ OneTapPresenter(@NonNull final OneTapModel model,
-        @NonNull final PaymentRepository paymentRepository) {
-        this.model = model;
+    /* default */ OneTapPresenter(@NonNull final PaymentRepository paymentRepository) {
         this.paymentRepository = paymentRepository;
         explodeDecoratorMapper = new ExplodeDecoratorMapper();
     }
 
     @Override
-    public void confirmPayment(final int yButtonPosition, final int buttonHeight) {
-        getView().trackConfirm(model);
-        //TODO persist this data.
-        this.yButtonPosition = yButtonPosition;
-        this.buttonHeight = buttonHeight;
+    public void confirmPayment() {
+        getView().trackConfirm();
         getView().hideToolbar();
 
         if (paymentRepository.isExplodingAnimationCompatible()) {
-            getView().startLoadingButton(yButtonPosition, buttonHeight, paymentRepository.getPaymentTimeout());
+            getView().startLoadingButton(paymentRepository.getPaymentTimeout());
             getView().hideConfirmButton();
         }
 
-        paymentRepository.startOneTapPayment(model);
+        // TODO improve: This was added because onetap can detach this listener on its OnDestroy
+        paymentRepository.attach(this);
+        paymentRepository.startOneTapPayment();
     }
 
     @Override
@@ -55,8 +47,8 @@ import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 
     @Override
     public void onAmountShowMore() {
-        getView().trackModal(model);
-        getView().showDetailModal(model);
+        getView().trackModal();
+        getView().showDetailModal();
     }
 
     public void cancel() {
@@ -66,8 +58,8 @@ import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 
     @Override
     public void onTokenResolved() {
-        //TODO fix yButtonPosition and buttonHeight persistance
-        confirmPayment(yButtonPosition, buttonHeight);
+        getView().cancelLoading();
+        confirmPayment();
     }
 
     @Override
@@ -132,7 +124,7 @@ import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
     @Override
     public void onCvvRequired(@NonNull final Card card) {
         getView().cancelLoading();
-        getView().showCardFlow(model, card);
+        getView().showCardFlow(card);
     }
 
     @Override
@@ -141,14 +133,27 @@ import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
     }
 
     @Override
-    public void onViewResumed(final OneTapModel model) {
-        getView().updateViews(model);
+    public void onViewResumed() {
+        getView().updateViews();
+        paymentRepository.attach(this);
+
+        //If a payment was attempted, the exploding fragment is still visible when we go back to one tap fragment.
+        //Example: call for authorize, after asking for cvv and pressing back, we go back to one tap and need to
+        //remove the exploding fragment we had before.
+        if (paymentRepository.hasPayment()) {
+            getView().cancelLoading();
+        }
+    }
+
+    @Override
+    public void attachView(final OneTap.View view) {
+        super.attachView(view);
         paymentRepository.attach(this);
     }
 
     @Override
     public void onViewPaused() {
-        paymentRepository.detach();
+        paymentRepository.detach(this);
     }
 
     @Override

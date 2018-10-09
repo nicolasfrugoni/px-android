@@ -8,11 +8,12 @@ import com.mercadopago.android.px.internal.callbacks.PaymentServiceHandler;
 import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.EscManager;
+import com.mercadopago.android.px.internal.repository.GroupsRepository;
+import com.mercadopago.android.px.internal.repository.InstructionsRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.repository.PluginRepository;
 import com.mercadopago.android.px.internal.repository.TokenRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
-import com.mercadopago.android.px.internal.viewmodel.OneTapModel;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.CardPaymentMetadata;
 import com.mercadopago.android.px.model.OneTapMetadata;
@@ -24,6 +25,7 @@ import com.mercadopago.android.px.model.Token;
 import com.mercadopago.android.px.model.exceptions.ApiException;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.utils.StubFailMpCall;
+import com.mercadopago.android.px.utils.StubSuccessMpCall;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,8 +40,6 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class PaymentServiceTest {
 
-    @Mock private OneTapModel oneTapModel;
-
     @Mock private PaymentServiceHandler handler;
 
     @Mock private UserSelectionRepository userSelectionRepository;
@@ -51,14 +51,20 @@ public class PaymentServiceTest {
     @Mock private Context context;
     @Mock private EscManager escManager;
     @Mock private TokenRepository tokenRepository;
+    @Mock private InstructionsRepository instructionsRepository;
+    @Mock private GroupsRepository groupsRepository;
+
+    @Mock private PaymentMethodSearch paymentMethodSearch;
+    @Mock OneTapMetadata oneTapMetadata;
 
     private PaymentService paymentService;
 
-    @Mock OneTapMetadata oneTapMetadata;
     @Mock CardPaymentMetadata cardPaymentMetadata;
 
     @Before
     public void setUp() {
+        when(paymentMethodSearch.getOneTapMetadata()).thenReturn(oneTapMetadata);
+
         paymentService = new PaymentService(userSelectionRepository,
             paymentSettingRepository,
             pluginRepository,
@@ -67,7 +73,9 @@ public class PaymentServiceTest {
             paymentProcessor,
             context,
             escManager,
-            tokenRepository);
+            tokenRepository,
+            instructionsRepository,
+            groupsRepository);
 
         when(paymentSettingRepository.getCheckoutPreference()).thenReturn(mock(CheckoutPreference.class));
     }
@@ -76,7 +84,7 @@ public class PaymentServiceTest {
     public void whenOneTapPaymentIsCardSelectCard() {
         final Card card = creditCardPresetMock();
         paymentService.attach(handler);
-        paymentService.startOneTapPayment(oneTapModel);
+        paymentService.startOneTapPayment();
         verify(userSelectionRepository).select(card);
     }
 
@@ -84,27 +92,27 @@ public class PaymentServiceTest {
     public void whenOneTapPaymentIsCardSelectPayerCost() {
         creditCardPresetMock();
         paymentService.attach(handler);
-        paymentService.startOneTapPayment(oneTapModel);
+        paymentService.startOneTapPayment();
         verify(userSelectionRepository).select(cardPaymentMetadata.getAutoSelectedInstallment());
     }
 
     @Test
-    public void whenOneTapPaymentIsCardSelectPayerCostAndCard() {
+    public void whenOneTapPaymentIsCardPayerCostAndCardSetted() {
         final Card card = creditCardPresetMock();
         paymentService.attach(handler);
-        paymentService.startOneTapPayment(oneTapModel);
+        paymentService.startOneTapPayment();
         verify(userSelectionRepository).select(card);
         verify(userSelectionRepository).select(cardPaymentMetadata.getAutoSelectedInstallment());
     }
 
     @Test
-    public void whenOneTapPaymentWhenSavedCardAndESCSavedThenAskTokenButFailApiCallThenCVVIsRequiered() {
+    public void whenSavedCardAndESCSavedThenAskTokenButFailApiCallThenCVVIsRequiered() {
         final Card card = savedCreditCardOneTapPresent();
         when(escManager.hasEsc(card)).thenReturn(true);
         when(tokenRepository.createToken(card)).thenReturn(new StubFailMpCall(mock(ApiException.class)));
 
         paymentService.attach(handler);
-        paymentService.startOneTapPayment(oneTapModel);
+        paymentService.startOneTapPayment();
 
         verify(escManager).hasEsc(card);
         verifyNoMoreInteractions(escManager);
@@ -126,7 +134,7 @@ public class PaymentServiceTest {
         when(tokenRepository.createToken(card)).thenReturn(tokenMPCall);
 
         paymentService.attach(handler);
-        paymentService.startOneTapPayment(oneTapModel);
+        paymentService.startOneTapPayment();
 
         verify(escManager).hasEsc(card);
         verifyNoMoreInteractions(escManager);
@@ -141,7 +149,7 @@ public class PaymentServiceTest {
         when(escManager.hasEsc(card)).thenReturn(false);
 
         paymentService.attach(handler);
-        paymentService.startOneTapPayment(oneTapModel);
+        paymentService.startOneTapPayment();
 
         verify(escManager).hasEsc(card);
         verifyNoMoreInteractions(escManager);
@@ -162,12 +170,11 @@ public class PaymentServiceTest {
 
     private Card creditCardPresetMock() {
         final Card card = mock(Card.class);
-        final PaymentMethodSearch paymentMethodSearch = mock(PaymentMethodSearch.class);
+        when(groupsRepository.getGroups()).thenReturn(new StubSuccessMpCall<>(paymentMethodSearch));
         when(oneTapMetadata.getCard()).thenReturn(cardPaymentMetadata);
         when(oneTapMetadata.getPaymentTypeId()).thenReturn(PaymentTypes.CREDIT_CARD);
         when(paymentMethodSearch.getOneTapMetadata()).thenReturn(oneTapMetadata);
         when(paymentMethodSearch.getCardById(cardPaymentMetadata.getId())).thenReturn(card);
-        when(oneTapModel.getPaymentMethods()).thenReturn(paymentMethodSearch);
         when(paymentMethodSearch.getPaymentMethodById(oneTapMetadata.getPaymentMethodId()))
             .thenReturn(mock(PaymentMethod.class));
         return card;

@@ -9,12 +9,13 @@ import com.mercadopago.android.px.internal.callbacks.PaymentServiceHandlerWrappe
 import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.EscManager;
+import com.mercadopago.android.px.internal.repository.GroupsRepository;
+import com.mercadopago.android.px.internal.repository.InstructionsRepository;
 import com.mercadopago.android.px.internal.repository.PaymentRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.repository.PluginRepository;
 import com.mercadopago.android.px.internal.repository.TokenRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
-import com.mercadopago.android.px.internal.viewmodel.OneTapModel;
 import com.mercadopago.android.px.internal.viewmodel.mappers.CardMapper;
 import com.mercadopago.android.px.internal.viewmodel.mappers.PaymentMethodMapper;
 import com.mercadopago.android.px.model.Card;
@@ -23,6 +24,7 @@ import com.mercadopago.android.px.model.OneTapMetadata;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentData;
 import com.mercadopago.android.px.model.PaymentMethod;
+import com.mercadopago.android.px.model.PaymentMethodSearch;
 import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.PaymentResult;
 import com.mercadopago.android.px.model.PaymentTypes;
@@ -44,6 +46,7 @@ public class PaymentService implements PaymentRepository {
     @NonNull private final PaymentProcessor paymentProcessor;
     @NonNull private final Context context;
     @NonNull private final TokenRepository tokenRepository;
+    @NonNull private final GroupsRepository groupsRepository;
     @NonNull private final PaymentMethodMapper paymentMethodMapper;
     @NonNull private final CardMapper cardMapper;
     @NonNull private final EscManager escManager;
@@ -60,7 +63,9 @@ public class PaymentService implements PaymentRepository {
         @NonNull final PaymentProcessor paymentProcessor,
         @NonNull final Context context,
         @NonNull final EscManager escManager,
-        @NonNull final TokenRepository tokenRepository) {
+        @NonNull final TokenRepository tokenRepository,
+        @NonNull final InstructionsRepository instructionsRepository,
+        @NonNull final GroupsRepository groupsRepository) {
 
         this.escManager = escManager;
         this.userSelectionRepository = userSelectionRepository;
@@ -71,9 +76,10 @@ public class PaymentService implements PaymentRepository {
         this.paymentProcessor = paymentProcessor;
         this.context = context;
         this.tokenRepository = tokenRepository;
+        this.groupsRepository = groupsRepository;
         paymentMethodMapper = new PaymentMethodMapper();
         cardMapper = new CardMapper();
-        handlerWrapper = new PaymentServiceHandlerWrapper(this, escManager);
+        handlerWrapper = new PaymentServiceHandlerWrapper(this, escManager, instructionsRepository);
     }
 
     @Override
@@ -83,8 +89,8 @@ public class PaymentService implements PaymentRepository {
     }
 
     @Override
-    public void detach() {
-        handlerWrapper.setHandler(null);
+    public void detach(@NonNull final PaymentServiceHandler handler) {
+        handlerWrapper.detach(handler);
     }
 
     @Override
@@ -124,29 +130,40 @@ public class PaymentService implements PaymentRepository {
 
     /**
      * This method presets all user information ahead before the payment is processed.
-     *
-     * @param oneTapModel onetap information.
      */
     @Override
-    public void startOneTapPayment(@NonNull final OneTapModel oneTapModel) {
-        final OneTapMetadata oneTapMetadata = oneTapModel.getPaymentMethods().getOneTapMetadata();
-        final String paymentTypeId = oneTapMetadata.getPaymentTypeId();
-        final String paymentMethodId = oneTapMetadata.getPaymentMethodId();
+    public void startOneTapPayment() {
 
-        if (PaymentTypes.isCardPaymentType(paymentTypeId)) {
-            // Saved card.
-            final Card card = cardMapper.map(oneTapModel);
-            userSelectionRepository.select(card);
-            userSelectionRepository.select(oneTapMetadata.getCard().getAutoSelectedInstallment());
-        } else if (PaymentTypes.isPlugin(paymentTypeId)) {
-            // Account money plugin / No second factor.
-            userSelectionRepository.select(pluginRepository.getPluginAsPaymentMethod(paymentMethodId, paymentTypeId));
-        } else {
-            // Other - not implemented
-            userSelectionRepository.select(paymentMethodMapper.map(oneTapModel.getPaymentMethods()));
-        }
+        groupsRepository.getGroups().execute(new Callback<PaymentMethodSearch>() {
+            @Override
+            public void success(final PaymentMethodSearch paymentMethodSearch) {
 
-        startPayment();
+                final OneTapMetadata oneTapMetadata = paymentMethodSearch.getOneTapMetadata();
+                final String paymentTypeId = oneTapMetadata.getPaymentTypeId();
+                final String paymentMethodId = oneTapMetadata.getPaymentMethodId();
+
+                if (PaymentTypes.isCardPaymentType(paymentTypeId)) {
+                    // Saved card.
+                    final Card card = cardMapper.map(paymentMethodSearch);
+                    userSelectionRepository.select(card);
+                    userSelectionRepository.select(oneTapMetadata.getCard().getAutoSelectedInstallment());
+                } else if (PaymentTypes.isPlugin(paymentTypeId)) {
+                    // Account money plugin / No second factor.
+                    userSelectionRepository
+                        .select(pluginRepository.getPluginAsPaymentMethod(paymentMethodId, paymentTypeId));
+                } else {
+                    // Other - not implemented
+                    userSelectionRepository.select(paymentMethodMapper.map(paymentMethodSearch));
+                }
+
+                startPayment();
+            }
+
+            @Override
+            public void failure(final ApiException apiException) {
+                throw new IllegalStateException("something fail with groups cache - PaymentService - OneTap");
+            }
+        });
     }
 
     @Override

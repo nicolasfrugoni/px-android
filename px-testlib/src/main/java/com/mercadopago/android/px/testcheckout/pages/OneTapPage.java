@@ -15,6 +15,7 @@ public class OneTapPage extends PageObject<CheckoutValidator> {
     }
 
     public OneTapPage(final CheckoutValidator validator) {
+        super(validator);
     }
 
     public DiscountDetailPage pressOnDiscountDetail() {
@@ -22,9 +23,19 @@ public class OneTapPage extends PageObject<CheckoutValidator> {
         return new DiscountDetailPage(validator);
     }
 
-    public SecurityCodeToCongratsPage pressConfirmButton() {
+    public SecurityCodeToResultsPage pressConfirmButton() {
         onView(withId(R.id.px_button_primary)).perform(click());
-        return new SecurityCodeToCongratsPage(validator);
+        return new SecurityCodeToResultsPage(validator);
+    }
+
+    public CongratsPage pressConfirmButtonToCongratsPage() {
+        onView(withId(R.id.px_button_primary)).perform(click());
+        return new CongratsPage(validator);
+    }
+
+    public RejectedPage pressConfirmButtonToRejectedPage() {
+        onView(withId(R.id.px_button_primary)).perform(click());
+        return new RejectedPage(validator);
     }
 
     @Override

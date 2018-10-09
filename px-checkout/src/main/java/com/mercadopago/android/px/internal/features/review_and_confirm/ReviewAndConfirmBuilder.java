@@ -84,14 +84,12 @@ public class ReviewAndConfirmBuilder {
             termsAndConditionsEnabled ? new TermsAndConditionsModel(site.getTermsAndConditionsUrl(),
                 resources.getString(R.string.px_terms_and_conditions_message),
                 resources.getString(R.string.px_terms_and_conditions_linked_message),
-                publicKey,
                 LineSeparatorType.TOP_LINE_SEPARATOR) : null;
 
         final TermsAndConditionsModel discountTermsAndConditions =
             campaign != null ? new TermsAndConditionsModel(campaign.getCampaignTermsUrl(),
                 resources.getString(R.string.px_discount_terms_and_conditions_message),
                 resources.getString(R.string.px_discount_terms_and_conditions_linked_message),
-                publicKey,
                 LineSeparatorType.BOTTOM_LINE_SEPARATOR) : null;
 
         final PaymentModel paymentModel = new PaymentModel(paymentMethod, token, issuer, hasExtraPaymentMethods);

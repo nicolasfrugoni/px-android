@@ -24,7 +24,6 @@ import com.mercadopago.android.px.internal.repository.PluginRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.internal.util.ApiUtil;
 import com.mercadopago.android.px.internal.viewmodel.CheckoutStateModel;
-import com.mercadopago.android.px.internal.viewmodel.OneTapModel;
 import com.mercadopago.android.px.internal.viewmodel.PostPaymentAction;
 import com.mercadopago.android.px.model.BusinessPayment;
 import com.mercadopago.android.px.model.Campaign;
@@ -42,7 +41,7 @@ import com.mercadopago.android.px.model.exceptions.CheckoutPreferenceException;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.services.Callback;
-import com.mercadopago.android.px.viewmodel.mappers.BusinessModelMapper;
+import com.mercadopago.android.px.internal.viewmodel.mappers.BusinessModelMapper;
 import java.util.List;
 import java.util.Map;
 
@@ -214,7 +213,8 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
                 }
 
                 @Override
-                public void driveToNewCardFlow() {
+                public void driveToNewCardFlow(final String defaultPaymentTypeId) {
+                    userSelectionRepository.select(defaultPaymentTypeId);
                     getView().showNewCardFlow();
                 }
 
@@ -231,7 +231,7 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
 
         if (state.isOneTap) {
             getView().hideProgress();
-            getView().showOneTap(OneTapModel.from(paymentMethodSearch, paymentSettingRepository));
+            getView().showOneTap();
         } else {
             getView().showPaymentMethodSelection();
         }
@@ -394,7 +394,7 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
                         }
 
                         @Override
-                        public void driveToNewCardFlow() {
+                        public void driveToNewCardFlow(final String defaultPaymentTypeId) {
                             cancelCheckout();
                         }
 
