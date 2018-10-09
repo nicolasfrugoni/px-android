@@ -7,8 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import com.mercadopago.android.px.R;
+import com.mercadopago.android.px.internal.features.review_and_confirm.components.actions.ChangePayerInformationAction;
 import com.mercadopago.android.px.internal.features.review_and_confirm.components.actions.ChangePaymentMethodAction;
 import com.mercadopago.android.px.internal.features.review_and_confirm.components.items.ReviewItems;
+import com.mercadopago.android.px.internal.features.review_and_confirm.components.payer_information.PayerInformationComponent;
 import com.mercadopago.android.px.internal.features.review_and_confirm.components.payment_method.PaymentMethodComponent;
 import com.mercadopago.android.px.internal.features.review_and_confirm.models.PaymentModel;
 import com.mercadopago.android.px.internal.util.FragmentUtil;
@@ -16,6 +18,8 @@ import com.mercadopago.android.px.internal.view.ActionDispatcher;
 import com.mercadopago.android.px.internal.view.Renderer;
 import com.mercadopago.android.px.internal.view.RendererFactory;
 import com.mercadopago.android.px.internal.view.TermsAndConditionsComponent;
+import com.mercadopago.android.px.model.Identification;
+import com.mercadopago.android.px.model.Payer;
 
 public class ReviewAndConfirmRenderer extends Renderer<ReviewAndConfirmContainer> {
 
@@ -40,6 +44,10 @@ public class ReviewAndConfirmRenderer extends Renderer<ReviewAndConfirmContainer
             FragmentUtil.addFragmentInside(linearLayout,
                 R.id.px_fragment_container_top,
                 component.props.preferences.getTopFragment());
+        }
+
+        if (component.props.payer != null) {
+            addPayerInformation(component.props.payer, component.getDispatcher(), linearLayout);
         }
 
         addPaymentMethod(component.props.paymentModel, component.getDispatcher(), linearLayout);
@@ -98,6 +106,18 @@ public class ReviewAndConfirmRenderer extends Renderer<ReviewAndConfirmContainer
 
         final View paymentView = paymentMethodComponent.render(parent);
         parent.addView(paymentView);
+    }
+
+    private void addPayerInformation(final Payer payer, final ActionDispatcher dispatcher, final ViewGroup parent) {
+        final PayerInformationComponent payerInformationComponent = new PayerInformationComponent(payer,
+            new PayerInformationComponent.Actions() {
+                @Override
+                public void onModifyPayerInformationClicked() {
+                    dispatcher.dispatch(new ChangePayerInformationAction());
+                }
+            });
+        final View payerView = payerInformationComponent.render(parent);
+        parent.addView(payerView);
     }
 
     private void addReviewItems(@NonNull final ReviewAndConfirmContainer component, final ViewGroup parent) {

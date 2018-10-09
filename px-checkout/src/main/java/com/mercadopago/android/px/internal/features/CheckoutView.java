@@ -73,4 +73,6 @@ public interface CheckoutView extends MvpView {
         @NonNull final PostPaymentAction postPaymentAction);
 
     void startPayment();
+
+    void collectPayerInformation();
 }

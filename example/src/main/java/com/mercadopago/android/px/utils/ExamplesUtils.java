@@ -9,14 +9,18 @@ import android.support.v4.util.Pair;
 import android.util.Log;
 import android.widget.Toast;
 import com.mercadopago.android.px.configuration.AdvancedConfiguration;
+import com.mercadopago.android.px.configuration.PaymentConfiguration;
 import com.mercadopago.android.px.configuration.ReviewAndConfirmConfiguration;
 import com.mercadopago.android.px.core.MercadoPagoCheckout;
 import com.mercadopago.android.px.core.MercadoPagoCheckout.Builder;
 import com.mercadopago.android.px.internal.util.ViewUtils;
+import com.mercadopago.android.px.model.Identification;
 import com.mercadopago.android.px.model.Item;
+import com.mercadopago.android.px.model.Payer;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentTypes;
 import com.mercadopago.android.px.model.Sites;
+import com.mercadopago.android.px.model.TicketPayer;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.tracking.PXEventListener;
@@ -90,18 +94,24 @@ public final class ExamplesUtils {
 
     public static List<Pair<String, Builder>> getOptions() {
         final List<Pair<String, Builder>> options = new ArrayList<>(BusinessSamples.getAll());
-        OneTapSamples.addAll(options);
-        ChargesSamples.addAll(options);
-        DiscountSamples.addAll(options);
-        options.add(new Pair<>("Review and Confirm - Custom exit", customExitReviewAndConfirm()));
-        options.add(new Pair<>("Base flow - Tracks with listener", startBaseFlowWithTrackListener()));
-        options.add(new Pair<>("All but debit card", allButDebitCard()));
-        options.add(new Pair<>("Two items", createBaseWithTwoItems()));
-        options.add(new Pair<>("One item with quantity", createBaseWithOneItemWithQuantity()));
-        options.add(new Pair<>("Two items - Collector icon", createBaseWithTwoItemsAndCollectorIcon()));
-        options.add(new Pair<>("One item - Long title", createBaseWithOneItemLongTitle()));
-        options.add(new Pair<>("Differential pricing preference", createWithDifferentialPricing()));
+
+        options.add(new Pair<>("Brasil test con user", createWithBrasilUser()));
         return options;
+    }
+
+    private static Builder createWithBrasilUser() {
+        final CheckoutPreference.Builder builder = getBaseBrasilPreferenceBuilder();
+
+        for (final String type : PaymentTypes.getAllPaymentTypes()) {
+            if (!PaymentTypes.TICKET.equals(type)) {
+                builder.addExcludedPaymentType(type);
+            }
+        }
+
+        return new Builder("APP_USR-9869d68d-da7d-4cf9-980b-27f62f93e85b",
+            builder.build(),
+            PaymentConfigurationUtils.create())
+            .setPrivateKey("APP_USR-1311377052931992-100910-83d306bf7c6c12bcc20a8037b9f8f330-355743712");
     }
 
     private static Builder allButDebitCard() {
@@ -114,6 +124,20 @@ public final class ExamplesUtils {
         }
 
         return new Builder(DUMMY_MERCHANT_PUBLIC_KEY, builder.build(), PaymentConfigurationUtils.create());
+    }
+
+    private static CheckoutPreference.Builder getBaseBrasilPreferenceBuilder() {
+        final Item item = new Item.Builder("title", 1, new BigDecimal(10)).setDescription("description").build();
+
+        final Identification identification = new Identification();
+        identification.setNumber("12312312312");
+        identification.setType("CPF");
+        final TicketPayer payer = new TicketPayer(identification,
+            "hgasd@merads.com",
+            "Nicolas",
+            "Frugoni");
+
+        return new CheckoutPreference.Builder(Sites.BRASIL, payer, Collections.singletonList(item));
     }
 
     @NonNull

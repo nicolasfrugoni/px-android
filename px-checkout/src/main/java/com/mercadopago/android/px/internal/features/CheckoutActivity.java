@@ -48,11 +48,13 @@ import static com.mercadopago.android.px.core.MercadoPagoCheckout.PAYMENT_RESULT
 import static com.mercadopago.android.px.internal.features.Constants.RESULT_ACTION;
 import static com.mercadopago.android.px.internal.features.Constants.RESULT_CANCELED_RYC;
 import static com.mercadopago.android.px.internal.features.Constants.RESULT_CANCEL_PAYMENT;
+import static com.mercadopago.android.px.internal.features.Constants.RESULT_CHANGE_PAYER_INFO;
 import static com.mercadopago.android.px.internal.features.Constants.RESULT_CHANGE_PAYMENT_METHOD;
 import static com.mercadopago.android.px.internal.features.Constants.RESULT_CUSTOM_EXIT;
 import static com.mercadopago.android.px.internal.features.Constants.RESULT_ERROR;
 import static com.mercadopago.android.px.internal.features.Constants.RESULT_FAIL_ESC;
 import static com.mercadopago.android.px.internal.features.Constants.RESULT_PAYMENT;
+import static com.mercadopago.android.px.internal.features.PaymentVaultActivity.PAYER_INFORMATION_REQUEST_CODE;
 import static com.mercadopago.android.px.internal.features.paymentresult.PaymentResultActivity.EXTRA_RESULT_CODE;
 import static com.mercadopago.android.px.model.ExitAction.EXTRA_CLIENT_RES_CODE;
 
@@ -244,6 +246,9 @@ public class CheckoutActivity extends MercadoPagoBaseActivity implements Checkou
         case REQ_CARD_VAULT:
             resolveCardVaultRequest(resultCode, data);
             break;
+        case PAYER_INFORMATION_REQUEST_CODE:
+            resolvePayerInformationRequest(resultCode, data);
+            break;
         default:
             break;
         }
@@ -257,6 +262,9 @@ public class CheckoutActivity extends MercadoPagoBaseActivity implements Checkou
         case RESULT_CHANGE_PAYMENT_METHOD:
             //TODO support one tap too.
             presenter.onChangePaymentMethodFromReviewAndConfirm();
+            break;
+        case RESULT_CHANGE_PAYER_INFO:
+            presenter.onChangePayerInfoFromReviewAndConfirm();
             break;
         case RESULT_CANCEL_PAYMENT:
             resolveCancelReviewAndConfirm(data);
@@ -353,6 +361,12 @@ public class CheckoutActivity extends MercadoPagoBaseActivity implements Checkou
         overrideTransitionOut();
     }
 
+    private void resolvePayerInformationRequest(final int resultCode, final Intent data) {
+        if (resultCode == RESULT_OK){
+            presenter.onPayerInformationResponse();
+        }
+    }
+
     private void resolveCancelReviewAndConfirm(final Intent data) {
         if (data != null && data.hasExtra(EXTRA_CLIENT_RES_CODE)) {
             final Integer customResultCode = data.getIntExtra(EXTRA_CLIENT_RES_CODE, 0);
@@ -369,6 +383,12 @@ public class CheckoutActivity extends MercadoPagoBaseActivity implements Checkou
                 presenter.onReviewAndConfirmError(mercadoPagoError);
             }
         }
+    }
+
+    @Override
+    public void collectPayerInformation() {
+        overrideTransitionOut();
+        PayerInformationActivity.start(this, PAYER_INFORMATION_REQUEST_CODE);
     }
 
     protected void resolveCardVaultRequest(final int resultCode, final Intent data) {

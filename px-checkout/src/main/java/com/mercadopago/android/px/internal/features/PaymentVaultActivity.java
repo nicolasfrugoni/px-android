@@ -67,7 +67,7 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
 
     public static final int COLUMN_SPACING_DP_VALUE = 20;
     public static final int COLUMNS = 2;
-    private static final int PAYER_INFORMATION_REQUEST_CODE = 22;
+    protected static final int PAYER_INFORMATION_REQUEST_CODE = 22;
     private static final int REQ_CARD_VAULT = 102;
 
     // Local vars

@@ -18,11 +18,18 @@ public final class PaymentUtils {
 
     @NonNull
     public static BusinessPayment getBusinessPaymentApproved() {
-        return new BusinessPayment.Builder(BusinessPayment.Decorator.APPROVED, Payment.StatusCodes.STATUS_APPROVED,
-            Payment.StatusDetail.STATUS_DETAIL_ACCREDITED,
+        return new BusinessPayment.Builder(BusinessPayment.Decorator.REJECTED, Payment.StatusCodes.STATUS_REJECTED,
+            Payment.StatusDetail.STATUS_DETAIL_REJECTED_REJECTED_INSUFFICIENT_DATA,
             R.drawable.px_icon_card, "Title")
-            .setPrimaryButton(new ExitAction("Button Name", 23))
+            .setSecondaryButton(new ExitAction("Button Name", 23))
+            .setPrimaryButton(new ExitAction("Cambiar Informacion",301))
             .build();
+    }
+
+    @NonNull
+    public static GenericPayment getGenericPaymentRejected() {
+        return new GenericPayment(123L, Payment.StatusCodes.STATUS_REJECTED,
+            Payment.StatusDetail.STATUS_DETAIL_REJECTED_REJECTED_INSUFFICIENT_DATA);
     }
 
     @NonNull

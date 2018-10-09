@@ -13,6 +13,9 @@ public final class CheckoutStateModel {
     public boolean paymentMethodEdited;
     public boolean editPaymentMethodFromReviewAndConfirm;
 
+    public boolean payerInformationEdited;
+    public boolean editPayerInformationFromReviewAndConfirm;
+
     public boolean isUniquePaymentMethod;
     public boolean isOneTap;
 

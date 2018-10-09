@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 import com.mercadopago.android.px.configuration.PaymentResultScreenConfiguration;
 import com.mercadopago.android.px.internal.features.paymentresult.PaymentResultProvider;
+import com.mercadopago.android.px.internal.features.review_and_confirm.components.actions.ChangePayerInformationAction;
 import com.mercadopago.android.px.internal.features.review_and_confirm.components.actions.ChangePaymentMethodAction;
 import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.internal.view.ActionDispatcher;
@@ -126,6 +127,13 @@ public class FooterContainer extends Component<FooterContainer.Props, Void> {
                 buttonAction = null;
 
                 linkAction = new Button.Props(resourcesProvider.getContinueShopping(), new NextAction());
+            } else if (Payment.StatusDetail.STATUS_DETAIL_REJECTED_REJECTED_INSUFFICIENT_DATA
+                .equals(props.paymentResult.getPaymentStatusDetail())) {
+
+                buttonAction = new Button.Props(resourcesProvider.getChangePayerInformationLabel(),
+                    new ChangePayerInformationAction());
+
+                linkAction = new Button.Props(resourcesProvider.getCancelPayment(), new NextAction());
             } else {
 
                 buttonAction = new Button.Props(

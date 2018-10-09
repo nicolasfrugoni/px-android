@@ -9,6 +9,7 @@ import com.mercadopago.android.px.model.Item;
 import com.mercadopago.android.px.model.Payer;
 import com.mercadopago.android.px.model.Site;
 import com.mercadopago.android.px.model.Sites;
+import com.mercadopago.android.px.model.TicketPayer;
 import com.mercadopago.android.px.model.exceptions.CheckoutPreferenceException;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -79,7 +80,6 @@ public class CheckoutPreference implements Serializable {
         conceptAmount = builder.conceptAmount;
         conceptId = builder.conceptId;
         payer = builder.payer;
-        payer.setEmail(builder.payerEmail);
         isBinaryMode = builder.isBinaryMode;
 
         paymentPreference = new PaymentPreference();
@@ -238,7 +238,6 @@ public class CheckoutPreference implements Serializable {
         //region mandatory params
         /* default */ final List<Item> items;
         /* default */ final Site site;
-        /* default */ final String payerEmail;
         //endregion mandatory params
 
         /* default */ final List<String> excludedPaymentMethods;
@@ -254,7 +253,7 @@ public class CheckoutPreference implements Serializable {
         /* default */ BigDecimal conceptAmount;
         /* default */ String conceptId;
         /* default */ boolean isBinaryMode = false;
-            /* default */ Payer payer = new Payer();
+        /* default */ Payer payer = new Payer();
 
         /**
          * Builder for custom CheckoutPreference construction.
@@ -269,7 +268,27 @@ public class CheckoutPreference implements Serializable {
         public Builder(@NonNull final Site site, @NonNull final String payerEmail,
             @Size(min = 1) @NonNull final List<Item> items) {
             this.items = items;
-            this.payerEmail = payerEmail;
+            this.payer = new Payer();
+            this.payer.setEmail(payerEmail);
+            this.site = site;
+            excludedPaymentMethods = new ArrayList<>();
+            excludedPaymentTypes = new ArrayList<>();
+        }
+
+        /**
+         * Builder for custom CheckoutPreference construction.
+         * It should be only used if you are processing the payment
+         * with a Payment processor.
+         * Otherwise you should use the ID constructor.
+         *
+         * @param site preference site {@link Sites#getById(String)}
+         * @param payer payer
+         * @param items items to pay
+         */
+        public Builder(@NonNull final Site site, @NonNull final TicketPayer payer,
+            @Size(min = 1) @NonNull final List<Item> items) {
+            this.items = items;
+            this.payer = payer;
             this.site = site;
             excludedPaymentMethods = new ArrayList<>();
             excludedPaymentTypes = new ArrayList<>();
@@ -454,18 +473,6 @@ public class CheckoutPreference implements Serializable {
          */
         public Builder setConceptId(final String conceptId) {
             this.conceptId = conceptId;
-            return this;
-        }
-
-        /**
-         * Is used to know if should request payer info or not
-         * Note: Payer's email will be override with email in constructor
-         *
-         * @param payer payer object
-         * @return builder
-         */
-        public Builder setPayer(final Payer payer) {
-            this.payer = payer;
             return this;
         }
 

@@ -12,6 +12,7 @@ import com.mercadopago.android.px.internal.datasource.PluginInitializationAsync;
 import com.mercadopago.android.px.internal.features.hooks.Hook;
 import com.mercadopago.android.px.internal.features.hooks.HookHelper;
 import com.mercadopago.android.px.internal.features.providers.CheckoutProvider;
+import com.mercadopago.android.px.internal.navigation.DefaultPayerInformationDriver;
 import com.mercadopago.android.px.internal.navigation.DefaultPaymentMethodDriver;
 import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
@@ -45,6 +46,7 @@ import com.mercadopago.android.px.viewmodel.mappers.BusinessModelMapper;
 import java.util.List;
 import java.util.Map;
 
+import static com.mercadopago.android.px.internal.features.Constants.RESULT_CHANGE_PAYER_INFO;
 import static com.mercadopago.android.px.internal.features.Constants.RESULT_CHANGE_PAYMENT_METHOD;
 
 public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvider> implements PaymentServiceHandler,
@@ -364,6 +366,10 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
     }
 
     public void onCardFlowResponse() {
+        handleStartPayment();
+    }
+
+    private void handleStartPayment() {
         if (isRecoverableTokenProcess()) {
             getView().startPayment();
         } else {
@@ -547,7 +553,11 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
      * Close checkout with resCode
      */
     public void exitWithCode(final int resCode) {
-        getView().exitCheckout(resCode);
+        if (resCode == RESULT_CHANGE_PAYER_INFO) {
+            getView().collectPayerInformation();
+        } else {
+            getView().exitCheckout(resCode);
+        }
     }
 
     public void onChangePaymentMethodFromReviewAndConfirm() {
@@ -652,5 +662,13 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
             state.paymentMethodEdited = true;
             getView().showPaymentMethodSelection();
         }
+    }
+
+    public void onChangePayerInfoFromReviewAndConfirm() {
+        getView().collectPayerInformation();
+    }
+
+    public void onPayerInformationResponse() {
+        handleStartPayment();
     }
 }

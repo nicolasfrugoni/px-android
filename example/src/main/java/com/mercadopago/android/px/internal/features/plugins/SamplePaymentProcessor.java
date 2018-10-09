@@ -11,7 +11,7 @@ import com.mercadopago.android.px.model.BusinessPayment;
 import com.mercadopago.android.px.model.GenericPayment;
 import com.mercadopago.android.px.model.IPayment;
 
-import static com.mercadopago.android.px.utils.PaymentUtils.getBusinessPaymentApproved;
+import static com.mercadopago.android.px.utils.PaymentUtils.getGenericPaymentRejected;
 
 public class SamplePaymentProcessor implements PaymentProcessor {
 
@@ -24,7 +24,7 @@ public class SamplePaymentProcessor implements PaymentProcessor {
     }
 
     public SamplePaymentProcessor() {
-        iPayment = getBusinessPaymentApproved();
+        iPayment = getGenericPaymentRejected();
     }
 
     @Override

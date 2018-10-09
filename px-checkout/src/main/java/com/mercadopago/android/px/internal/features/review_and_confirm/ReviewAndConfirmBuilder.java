@@ -22,6 +22,7 @@ import com.mercadopago.android.px.model.Campaign;
 import com.mercadopago.android.px.model.Discount;
 import com.mercadopago.android.px.model.Issuer;
 import com.mercadopago.android.px.model.Item;
+import com.mercadopago.android.px.model.Payer;
 import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.Site;
 import com.mercadopago.android.px.model.Token;
@@ -62,6 +63,11 @@ public class ReviewAndConfirmBuilder {
         final DiscountRepository discountRepository = session.getDiscountRepository();
         final Discount discount = discountRepository.getDiscount();
         final Campaign campaign = discountRepository.getCampaign();
+        Payer payer = null;
+
+        if (checkoutPreference != null) {
+            payer = checkoutPreference.getPayer();
+        }
 
         final List<Item> items = checkoutPreference.getItems();
 
@@ -102,6 +108,7 @@ public class ReviewAndConfirmBuilder {
                 publicKey,
                 mercadoPagoTermsAndConditions,
                 paymentModel,
+                payer,
                 summaryModel,
                 itemsModel,
                 discountTermsAndConditions,
@@ -111,6 +118,7 @@ public class ReviewAndConfirmBuilder {
             publicKey,
             mercadoPagoTermsAndConditions,
             paymentModel,
+            payer,
             summaryModel,
             itemsModel,
             discountTermsAndConditions);

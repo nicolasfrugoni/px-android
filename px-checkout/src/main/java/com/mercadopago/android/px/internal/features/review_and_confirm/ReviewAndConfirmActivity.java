@@ -28,6 +28,7 @@ import com.mercadopago.android.px.internal.features.paymentresult.PaymentResultA
 import com.mercadopago.android.px.internal.features.plugins.PaymentProcessorActivity;
 import com.mercadopago.android.px.internal.features.review_and_confirm.components.ReviewAndConfirmContainer;
 import com.mercadopago.android.px.internal.features.review_and_confirm.components.actions.CancelPaymentAction;
+import com.mercadopago.android.px.internal.features.review_and_confirm.components.actions.ChangePayerInformationAction;
 import com.mercadopago.android.px.internal.features.review_and_confirm.components.actions.ChangePaymentMethodAction;
 import com.mercadopago.android.px.internal.features.review_and_confirm.components.actions.ConfirmPaymentAction;
 import com.mercadopago.android.px.internal.features.review_and_confirm.models.ItemsModel;
@@ -45,6 +46,7 @@ import com.mercadopago.android.px.internal.viewmodel.PostPaymentAction;
 import com.mercadopago.android.px.model.Action;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.ExitAction;
+import com.mercadopago.android.px.model.Payer;
 import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.PaymentResult;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
@@ -53,6 +55,7 @@ import static android.content.Intent.FLAG_ACTIVITY_FORWARD_RESULT;
 import static com.mercadopago.android.px.core.MercadoPagoCheckout.EXTRA_ERROR;
 import static com.mercadopago.android.px.internal.features.Constants.RESULT_CANCELED_RYC;
 import static com.mercadopago.android.px.internal.features.Constants.RESULT_CANCEL_PAYMENT;
+import static com.mercadopago.android.px.internal.features.Constants.RESULT_CHANGE_PAYER_INFO;
 import static com.mercadopago.android.px.internal.features.Constants.RESULT_CHANGE_PAYMENT_METHOD;
 import static com.mercadopago.android.px.internal.features.Constants.RESULT_ERROR;
 
@@ -63,6 +66,7 @@ public final class ReviewAndConfirmActivity extends MercadoPagoBaseActivity impl
 
     private static final String EXTRA_TERMS_AND_CONDITIONS = "extra_terms_and_conditions";
     private static final String EXTRA_PAYMENT_MODEL = "extra_payment_model";
+    private static final String EXTRA_PAYER_INFO = "extra_payer_info";
     private static final String EXTRA_SUMMARY_MODEL = "extra_summary_model";
     private static final String EXTRA_PUBLIC_KEY = "extra_public_key";
     private static final String EXTRA_ITEMS = "extra_items";
@@ -81,6 +85,7 @@ public final class ReviewAndConfirmActivity extends MercadoPagoBaseActivity impl
         @NonNull final String merchantPublicKey,
         @Nullable final TermsAndConditionsModel mercadoPagoTermsAndConditions,
         @NonNull final PaymentModel paymentModel,
+        @NonNull final Payer payer,
         @NonNull final SummaryModel summaryModel,
         @NonNull final ItemsModel itemsModel,
         @Nullable final TermsAndConditionsModel discountTermsAndConditions) {
@@ -89,6 +94,7 @@ public final class ReviewAndConfirmActivity extends MercadoPagoBaseActivity impl
         intent.putExtra(EXTRA_PUBLIC_KEY, merchantPublicKey);
         intent.putExtra(EXTRA_TERMS_AND_CONDITIONS, mercadoPagoTermsAndConditions);
         intent.putExtra(EXTRA_PAYMENT_MODEL, paymentModel);
+        intent.putExtra(EXTRA_PAYER_INFO, payer);
         intent.putExtra(EXTRA_SUMMARY_MODEL, summaryModel);
         intent.putExtra(EXTRA_ITEMS, itemsModel);
         intent.putExtra(EXTRA_DISCOUNT_TERMS_AND_CONDITIONS, discountTermsAndConditions);
@@ -100,12 +106,13 @@ public final class ReviewAndConfirmActivity extends MercadoPagoBaseActivity impl
         @NonNull final String merchantPublicKey,
         @Nullable final TermsAndConditionsModel mercadoPagoTermsAndConditions,
         @NonNull final PaymentModel paymentModel,
+        @NonNull final Payer payer,
         @NonNull final SummaryModel summaryModel,
         @NonNull final ItemsModel itemsModel,
         @Nullable final TermsAndConditionsModel discountTermsAndConditions,
         @NonNull final PostPaymentAction postPaymentAction) {
         final Intent intent = getIntent(context, merchantPublicKey, mercadoPagoTermsAndConditions,
-            paymentModel, summaryModel, itemsModel,
+            paymentModel,payer, summaryModel, itemsModel,
             discountTermsAndConditions);
 
         postPaymentAction.addToIntent(intent);
@@ -305,6 +312,7 @@ public final class ReviewAndConfirmActivity extends MercadoPagoBaseActivity impl
         if (extras != null) {
             final TermsAndConditionsModel termsAndConditionsModel = extras.getParcelable(EXTRA_TERMS_AND_CONDITIONS);
             final PaymentModel paymentModel = extras.getParcelable(EXTRA_PAYMENT_MODEL);
+            final Payer payer = (Payer) extras.getSerializable(EXTRA_PAYER_INFO);
             final SummaryModel summaryModel = extras.getParcelable(EXTRA_SUMMARY_MODEL);
             final ItemsModel itemsModel = extras.getParcelable(EXTRA_ITEMS);
             final TermsAndConditionsModel discountTermsAndConditions =
@@ -318,6 +326,7 @@ public final class ReviewAndConfirmActivity extends MercadoPagoBaseActivity impl
                 paymentModel);
             return new ReviewAndConfirmContainer.Props(termsAndConditionsModel,
                 paymentModel,
+                payer,
                 summaryModel,
                 reviewAndConfirmConfiguration,
                 itemsModel, discountTermsAndConditions);
@@ -350,6 +359,8 @@ public final class ReviewAndConfirmActivity extends MercadoPagoBaseActivity impl
     public void dispatch(final Action action) {
         if (action instanceof ChangePaymentMethodAction) {
             changePaymentMethod();
+        } else if (action instanceof ChangePayerInformationAction) {
+            changePayerInformation();
         } else if (action instanceof CancelPaymentAction) {
             onBackPressed();
         } else if (action instanceof ConfirmPaymentAction) {
@@ -377,6 +388,15 @@ public final class ReviewAndConfirmActivity extends MercadoPagoBaseActivity impl
      */
     private void changePaymentMethod() {
         setResult(RESULT_CHANGE_PAYMENT_METHOD);
+        finish();
+    }
+
+    /**
+     * Exit review and confirm and notify the origin activity
+     * that that modify payer information button has been pressed.
+     */
+    private void changePayerInformation() {
+        setResult(RESULT_CHANGE_PAYER_INFO);
         finish();
     }
 

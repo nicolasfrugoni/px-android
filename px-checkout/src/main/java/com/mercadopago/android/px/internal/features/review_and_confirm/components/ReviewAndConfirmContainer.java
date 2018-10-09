@@ -10,6 +10,7 @@ import com.mercadopago.android.px.internal.features.review_and_confirm.models.Te
 import com.mercadopago.android.px.internal.view.ActionDispatcher;
 import com.mercadopago.android.px.internal.view.Component;
 import com.mercadopago.android.px.internal.view.RendererFactory;
+import com.mercadopago.android.px.model.Payer;
 
 public class ReviewAndConfirmContainer extends Component<ReviewAndConfirmContainer.Props, Void> {
 
@@ -36,6 +37,7 @@ public class ReviewAndConfirmContainer extends Component<ReviewAndConfirmContain
     public static class Props {
         /* default */ @Nullable final TermsAndConditionsModel mercadoPagoTermsAndConditionsModel;
         /* default */ @NonNull final PaymentModel paymentModel;
+        /* default */ @Nullable final Payer payer;
         /* default */ @NonNull final SummaryModel summaryModel;
         /* default */ @NonNull final ReviewAndConfirmConfiguration preferences;
         /* default */ @NonNull final ItemsModel itemsModel;
@@ -43,6 +45,7 @@ public class ReviewAndConfirmContainer extends Component<ReviewAndConfirmContain
 
         public Props(@Nullable final TermsAndConditionsModel mercadoPagoTermsAndConditionsModel,
             @NonNull final PaymentModel paymentModel,
+            @Nullable final Payer payer,
             @NonNull final SummaryModel summaryModel,
             @NonNull final ReviewAndConfirmConfiguration preferences,
             @NonNull final ItemsModel itemsModel,
@@ -50,6 +53,7 @@ public class ReviewAndConfirmContainer extends Component<ReviewAndConfirmContain
 
             this.mercadoPagoTermsAndConditionsModel = mercadoPagoTermsAndConditionsModel;
             this.paymentModel = paymentModel;
+            this.payer = payer;
             this.summaryModel = summaryModel;
             this.preferences = preferences;
             this.itemsModel = itemsModel;

@@ -225,4 +225,9 @@ public class PaymentResultProviderImpl implements PaymentResultProvider {
         }
         return description;
     }
+
+    @Override
+    public String getChangePayerInformationLabel() {
+        return "Cambiar Payer info";
+    }
 }

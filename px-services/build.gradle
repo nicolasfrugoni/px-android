@@ -1,5 +1,6 @@
 apply from:"$rootDir/gradle/base_android_lib.gradle"
 apply from:"$rootDir/gradle/deploy_services.gradle"
+apply plugin: 'maven'
 
 def user_agent = "PX/Android/" + (version_to_deploy as String)
 
@@ -7,6 +8,48 @@ android {
     defaultConfig {
         buildConfigField "String", "USER_AGENT", "\"$user_agent\""
     }
+}
+
+
+def groupIdLocal = 'com.mercadopago.px'
+def artifactIdLocal = 'px-services'
+def versionLocal = '1.0.4'
+
+def pomFileNameFinal = "$artifactIdLocal-$versionLocal"+".pom"
+def pomFileName = "$buildDir/outputs/aar/$pomFileNameFinal"
+def pomDestination = "${System.properties['user.home']}/.m2/repository/com/px/local/$artifactIdLocal/$versionLocal/"
+task createPom << {
+    pom {
+        project {
+            groupId groupIdLocal
+            artifactId artifactIdLocal
+            version versionLocal
+        }
+    }.writeTo(pomFileName)
+}
+
+task copyPom(type: Copy) {
+    println(pomFileName)
+    println(pomDestination)
+
+    from (pomFileName)
+    into (pomDestination)
+}
+
+publishing.publications{
+    bar(MavenPublication){
+        groupId groupIdLocal
+        artifactId artifactIdLocal
+        version versionLocal
+        artifact ("$buildDir/outputs/aar/services-release.aar")
+    }
+}
+
+task publishPX {
+    dependsOn 'build'
+    dependsOn 'publishToMavenLocal'
+    dependsOn 'createPom'
+    dependsOn 'copyPom'
 }
 
 dependencies {

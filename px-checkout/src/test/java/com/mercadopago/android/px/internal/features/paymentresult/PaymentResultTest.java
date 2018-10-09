@@ -552,6 +552,11 @@ public class PaymentResultTest {
         public String getReceiptDescription(final Long receiptId) {
             return null;
         }
+
+        @Override
+        public String getChangePayerInformationLabel() {
+            return null;
+        }
     }
 
     private class MockedNavigator implements PaymentResultNavigator {

@@ -2,6 +2,42 @@ apply from:"$rootDir/gradle/base_android_lib.gradle"
 apply from:"$rootDir/gradle/jacoco.gradle"
 apply from:"$rootDir/gradle/static-analysis.gradle"
 apply from:"$rootDir/gradle/deploy_checkout.gradle"
+apply plugin: 'maven'
+
+def groupIdLocal = 'com.mercadopago.px'
+def artifactIdLocal = 'px-checkout'
+def versionLocal = '1.0.4'
+
+def pomFileNameFinal = "$artifactIdLocal-$versionLocal"+".pom"
+def pomFileName = "$buildDir/outputs/aar/$pomFileNameFinal"
+def pomDestination = "${System.properties['user.home']}/.m2/repository/com/px/local/$artifactIdLocal/$versionLocal/"
+task createPom << {
+    pom {
+        project {
+            groupId groupIdLocal
+            artifactId artifactIdLocal
+            version versionLocal
+        }
+    }.writeTo(pomFileName)
+}
+
+task copyPom(type: Copy) {
+    println(pomFileName)
+    println(pomDestination)
+
+    from (pomFileName)
+    into (pomDestination)
+}
+
+publishing.publications{
+    bar(MavenPublication){
+        groupId groupIdLocal
+        artifactId artifactIdLocal
+        version versionLocal
+        artifact ("$buildDir/outputs/aar/checkout-release.aar")
+    }
+}
+
 
 android {
     defaultConfig {

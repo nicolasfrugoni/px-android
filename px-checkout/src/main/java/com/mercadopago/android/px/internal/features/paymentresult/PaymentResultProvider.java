@@ -85,4 +85,6 @@ public interface PaymentResultProvider extends ResourcesProvider {
     String getRejectedCallForAuthBodySecondaryTitle();
 
     String getReceiptDescription(final Long receiptId);
+
+    String getChangePayerInformationLabel();
 }
