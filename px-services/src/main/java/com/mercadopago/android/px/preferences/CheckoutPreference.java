@@ -9,7 +9,7 @@ import com.mercadopago.android.px.model.Item;
 import com.mercadopago.android.px.model.Payer;
 import com.mercadopago.android.px.model.Site;
 import com.mercadopago.android.px.model.Sites;
-import com.mercadopago.android.px.model.TicketPayer;
+import com.mercadopago.android.px.model.OpenPayer;
 import com.mercadopago.android.px.model.exceptions.CheckoutPreferenceException;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -253,7 +253,7 @@ public class CheckoutPreference implements Serializable {
         /* default */ BigDecimal conceptAmount;
         /* default */ String conceptId;
         /* default */ boolean isBinaryMode = false;
-        /* default */ Payer payer = new Payer();
+        /* default */ final Payer payer;
 
         /**
          * Builder for custom CheckoutPreference construction.
@@ -268,7 +268,7 @@ public class CheckoutPreference implements Serializable {
         public Builder(@NonNull final Site site, @NonNull final String payerEmail,
             @Size(min = 1) @NonNull final List<Item> items) {
             this.items = items;
-            this.payer = new Payer();
+            payer = new Payer();
             this.payer.setEmail(payerEmail);
             this.site = site;
             excludedPaymentMethods = new ArrayList<>();
@@ -285,7 +285,8 @@ public class CheckoutPreference implements Serializable {
          * @param payer payer
          * @param items items to pay
          */
-        public Builder(@NonNull final Site site, @NonNull final TicketPayer payer,
+        @Deprecated
+        public Builder(@NonNull final Site site, @NonNull final OpenPayer payer,
             @Size(min = 1) @NonNull final List<Item> items) {
             this.items = items;
             this.payer = payer;
