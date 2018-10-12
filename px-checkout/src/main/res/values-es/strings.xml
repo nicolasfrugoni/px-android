@@ -34,6 +34,9 @@
     <!-- Installments -->
     <string name="px_card_installments_title">¿En cuántas cuotas?</string>
 
+<!-- Payer Information -->
+    <string name="px_payer_information_modify">Modificar</string>
+
     <!-- Terms And Conditions -->
     <string name="px_terms_and_conditions_message">Al pagar, afirmo que soy mayor de edad y acepto los</string>
     <string name="px_terms_and_conditions_linked_message">Términos y condiciones.</string>

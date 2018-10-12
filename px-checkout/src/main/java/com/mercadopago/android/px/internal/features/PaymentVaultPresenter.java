@@ -9,6 +9,7 @@ import com.mercadopago.android.px.internal.datasource.CheckoutStore;
 import com.mercadopago.android.px.internal.features.hooks.Hook;
 import com.mercadopago.android.px.internal.features.hooks.HookHelper;
 import com.mercadopago.android.px.internal.features.providers.PaymentVaultProvider;
+import com.mercadopago.android.px.internal.navigation.DefaultPayerInformationDriver;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.GroupsRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
@@ -17,6 +18,7 @@ import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.internal.view.AmountView;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.CustomSearchItem;
+import com.mercadopago.android.px.model.Payer;
 import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.PaymentMethodSearch;
 import com.mercadopago.android.px.model.PaymentMethodSearchItem;
@@ -294,13 +296,29 @@ public class PaymentVaultPresenter extends MvpPresenter<PaymentVaultView, Paymen
             if (selectedPaymentMethod == null) {
                 showMismatchingPaymentMethodError();
             } else if (selectedPaymentMethod.getId().equals(PaymentMethods.BRASIL.BOLBRADESCO)) {
-                getView().collectPayerInformation();
+                handleCollectPayerInformation();
             } else {
                 getView().finishPaymentMethodSelection(selectedPaymentMethod);
             }
         } else {
             resumeItem = item;
         }
+    }
+
+    private void handleCollectPayerInformation() {
+        new DefaultPayerInformationDriver(configuration.getCheckoutPreference().getPayer())
+            .drive(
+                new DefaultPayerInformationDriver.PayerInformationDriverCallback() {
+                    @Override
+                    public void driveToNewPayerData() {
+                        getView().collectPayerInformation();
+                    }
+
+                    @Override
+                    public void driveToReviewConfirm() {
+                        getView().finishPaymentMethodSelection(userSelectionRepository.getPaymentMethod());
+                    }
+                });
     }
 
     public boolean isOnlyOneItemAvailable() {

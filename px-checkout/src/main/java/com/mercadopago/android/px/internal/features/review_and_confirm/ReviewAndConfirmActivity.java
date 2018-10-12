@@ -19,9 +19,11 @@ import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.configuration.AdvancedConfiguration;
 import com.mercadopago.android.px.configuration.ReviewAndConfirmConfiguration;
 import com.mercadopago.android.px.core.DynamicDialogCreator;
+import com.mercadopago.android.px.internal.di.ConfigurationModule;
 import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.internal.features.Constants;
 import com.mercadopago.android.px.internal.features.MercadoPagoBaseActivity;
+import com.mercadopago.android.px.internal.features.PayerInformationActivity;
 import com.mercadopago.android.px.internal.features.business_result.BusinessPaymentResultActivity;
 import com.mercadopago.android.px.internal.features.explode.ExplodeDecorator;
 import com.mercadopago.android.px.internal.features.explode.ExplodeParams;
@@ -30,6 +32,7 @@ import com.mercadopago.android.px.internal.features.paymentresult.PaymentResultA
 import com.mercadopago.android.px.internal.features.plugins.PaymentProcessorActivity;
 import com.mercadopago.android.px.internal.features.review_and_confirm.components.ReviewAndConfirmContainer;
 import com.mercadopago.android.px.internal.features.review_and_confirm.components.actions.CancelPaymentAction;
+import com.mercadopago.android.px.internal.features.review_and_confirm.components.actions.ChangePayerInformationAction;
 import com.mercadopago.android.px.internal.features.review_and_confirm.components.actions.ChangePaymentMethodAction;
 import com.mercadopago.android.px.internal.features.review_and_confirm.components.actions.ConfirmPaymentAction;
 import com.mercadopago.android.px.internal.features.review_and_confirm.models.ItemsModel;
@@ -47,6 +50,7 @@ import com.mercadopago.android.px.internal.viewmodel.PostPaymentAction;
 import com.mercadopago.android.px.model.Action;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.ExitAction;
+import com.mercadopago.android.px.model.Payer;
 import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.PaymentResult;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
@@ -57,6 +61,7 @@ import static com.mercadopago.android.px.internal.features.Constants.RESULT_CANC
 import static com.mercadopago.android.px.internal.features.Constants.RESULT_CANCEL_PAYMENT;
 import static com.mercadopago.android.px.internal.features.Constants.RESULT_CHANGE_PAYMENT_METHOD;
 import static com.mercadopago.android.px.internal.features.Constants.RESULT_ERROR;
+import static com.mercadopago.android.px.internal.features.PaymentVaultActivity.PAYER_INFORMATION_REQUEST_CODE;
 
 public final class ReviewAndConfirmActivity extends MercadoPagoBaseActivity implements
     ReviewAndConfirm.View, ActionDispatcher {
@@ -195,11 +200,26 @@ public final class ReviewAndConfirmActivity extends MercadoPagoBaseActivity impl
         case ErrorUtil.ERROR_REQUEST_CODE:
             resolveErrorRequest(resultCode, data);
             break;
+        case PAYER_INFORMATION_REQUEST_CODE:
+            resolvePayerInformationRequest(resultCode, data);
+            break;
         default:
             //Do nothing
             break;
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void resolvePayerInformationRequest(final int resultCode, final Intent data) {
+        if (resultCode == RESULT_OK) {
+            reloadBody();
+        }
+    }
+
+    private void reloadBody() {
+        final ViewGroup mainContent = findViewById(R.id.scroll_view);
+        mainContent.removeAllViews();
+        initBody();
     }
 
     private void initializeViews() {
@@ -318,8 +338,10 @@ public final class ReviewAndConfirmActivity extends MercadoPagoBaseActivity impl
                 extras.getParcelable(EXTRA_DISCOUNT_TERMS_AND_CONDITIONS);
 
             final Session session = Session.getSession(this);
-            final AdvancedConfiguration advancedConfiguration = session.getConfigurationModule().getPaymentSettings()
+            final ConfigurationModule configurationModule = session.getConfigurationModule();
+            final AdvancedConfiguration advancedConfiguration = configurationModule.getPaymentSettings()
                 .getAdvancedConfiguration();
+            final Payer payer = configurationModule.getPaymentSettings().getCheckoutPreference().getPayer();
 
             final ReviewAndConfirmConfiguration reviewAndConfirmConfiguration =
                 advancedConfiguration.getReviewAndConfirmConfiguration();
@@ -331,7 +353,9 @@ public final class ReviewAndConfirmActivity extends MercadoPagoBaseActivity impl
                 summaryModel,
                 reviewAndConfirmConfiguration,
                 advancedConfiguration.getDynamicFragmentConfiguration(),
-                itemsModel, discountTermsAndConditions);
+                itemsModel,
+                discountTermsAndConditions,
+                payer);
         }
 
         throw new IllegalStateException("Unsupported parameters for Review and confirm activity");
@@ -363,6 +387,8 @@ public final class ReviewAndConfirmActivity extends MercadoPagoBaseActivity impl
             changePaymentMethod();
         } else if (action instanceof CancelPaymentAction) {
             onBackPressed();
+        } else if (action instanceof ChangePayerInformationAction) {
+            changePayerInformation();
         } else if (action instanceof ConfirmPaymentAction) {
             presenter.onPaymentConfirm();
         } else if (action instanceof ExitAction) {
@@ -370,6 +396,11 @@ public final class ReviewAndConfirmActivity extends MercadoPagoBaseActivity impl
         } else {
             throw new UnsupportedOperationException("action not allowed");
         }
+    }
+
+    private void changePayerInformation() {
+        overrideTransitionIn();
+        PayerInformationActivity.start(this, PAYER_INFORMATION_REQUEST_CODE);
     }
 
     /**

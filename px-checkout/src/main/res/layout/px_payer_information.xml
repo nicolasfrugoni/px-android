@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/px_review_item_background"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/px_l_margin">
+
+    <LinearLayout
+        android:id="@+id/payer_information_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/px_l_margin"
+        android:paddingEnd="@dimen/px_m_margin"
+        android:paddingLeft="@dimen/px_m_margin"
+        android:paddingRight="@dimen/px_m_margin"
+        android:paddingStart="@dimen/px_m_margin">
+
+        <include
+            layout="@layout/px_view_rounded_icon"
+            android:layout_width="@dimen/px_m_height"
+            android:layout_height="@dimen/px_m_height"/>
+
+        <com.mercadopago.android.px.internal.view.MPTextView
+            android:id="@+id/payer_full_name"
+            style="@style/HeaderTitleText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/px_s_margin"
+            android:gravity="center"
+            tools:text="MIGUEL ÁNGEL RODRIGUEZ"/>
+
+        <com.mercadopago.android.px.internal.view.MPTextView
+            android:id="@+id/payer_doc_type_and_number"
+            style="@style/HeaderSubtitleText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/px_xs_margin"
+            android:gravity="center_horizontal"
+            tools:text="CPF: 223.123.123 - 23"/>
+
+        <com.mercadolibre.android.ui.widgets.MeliButton
+            android:id="@+id/payer_information_modify_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/px_payer_information_modify"
+            android:layout_marginTop="@dimen/px_s_margin"
+            app:type="optionPrimary"/>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/px_separator"/>
+</LinearLayout>
