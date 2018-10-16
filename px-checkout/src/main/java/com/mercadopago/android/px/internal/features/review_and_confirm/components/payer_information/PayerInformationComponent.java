@@ -3,22 +3,17 @@ package com.mercadopago.android.px.internal.features.review_and_confirm.componen
 import android.content.Context;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 import com.mercadolibre.android.ui.widgets.MeliButton;
 import com.mercadopago.android.px.R;
-import com.mercadopago.android.px.internal.features.paymentresult.components.LineSeparator;
-import com.mercadopago.android.px.internal.util.ResourceUtil;
+import com.mercadopago.android.px.internal.util.MPCardMaskUtil;
 import com.mercadopago.android.px.internal.util.TextUtil;
-import com.mercadopago.android.px.internal.view.Button;
-import com.mercadopago.android.px.internal.view.ButtonLink;
 import com.mercadopago.android.px.internal.view.CompactComponent;
 import com.mercadopago.android.px.internal.view.MPTextView;
-import com.mercadopago.android.px.model.Action;
+import com.mercadopago.android.px.model.IdentificationType;
 import com.mercadopago.android.px.model.Payer;
 import javax.annotation.Nonnull;
 
@@ -71,7 +66,18 @@ public class PayerInformationComponent extends CompactComponent<Payer, PayerInfo
     @NonNull
     private String getIdentificationTypeAndNumber() {
         final int res = R.string.px_payer_information_identification_type_and_number;
-        return context.getString(res, props.getIdentification().getType(), props.getIdentification().getNumber());
+        final IdentificationType identificationType = new IdentificationType();
+        identificationType.setId(props.getIdentification().getType());
+
+        final String identificationNumber = props.getIdentification().getNumber();
+        try {
+            identificationType.setMaxLength(identificationNumber.length());
+        } catch (NumberFormatException e) {
+            identificationType.setMaxLength(0);
+        }
+        final String maskedNumber =
+            MPCardMaskUtil.buildIdentificationNumberWithMask(identificationNumber, identificationType);
+        return context.getString(res, identificationType.getId(), maskedNumber);
     }
 
     private void drawIconFromRes(@Nonnull final ImageView imageView, @DrawableRes final int resource) {
