@@ -1,12 +1,16 @@
 package com.mercadopago.android.px.internal.features.paymentresult;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
 import com.mercadopago.android.px.BuildConfig;
+import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.configuration.PaymentResultScreenConfiguration;
 import com.mercadopago.android.px.core.MercadoPagoCheckout;
 import com.mercadopago.android.px.internal.di.Session;
@@ -19,6 +23,10 @@ import com.mercadopago.android.px.internal.features.paymentresult.components.Bod
 import com.mercadopago.android.px.internal.features.paymentresult.components.BodyError;
 import com.mercadopago.android.px.internal.features.paymentresult.components.BodyErrorRenderer;
 import com.mercadopago.android.px.internal.features.paymentresult.components.BodyRenderer;
+import com.mercadopago.android.px.internal.features.paymentresult.components.InstructionInteractionComponentRenderer;
+import com.mercadopago.android.px.internal.features.paymentresult.components.InstructionInteractions;
+import com.mercadopago.android.px.internal.features.paymentresult.components.InstructionInteractionComponent;
+import com.mercadopago.android.px.internal.features.paymentresult.components.InstructionInteractionsRenderer;
 import com.mercadopago.android.px.internal.features.paymentresult.components.InstructionReferenceComponent;
 import com.mercadopago.android.px.internal.features.paymentresult.components.InstructionReferenceRenderer;
 import com.mercadopago.android.px.internal.features.paymentresult.components.Instructions;
@@ -125,6 +133,8 @@ public class PaymentResultActivity extends AppCompatActivity implements PaymentR
         RendererFactory.register(InstructionsInfo.class, InstructionsInfoRenderer.class);
         RendererFactory.register(InstructionsReferences.class, InstructionsReferencesRenderer.class);
         RendererFactory.register(InstructionReferenceComponent.class, InstructionReferenceRenderer.class);
+        RendererFactory.register(InstructionInteractionComponent.class, InstructionInteractionComponentRenderer.class);
+        RendererFactory.register(InstructionInteractions.class, InstructionInteractionsRenderer.class);
         RendererFactory.register(AccreditationTime.class, AccreditationTimeRenderer.class);
         RendererFactory.register(AccreditationComment.class, AccreditationCommentRenderer.class);
         RendererFactory.register(InstructionsSecondaryInfo.class, InstructionsSecondaryInfoRenderer.class);
@@ -147,7 +157,7 @@ public class PaymentResultActivity extends AppCompatActivity implements PaymentR
     protected void onResume() {
         super.onResume();
         presenter.attachView(mutator);
-        presenter.initialize();
+        presenter.initialize(this);
     }
 
     @Override
@@ -304,5 +314,15 @@ public class PaymentResultActivity extends AppCompatActivity implements PaymentR
             .build();
 
         mpTrackingContext.trackEvent(event);
+    }
+
+    @Override
+    public void copyToClipboard(final String content) {
+        ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText("", content);
+        if (clipboard != null) {
+            clipboard.setPrimaryClip(clip);
+            Toast.makeText(this, getString(R.string.px_copied_to_clipboard_ack), Toast.LENGTH_SHORT).show();
+        }
     }
 }

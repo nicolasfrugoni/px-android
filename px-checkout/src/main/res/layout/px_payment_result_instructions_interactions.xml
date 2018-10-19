@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:id="@+id/mpsdkInstructionsInteractionsContainer"
+              android:layout_height="wrap_content"
+              android:background="@color/px_white"
+              android:orientation="vertical"
+              android:paddingEnd="@dimen/px_xl_margin"
+              android:paddingLeft="@dimen/px_xl_margin"
+              android:paddingRight="@dimen/px_xl_margin"
+              android:paddingStart="@dimen/px_xl_margin">
+
+</LinearLayout>

@@ -19,5 +19,6 @@ public class InstructionAction {
 
     public static class Tags {
         public static final String LINK = "link";
+        public static final String COPY = "copy";
     }
 }

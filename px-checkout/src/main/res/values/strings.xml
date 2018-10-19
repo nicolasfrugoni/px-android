@@ -100,6 +100,7 @@
     <string name="px_ending_in">ending in</string>
     <string name="px_receipt">Transaction number %1$s</string>
     <string name="px_date_divider">of</string>
+    <string name="px_copied_to_clipboard_ack">Copied to clipboard</string>
 
     <!-- CallForAuthorize -->
     <string name="px_title_activity_call_for_authorize">You must authorize with %1$s the payment of %2$s to Mercado Pago</string>
