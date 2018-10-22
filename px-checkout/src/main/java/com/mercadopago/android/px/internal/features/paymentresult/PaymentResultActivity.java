@@ -7,8 +7,10 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
+import com.mercadolibre.android.ui.widgets.MeliSnackbar;
 import com.mercadopago.android.px.BuildConfig;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.configuration.PaymentResultScreenConfiguration;
@@ -322,7 +324,8 @@ public class PaymentResultActivity extends AppCompatActivity implements PaymentR
         ClipData clip = ClipData.newPlainText("", content);
         if (clipboard != null) {
             clipboard.setPrimaryClip(clip);
-            Toast.makeText(this, getString(R.string.px_copied_to_clipboard_ack), Toast.LENGTH_SHORT).show();
+            MeliSnackbar.make(findViewById(R.id.mpsdkPaymentResultContainer),getString(R.string.px_copied_to_clipboard_ack),
+                Snackbar.LENGTH_SHORT,MeliSnackbar.SnackbarType.SUCCESS).show();
         }
     }
 }
