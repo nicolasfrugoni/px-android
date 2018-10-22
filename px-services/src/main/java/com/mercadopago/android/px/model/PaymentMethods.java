@@ -44,6 +44,7 @@ public class PaymentMethods {
         public static final String ELO = "elo";
         public static final String MELICARD = "melicard";
         public static final String BOLBRADESCO = "bolbradesco";
+        public static final String PEC = "pec";
     }
 
     public class MEXICO {

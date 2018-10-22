@@ -335,7 +335,7 @@ public class PaymentResultContainer extends Component<PaymentResultProps, Void> 
         } else if (props.paymentResult == null) {
             return paymentResultProvider.getEmptyText();
         } else {
-            if (isLabelEmpty(props.paymentResult)) {
+            if (isLabelEmpty(props.paymentResult) || isPaymentMethodOff(props.paymentResult)) {
                 return paymentResultProvider.getEmptyText();
             } else if (isLabelPending(props.paymentResult)) {
                 return paymentResultProvider.getPendingLabel();

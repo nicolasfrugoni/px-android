@@ -52,7 +52,6 @@ public class PaymentResultTest {
             .build();
 
         presenter.setPaymentResult(paymentResult);
-        presenter.setAmount(new BigDecimal("100"));
 
         MockedPropsView mockedView = new MockedPropsView();
         MockedProvider mockedProvider = new MockedProvider();
@@ -82,8 +81,6 @@ public class PaymentResultTest {
             .build();
 
         presenter.setPaymentResult(paymentResult);
-        presenter.setAmount(new BigDecimal("100"));
-        ;
 
         MockedPropsView mockedView = new MockedPropsView();
         MockedProvider mockedProvider = new MockedProvider();
@@ -113,8 +110,6 @@ public class PaymentResultTest {
             .build();
 
         presenter.setPaymentResult(paymentResult);
-        presenter.setAmount(new BigDecimal("100"));
-        ;
 
         MockedPropsView mockedView = new MockedPropsView();
         MockedProvider mockedProvider = new MockedProvider();
@@ -144,8 +139,6 @@ public class PaymentResultTest {
             .build();
 
         presenter.setPaymentResult(paymentResult);
-        presenter.setAmount(new BigDecimal("100"));
-        ;
 
         MockedPropsView mockedView = new MockedPropsView();
         MockedProvider mockedProvider = new MockedProvider();
@@ -174,8 +167,6 @@ public class PaymentResultTest {
             .build();
 
         presenter.setPaymentResult(paymentResult);
-        presenter.setAmount(new BigDecimal("100"));
-        ;
 
         MockedPropsView mockedView = new MockedPropsView();
         MockedProvider mockedProvider = new MockedProvider();
@@ -205,8 +196,6 @@ public class PaymentResultTest {
             .build();
 
         presenter.setPaymentResult(paymentResult);
-        presenter.setAmount(new BigDecimal("100"));
-        ;
 
         MockedPropsView mockedView = new MockedPropsView();
         MockedProvider mockedProvider = new MockedProvider();
@@ -234,8 +223,6 @@ public class PaymentResultTest {
             .build();
 
         presenter.setPaymentResult(paymentResult);
-        presenter.setAmount(new BigDecimal("100"));
-        ;
 
         MockedPropsView mockedView = new MockedPropsView();
         MockedProvider mockedProvider = new MockedProvider();
@@ -263,8 +250,6 @@ public class PaymentResultTest {
             .build();
 
         presenter.setPaymentResult(paymentResult);
-        presenter.setAmount(new BigDecimal("100"));
-        ;
 
         MockedPropsView mockedView = new MockedPropsView();
         MockedProvider mockedProvider = new MockedProvider();
@@ -284,8 +269,6 @@ public class PaymentResultTest {
             paymentSettingRepository, instructionsRepository);
 
         presenter.setPaymentResult(null);
-        presenter.setAmount(new BigDecimal("100"));
-        ;
 
         MockedPropsView mockedView = new MockedPropsView();
         MockedProvider mockedProvider = new MockedProvider();
@@ -313,8 +296,6 @@ public class PaymentResultTest {
             .build();
 
         presenter.setPaymentResult(paymentResult);
-        presenter.setAmount(new BigDecimal("100"));
-        ;
 
         MockedPropsView mockedView = new MockedPropsView();
         MockedProvider mockedProvider = new MockedProvider();
