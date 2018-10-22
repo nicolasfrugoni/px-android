@@ -19,6 +19,7 @@ import com.mercadopago.android.px.testcheckout.pages.IssuerPage;
 import com.mercadopago.android.px.testcheckout.pages.NamePage;
 import com.mercadopago.android.px.testcheckout.pages.NoCheckoutPage;
 import com.mercadopago.android.px.testcheckout.pages.OneTapPage;
+import com.mercadopago.android.px.testcheckout.pages.PayerInformationPage;
 import com.mercadopago.android.px.testcheckout.pages.PaymentMethodPage;
 import com.mercadopago.android.px.testcheckout.pages.PendingPage;
 import com.mercadopago.android.px.testcheckout.pages.RejectedPage;
@@ -50,6 +51,11 @@ public class DefaultValidator implements CheckoutValidator {
     public void validate(@NonNull final PaymentMethodPage paymentMethodPage) {
         //TODO fix, does not work
 //        validateAmountView();
+    }
+
+    @Override
+    public void validate(@NonNull final PayerInformationPage payerInformationPage) {
+        //TODO implement default PX Validations
     }
 
     @Override

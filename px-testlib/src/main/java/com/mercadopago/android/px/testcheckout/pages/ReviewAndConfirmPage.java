@@ -48,4 +48,11 @@ public class ReviewAndConfirmPage extends PageObject<CheckoutValidator> {
         onView(withText(R.string.px_change_payment)).perform(NestedScroll.nestedScrollTo()).perform(click());
         return new PaymentMethodPage(validator);
     }
+
+    @NonNull
+    public PayerInformationPage pressModifyPayerInformation() {
+        onView(withText(R.string.px_payer_information_modify)).perform(NestedScroll.nestedScrollTo()).perform(click());
+        return new PayerInformationPage(validator);
+    }
+
 }
