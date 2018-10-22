@@ -159,7 +159,7 @@ public class PaymentResultActivity extends AppCompatActivity implements PaymentR
     protected void onResume() {
         super.onResume();
         presenter.attachView(mutator);
-        presenter.initialize(this);
+        presenter.initialize();
     }
 
     @Override
