@@ -30,7 +30,6 @@ import java.util.List;
 /* default */ class PaymentResultPresenter extends MvpPresenter<PaymentResultPropsView, PaymentResultProvider>
     implements ActionsListener {
     private PaymentResult paymentResult;
-    private BigDecimal amount;
 
     private final PaymentResultNavigator navigator;
     private final PaymentSettingRepository paymentSettings;
@@ -142,10 +141,6 @@ import java.util.List;
         this.paymentResult = paymentResult;
     }
 
-    public void setAmount(final BigDecimal amount) {
-        this.amount = amount;
-    }
-
     private void checkGetInstructions() {
         if (paymentResult.isOffPayment()) {
             getInstructionsAsync();
@@ -247,10 +242,6 @@ import java.util.List;
 
     public PaymentResult getPaymentResult() {
         return paymentResult;
-    }
-
-    public BigDecimal getAmount() {
-        return amount;
     }
 
     public void setOriginAction(@NonNull final PostPaymentAction.OriginAction originAction) {
