@@ -67,10 +67,8 @@ public class PaymentResultActivity extends AppCompatActivity implements PaymentR
 
     public static final String CONGRATS_DISPLAY_BUNDLE = "congrats_display";
     public static final String PAYMENT_RESULT_BUNDLE = "payment_result";
-    public static final String AMOUNT_BUNDLE = "amount";
 
     private static final String EXTRA_CONFIRM_PAYMENT_ORIGIN = "extra_confirm_payment_origin";
-    private static final String EXTRA_AMOUNT = "extra_amount";
     private static final String EXTRA_DISCOUNT = "extra_discount";
     private static final String EXTRA_PAYMENT_RESULT = "extra_payment_result";
 
@@ -90,7 +88,6 @@ public class PaymentResultActivity extends AppCompatActivity implements PaymentR
         //TODO remove
         resultIntent.putExtra(EXTRA_PAYMENT_RESULT, JsonUtil.getInstance().toJson(result));
         resultIntent.putExtra(EXTRA_DISCOUNT, JsonUtil.getInstance().toJson(discountRepository.getDiscount()));
-        resultIntent.putExtra(EXTRA_AMOUNT, session.getAmountRepository().getAmountToPay());
         resultIntent.putExtra(EXTRA_CONFIRM_PAYMENT_ORIGIN, confirmPaymentOrigin.ordinal());
         return resultIntent;
     }
@@ -175,7 +172,6 @@ public class PaymentResultActivity extends AppCompatActivity implements PaymentR
         super.onSaveInstanceState(outState);
         if (presenter != null) {
             outState.putString(PAYMENT_RESULT_BUNDLE, JsonUtil.getInstance().toJson(presenter.getPaymentResult()));
-            outState.putString(AMOUNT_BUNDLE, JsonUtil.getInstance().toJson(presenter.getAmount()));
         }
 
         outState.putInt(CONGRATS_DISPLAY_BUNDLE, congratsDisplay);
@@ -186,9 +182,6 @@ public class PaymentResultActivity extends AppCompatActivity implements PaymentR
         final PaymentResult paymentResult =
             JsonUtil.getInstance().fromJson(savedInstanceState.getString(PAYMENT_RESULT_BUNDLE), PaymentResult.class);
 
-        final BigDecimal amount =
-            JsonUtil.getInstance().fromJson(savedInstanceState.getString(AMOUNT_BUNDLE), BigDecimal.class);
-
         congratsDisplay = savedInstanceState.getInt(CONGRATS_DISPLAY_BUNDLE, -1);
 
         final Session session = Session.getSession(this);
@@ -196,7 +189,6 @@ public class PaymentResultActivity extends AppCompatActivity implements PaymentR
             session.getConfigurationModule().getPaymentSettings(),
             session.getInstructionsRepository());
         presenter.setPaymentResult(paymentResult);
-        presenter.setAmount(amount);
 
         final PaymentResultProvider provider = new PaymentResultProviderImpl(this);
         presenter.attachResourcesProvider(provider);
@@ -207,14 +199,9 @@ public class PaymentResultActivity extends AppCompatActivity implements PaymentR
     protected void getActivityParameters() {
 
         final Intent intent = getIntent();
-        BigDecimal amount = null;
-        if (intent.getStringExtra(EXTRA_AMOUNT) != null) {
-            amount = new BigDecimal(intent.getStringExtra(EXTRA_AMOUNT));
-        }
         final PaymentResult paymentResult =
             JsonUtil.getInstance().fromJson(intent.getExtras().getString(EXTRA_PAYMENT_RESULT), PaymentResult.class);
 
-        presenter.setAmount(amount);
         presenter.setPaymentResult(paymentResult);
 
         final int originIndex = intent.getIntExtra(EXTRA_CONFIRM_PAYMENT_ORIGIN, -1);

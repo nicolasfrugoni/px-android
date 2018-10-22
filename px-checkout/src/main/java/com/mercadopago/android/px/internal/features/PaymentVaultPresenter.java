@@ -295,7 +295,8 @@ public class PaymentVaultPresenter extends MvpPresenter<PaymentVaultView, Paymen
             skipHook = false;
             if (selectedPaymentMethod == null) {
                 showMismatchingPaymentMethodError();
-            } else if (selectedPaymentMethod.getId().equals(PaymentMethods.BRASIL.BOLBRADESCO)) {
+            } else if (PaymentMethods.BRASIL.BOLBRADESCO.equalsIgnoreCase(selectedPaymentMethod.getId())
+                || PaymentMethods.BRASIL.PEC.equalsIgnoreCase(selectedPaymentMethod.getId())) {
                 handleCollectPayerInformation();
             } else {
                 getView().finishPaymentMethodSelection(selectedPaymentMethod);
