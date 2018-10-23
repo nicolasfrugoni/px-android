@@ -61,7 +61,6 @@ import static com.mercadopago.android.px.internal.features.Constants.RESULT_CANC
 import static com.mercadopago.android.px.internal.features.Constants.RESULT_CANCEL_PAYMENT;
 import static com.mercadopago.android.px.internal.features.Constants.RESULT_CHANGE_PAYMENT_METHOD;
 import static com.mercadopago.android.px.internal.features.Constants.RESULT_ERROR;
-import static com.mercadopago.android.px.internal.features.PaymentVaultActivity.PAYER_INFORMATION_REQUEST_CODE;
 
 public final class ReviewAndConfirmActivity extends MercadoPagoBaseActivity implements
     ReviewAndConfirm.View, ActionDispatcher {
@@ -75,6 +74,7 @@ public final class ReviewAndConfirmActivity extends MercadoPagoBaseActivity impl
     private static final String EXTRA_ITEMS = "extra_items";
     private static final String EXTRA_DISCOUNT_TERMS_AND_CONDITIONS = "extra_discount_terms_and_conditions";
     private static final String TAG_DYNAMIC_DIALOG = "tag_dynamic_dialog";
+    private static final int PAYER_INFORMATION_REQUEST_CODE = 22;
 
     /* default */ ReviewAndConfirmPresenter presenter;
 
@@ -201,7 +201,7 @@ public final class ReviewAndConfirmActivity extends MercadoPagoBaseActivity impl
             resolveErrorRequest(resultCode, data);
             break;
         case PAYER_INFORMATION_REQUEST_CODE:
-            resolvePayerInformationRequest(resultCode, data);
+            resolvePayerInformationRequest(resultCode);
             break;
         default:
             //Do nothing
@@ -210,7 +210,7 @@ public final class ReviewAndConfirmActivity extends MercadoPagoBaseActivity impl
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void resolvePayerInformationRequest(final int resultCode, final Intent data) {
+    private void resolvePayerInformationRequest(final int resultCode) {
         if (resultCode == RESULT_OK) {
             reloadBody();
         }

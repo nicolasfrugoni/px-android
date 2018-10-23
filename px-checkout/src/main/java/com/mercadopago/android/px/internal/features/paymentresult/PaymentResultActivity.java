@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.Toast;
 import com.mercadolibre.android.ui.widgets.MeliSnackbar;
 import com.mercadopago.android.px.BuildConfig;
 import com.mercadopago.android.px.R;
@@ -25,9 +24,9 @@ import com.mercadopago.android.px.internal.features.paymentresult.components.Bod
 import com.mercadopago.android.px.internal.features.paymentresult.components.BodyError;
 import com.mercadopago.android.px.internal.features.paymentresult.components.BodyErrorRenderer;
 import com.mercadopago.android.px.internal.features.paymentresult.components.BodyRenderer;
+import com.mercadopago.android.px.internal.features.paymentresult.components.InstructionInteractionComponent;
 import com.mercadopago.android.px.internal.features.paymentresult.components.InstructionInteractionComponentRenderer;
 import com.mercadopago.android.px.internal.features.paymentresult.components.InstructionInteractions;
-import com.mercadopago.android.px.internal.features.paymentresult.components.InstructionInteractionComponent;
 import com.mercadopago.android.px.internal.features.paymentresult.components.InstructionInteractionsRenderer;
 import com.mercadopago.android.px.internal.features.paymentresult.components.InstructionReferenceComponent;
 import com.mercadopago.android.px.internal.features.paymentresult.components.InstructionReferenceRenderer;
@@ -68,7 +67,6 @@ import com.mercadopago.android.px.model.PaymentResult;
 import com.mercadopago.android.px.model.ScreenViewEvent;
 import com.mercadopago.android.px.model.exceptions.ApiException;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
-import java.math.BigDecimal;
 
 import static com.mercadopago.android.px.internal.features.Constants.RESULT_ACTION;
 import static com.mercadopago.android.px.internal.features.Constants.RESULT_CUSTOM_EXIT;
@@ -307,8 +305,8 @@ public class PaymentResultActivity extends AppCompatActivity implements PaymentR
 
     @Override
     public void copyToClipboard(final String content) {
-        ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-        ClipData clip = ClipData.newPlainText("", content);
+        final ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+        final ClipData clip = ClipData.newPlainText("", content);
         if (clipboard != null) {
             clipboard.setPrimaryClip(clip);
             MeliSnackbar.make(findViewById(R.id.mpsdkPaymentResultContainer),getString(R.string.px_copied_to_clipboard_ack),

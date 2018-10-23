@@ -28,7 +28,7 @@ public class InstructionInteractionComponent extends Component<InstructionIntera
             public InstructionInteraction interaction;
 
             public Props.Builder setInteraction(
-                @NonNull InstructionInteraction interaction) {
+                @NonNull final InstructionInteraction interaction) {
                 this.interaction = interaction;
                 return this;
             }

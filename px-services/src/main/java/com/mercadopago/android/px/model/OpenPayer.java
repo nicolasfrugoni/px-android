@@ -3,6 +3,11 @@ package com.mercadopago.android.px.model;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+/**
+ * Open Payer should be used if you want to start checkout
+ * with default Payer's data.
+ * If all data is valid, Payer Information step will be skipped.
+ */
 public class OpenPayer extends Payer {
 
     OpenPayer(@NonNull final Builder builder) {
@@ -12,6 +17,7 @@ public class OpenPayer extends Payer {
         setLastName(builder.lastName);
     }
 
+    @SuppressWarnings("unused")
     public static class Builder {
 
         //region mandatory params

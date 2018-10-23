@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import com.mercadolibre.android.ui.widgets.MeliButton;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.internal.util.MPCardMaskUtil;
-import com.mercadopago.android.px.internal.util.TextUtil;
+import com.mercadopago.android.px.internal.util.ViewUtils;
 import com.mercadopago.android.px.internal.view.CompactComponent;
 import com.mercadopago.android.px.internal.view.MPTextView;
 import com.mercadopago.android.px.model.IdentificationType;
@@ -36,8 +36,8 @@ public class PayerInformationComponent extends CompactComponent<Payer, PayerInfo
         final MPTextView fullName = payerInfoView.findViewById(R.id.payer_full_name);
         final ImageView icon = payerInfoView.findViewById(R.id.icon);
 
-        setText(docTypeAndNumber, getIdentificationTypeAndNumber());
-        setText(fullName, getFirstAndLastName());
+        ViewUtils.loadOrGone(getIdentificationTypeAndNumber(), docTypeAndNumber);
+        ViewUtils.loadOrGone(getFirstAndLastName(), fullName);
         drawIconFromRes(icon, R.drawable.px_payer_information);
         drawModifyButton(payerInfoView);
 
@@ -45,7 +45,7 @@ public class PayerInformationComponent extends CompactComponent<Payer, PayerInfo
     }
 
     private void drawModifyButton(@NonNull final ViewGroup payerInfoView) {
-        MeliButton buttonLink = payerInfoView.findViewById(R.id.payer_information_modify_button);
+        final MeliButton buttonLink = payerInfoView.findViewById(R.id.payer_information_modify_button);
         buttonLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
@@ -82,13 +82,5 @@ public class PayerInformationComponent extends CompactComponent<Payer, PayerInfo
 
     private void drawIconFromRes(@Nonnull final ImageView imageView, @DrawableRes final int resource) {
         imageView.setImageResource(resource);
-    }
-
-    private void setText(@NonNull final MPTextView textView, @NonNull String text) {
-        if (TextUtil.isEmpty(text)) {
-            textView.setVisibility(View.GONE);
-        } else {
-            textView.setText(text);
-        }
     }
 }
