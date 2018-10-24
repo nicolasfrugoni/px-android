@@ -3,7 +3,7 @@ package com.mercadopago.android.px.internal.features.paymentresult.components;
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.internal.view.ActionDispatcher;
 import com.mercadopago.android.px.internal.view.Component;
-import com.mercadopago.android.px.model.InstructionInteraction;
+import com.mercadopago.android.px.model.Interaction;
 
 public class InstructionInteractionComponent extends Component<InstructionInteractionComponent.Props, Void> {
 
@@ -13,7 +13,7 @@ public class InstructionInteractionComponent extends Component<InstructionIntera
 
     public static class Props {
 
-        public final InstructionInteraction interaction;
+        public final Interaction interaction;
 
         public Props(final Props.Builder builder) {
             interaction = builder.interaction;
@@ -25,10 +25,10 @@ public class InstructionInteractionComponent extends Component<InstructionIntera
         }
 
         public static class Builder {
-            public InstructionInteraction interaction;
+            public Interaction interaction;
 
             public Props.Builder setInteraction(
-                @NonNull final InstructionInteraction interaction) {
+                @NonNull final Interaction interaction) {
                 this.interaction = interaction;
                 return this;
             }

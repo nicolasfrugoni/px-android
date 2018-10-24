@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import com.mercadolibre.android.ui.widgets.MeliButton;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.internal.util.MPCardMaskUtil;
-import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.internal.util.ViewUtils;
 import com.mercadopago.android.px.internal.view.CompactComponent;
 import com.mercadopago.android.px.internal.view.MPTextView;

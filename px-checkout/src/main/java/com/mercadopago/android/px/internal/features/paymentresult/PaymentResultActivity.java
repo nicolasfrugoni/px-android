@@ -24,9 +24,9 @@ import com.mercadopago.android.px.internal.features.paymentresult.components.Bod
 import com.mercadopago.android.px.internal.features.paymentresult.components.BodyError;
 import com.mercadopago.android.px.internal.features.paymentresult.components.BodyErrorRenderer;
 import com.mercadopago.android.px.internal.features.paymentresult.components.BodyRenderer;
+import com.mercadopago.android.px.internal.features.paymentresult.components.InstructionInteractionComponent;
 import com.mercadopago.android.px.internal.features.paymentresult.components.InstructionInteractionComponentRenderer;
 import com.mercadopago.android.px.internal.features.paymentresult.components.InstructionInteractions;
-import com.mercadopago.android.px.internal.features.paymentresult.components.InstructionInteractionComponent;
 import com.mercadopago.android.px.internal.features.paymentresult.components.InstructionInteractionsRenderer;
 import com.mercadopago.android.px.internal.features.paymentresult.components.InstructionReferenceComponent;
 import com.mercadopago.android.px.internal.features.paymentresult.components.InstructionReferenceRenderer;

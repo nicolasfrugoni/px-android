@@ -10,7 +10,7 @@ public class Instruction {
     private List<String> tertiaryInfo;
     private String accreditationMessage;
     private String type;
-    private List<InstructionInteraction> instructionInteractions;
+    private List<Interaction> interactions;
     private List<String> accreditationComments;
     private List<InstructionAction> actions;
     private List<InstructionReference> references;
@@ -51,8 +51,8 @@ public class Instruction {
         return actions;
     }
 
-    public List<InstructionInteraction> getInstructionInteractions() {
-        return instructionInteractions;
+    public List<Interaction> getInteractions() {
+        return interactions;
     }
 
     public String getType() {

@@ -13,7 +13,7 @@ import com.mercadopago.android.px.internal.view.LinkAction;
 import com.mercadopago.android.px.internal.view.MPTextView;
 import com.mercadopago.android.px.internal.view.Renderer;
 import com.mercadopago.android.px.model.InstructionAction;
-import com.mercadopago.android.px.model.InstructionInteraction;
+import com.mercadopago.android.px.model.Interaction;
 
 import static android.view.View.GONE;
 import static com.mercadopago.android.px.model.InstructionAction.Tags.COPY;
@@ -28,7 +28,7 @@ public class InstructionInteractionComponentRenderer extends Renderer<Instructio
         final MPTextView content = view.findViewById(R.id.mpsdkInteractionContent);
         final MeliButton button = view.findViewById(R.id.mpsdkInteractionButton);
 
-        final InstructionInteraction interaction = component.props.interaction;
+        final Interaction interaction = component.props.interaction;
         setText(title, interaction.getTitle());
         setText(content, interaction.getContent());
 
