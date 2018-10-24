@@ -18,14 +18,12 @@ import com.mercadopago.android.px.internal.view.ResultCodeAction;
 import com.mercadopago.android.px.internal.viewmodel.PostPaymentAction;
 import com.mercadopago.android.px.model.Action;
 import com.mercadopago.android.px.model.Instruction;
-import com.mercadopago.android.px.model.Instructions;
 import com.mercadopago.android.px.model.PaymentResult;
 import com.mercadopago.android.px.model.ScreenViewEvent;
 import com.mercadopago.android.px.model.exceptions.ApiException;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.services.Callback;
 import com.mercadopago.android.px.tracking.internal.utils.TrackingUtil;
-import java.math.BigDecimal;
 import java.util.List;
 
 /* default */ class PaymentResultPresenter extends MvpPresenter<PaymentResultPropsView, PaymentResultProvider>
