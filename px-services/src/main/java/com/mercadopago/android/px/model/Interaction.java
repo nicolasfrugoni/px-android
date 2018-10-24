@@ -1,6 +1,6 @@
 package com.mercadopago.android.px.model;
 
-public class InstructionInteraction {
+public class Interaction {
 
     private InstructionAction action;
     private String title;

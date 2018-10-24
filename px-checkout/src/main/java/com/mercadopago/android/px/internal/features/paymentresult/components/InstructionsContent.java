@@ -10,7 +10,7 @@ import com.mercadopago.android.px.internal.features.paymentresult.props.Instruct
 import com.mercadopago.android.px.internal.view.ActionDispatcher;
 import com.mercadopago.android.px.internal.view.Component;
 import com.mercadopago.android.px.model.InstructionAction;
-import com.mercadopago.android.px.model.InstructionInteraction;
+import com.mercadopago.android.px.model.Interaction;
 import com.mercadopago.android.px.model.InstructionReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,8 +45,8 @@ public class InstructionsContent extends Component<InstructionsContentProps, Voi
     }
 
     public boolean hasInstructionInteractions() {
-        final List<InstructionInteraction> instructionInteractions = props.instruction.getInstructionInteractions();
-        if (instructionInteractions != null && !instructionInteractions.isEmpty()) {
+        final List<Interaction> interactions = props.instruction.getInteractions();
+        if (interactions != null && !interactions.isEmpty()) {
             return true;
         }
         return false;
@@ -160,7 +160,7 @@ public class InstructionsContent extends Component<InstructionsContentProps, Voi
 
     public InstructionInteractions getInteractionsComponent() {
         final InstructionInteractionsProps instructionInteractionsProps = new InstructionInteractionsProps.Builder()
-            .setInstructionInteractions(props.instruction.getInstructionInteractions())
+            .setInstructionInteractions(props.instruction.getInteractions())
             .build();
 
         return new InstructionInteractions(instructionInteractionsProps, getDispatcher());

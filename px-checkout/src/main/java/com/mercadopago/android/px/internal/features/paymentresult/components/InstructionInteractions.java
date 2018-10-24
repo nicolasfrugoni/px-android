@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 import com.mercadopago.android.px.internal.features.paymentresult.props.InstructionInteractionsProps;
 import com.mercadopago.android.px.internal.view.ActionDispatcher;
 import com.mercadopago.android.px.internal.view.Component;
-import com.mercadopago.android.px.model.InstructionInteraction;
+import com.mercadopago.android.px.model.Interaction;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +18,7 @@ public class InstructionInteractions extends Component<InstructionInteractionsPr
     public List<InstructionInteractionComponent> getInteractionComponents() {
         List<InstructionInteractionComponent> componentList = new ArrayList<>();
 
-        for (InstructionInteraction interaction : props.instructionInteractions) {
+        for (Interaction interaction : props.interactions) {
             final InstructionInteractionComponent.Props interactionProps =
                 new InstructionInteractionComponent.Props.Builder()
                     .setInteraction(interaction)

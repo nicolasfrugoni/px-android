@@ -1,9 +1,14 @@
 package com.mercadopago.android.px.internal.util;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.mercadopago.android.px.model.Instructions;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 
 public final class JsonUtil {
@@ -27,7 +32,6 @@ public final class JsonUtil {
 
         return mGson.fromJson(json, classOfT);
     }
-
 
     public <T> T fromJson(@NonNull final String json, @NonNull final Type classOfT) {
         return mGson.fromJson(json, classOfT);
