@@ -10,7 +10,7 @@ import retrofit2.http.Query;
 
 public interface InstructionsClient {
 
-    String INSTRUCTIONS_VERSION = "1.4";
+    String INSTRUCTIONS_VERSION = "1.7";
 
     @GET("/{version}/checkout/payments/{payment_id}/results?api_version=" + INSTRUCTIONS_VERSION)
     MPCall<Instructions> getInstructions(@Path(value = "version", encoded = true) String version,
