@@ -98,8 +98,18 @@ public final class ExamplesUtils {
     }
 
     public static List<Pair<String, Builder>> getOptions() {
-        final List<Pair<String, Builder>> options = new ArrayList<>();
+        final List<Pair<String, Builder>> options = new ArrayList<>(BusinessSamples.getAll());
+        OneTapSamples.addAll(options);
+        ChargesSamples.addAll(options);
+        DiscountSamples.addAll(options);
+        options.add(new Pair<>("Review and Confirm - Custom exit", customExitReviewAndConfirm()));
+        options.add(new Pair<>("Base flow - Tracks with listener", startBaseFlowWithTrackListener()));
+        options.add(new Pair<>("All but debit card", allButDebitCard()));
+        options.add(new Pair<>("Two items", createBaseWithTwoItems()));
         options.add(new Pair<>("One item with quantity", createBaseWithOneItemWithQuantity()));
+        options.add(new Pair<>("Two items - Collector icon", createBaseWithTwoItemsAndCollectorIcon()));
+        options.add(new Pair<>("One item - Long title", createBaseWithOneItemLongTitle()));
+        options.add(new Pair<>("Differential pricing preference", createWithDifferentialPricing()));
         return options;
     }
 

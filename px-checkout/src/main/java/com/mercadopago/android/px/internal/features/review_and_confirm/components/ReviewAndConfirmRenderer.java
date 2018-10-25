@@ -16,6 +16,7 @@ import com.mercadopago.android.px.internal.features.review_and_confirm.component
 import com.mercadopago.android.px.internal.features.review_and_confirm.components.payer_information.PayerInformationComponent;
 import com.mercadopago.android.px.internal.features.review_and_confirm.components.payment_method.PaymentMethodComponent;
 import com.mercadopago.android.px.internal.features.review_and_confirm.models.PaymentModel;
+import com.mercadopago.android.px.internal.navigation.DefaultPayerInformationDriver;
 import com.mercadopago.android.px.internal.util.FragmentUtil;
 import com.mercadopago.android.px.internal.view.ActionDispatcher;
 import com.mercadopago.android.px.internal.view.Renderer;
