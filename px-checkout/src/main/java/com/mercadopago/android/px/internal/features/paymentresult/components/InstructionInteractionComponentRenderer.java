@@ -50,9 +50,9 @@ public class InstructionInteractionComponentRenderer extends Renderer<Instructio
     @Nullable
     private Action getAction(@NonNull final Interaction interaction) {
         switch (interaction.getAction().getTag()) {
-        case LINK:
-            return new CopyAction(interaction.getContent());
         case COPY:
+            return new CopyAction(interaction.getContent());
+        case LINK:
             return new LinkAction(interaction.getAction().getUrl());
         default:
             return null;
