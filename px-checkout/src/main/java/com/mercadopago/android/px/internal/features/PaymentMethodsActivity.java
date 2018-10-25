@@ -104,9 +104,7 @@ public class PaymentMethodsActivity extends MercadoPagoBaseActivity implements P
         mBankDealsTextView = findViewById(R.id.mpsdkBankDeals);
         mTitle = findViewById(R.id.mpsdkToolbarTitle);
 
-        final String mainVerb =
-            getString(Session.getSession(this).getConfigurationModule().getPaymentSettings().getAdvancedConfiguration()
-                .getDynamicLanguageConfiguration().getMainVerbStringResourceId());
+        final String mainVerb = getString(Session.getSession(this).getMainVerb());
         mTitle.setText(getString(R.string.px_title_activity_payment_methods, mainVerb));
 
         setSupportActionBar(mToolbar);

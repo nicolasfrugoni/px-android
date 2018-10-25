@@ -132,9 +132,7 @@ public class AmountView extends LinearLayoutCompat {
 
     private void show(@NonNull final BigDecimal totalAmount, @NonNull final Site site) {
         configureViewsVisibilityDefault();
-        final String mainVerb =
-            getContext().getString(Session.getSession(getContext()).getConfigurationModule().getPaymentSettings()
-                .getAdvancedConfiguration().getDynamicLanguageConfiguration().getMainVerbStringResourceId());
+        final String mainVerb = getContext().getString(Session.getSession(getContext()).getMainVerb());
         amountDescription.setText(getContext().getString(R.string.px_title_activity_payment_vault, mainVerb));
         amountDescription.setTextColor(getResources().getColor(R.color.px_form_text));
         showEffectiveAmount(totalAmount, site);

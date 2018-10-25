@@ -27,10 +27,7 @@ public class PaymentVaultProviderImpl implements PaymentVaultProvider {
 
     @Override
     public String getTitle() {
-        final String mainVerb =
-            context.getString(
-                Session.getSession(context).getConfigurationModule().getPaymentSettings().getAdvancedConfiguration()
-                    .getDynamicLanguageConfiguration().getMainVerbStringResourceId());
+        final String mainVerb = context.getString(Session.getSession(context).getMainVerb());
         return context.getString(R.string.px_title_activity_payment_vault, mainVerb);
     }
 

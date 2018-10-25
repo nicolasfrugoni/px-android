@@ -4,11 +4,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import com.mercadopago.android.px.R;
 
-public class DynamicLanguageConfiguration {
+public class CustomStringConfiguration {
 
     @StringRes private final int mainVerbStringResourceId;
 
-    /* default */ DynamicLanguageConfiguration(@NonNull final Builder builder) {
+    /* default */ CustomStringConfiguration(@NonNull final Builder builder) {
         this.mainVerbStringResourceId = builder.mainVerbStringResourceId;
     }
 
@@ -40,8 +40,8 @@ public class DynamicLanguageConfiguration {
             return this;
         }
 
-        public DynamicLanguageConfiguration build() {
-            return new DynamicLanguageConfiguration(this);
+        public CustomStringConfiguration build() {
+            return new CustomStringConfiguration(this);
         }
     }
 }

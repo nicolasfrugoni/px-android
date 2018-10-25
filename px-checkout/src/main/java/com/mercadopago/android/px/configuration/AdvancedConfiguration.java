@@ -20,7 +20,7 @@ public class AdvancedConfiguration implements Serializable {
     @NonNull private final ReviewAndConfirmConfiguration reviewAndConfirmConfiguration;
     @NonNull private final DynamicFragmentConfiguration dynamicFragmentConfiguration;
     @NonNull private final DynamicDialogConfiguration dynamicDialogConfiguration;
-    @NonNull private final DynamicLanguageConfiguration dynamicLanguageConfiguration;
+    @NonNull private final CustomStringConfiguration customStringConfiguration;
 
     /* default */ AdvancedConfiguration(final Builder builder) {
         bankDealsEnabled = builder.bankDealsEnabled;
@@ -29,7 +29,7 @@ public class AdvancedConfiguration implements Serializable {
         reviewAndConfirmConfiguration = builder.reviewAndConfirmConfiguration;
         dynamicFragmentConfiguration = builder.dynamicFragmentConfiguration;
         dynamicDialogConfiguration = builder.dynamicDialogConfiguration;
-        dynamicLanguageConfiguration = builder.dynamicLanguageConfiguration;
+        customStringConfiguration = builder.customStringConfiguration;
     }
 
     public boolean isBankDealsEnabled() {
@@ -61,8 +61,8 @@ public class AdvancedConfiguration implements Serializable {
     }
 
     @NonNull
-    public DynamicLanguageConfiguration getDynamicLanguageConfiguration(){
-        return dynamicLanguageConfiguration;
+    public CustomStringConfiguration getCustomStringConfiguration(){
+        return customStringConfiguration;
     }
 
     @SuppressWarnings("unused")
@@ -77,8 +77,8 @@ public class AdvancedConfiguration implements Serializable {
             new DynamicFragmentConfiguration.Builder().build();
         /* default */ @NonNull DynamicDialogConfiguration dynamicDialogConfiguration =
             new DynamicDialogConfiguration.Builder().build();
-        /* default */ @NonNull DynamicLanguageConfiguration dynamicLanguageConfiguration =
-            new DynamicLanguageConfiguration.Builder().build();
+        /* default */ @NonNull CustomStringConfiguration customStringConfiguration =
+            new CustomStringConfiguration.Builder().build();
 
 
 
@@ -163,14 +163,14 @@ public class AdvancedConfiguration implements Serializable {
 
         /**
          * Enable to preset configurations to configure specific wordings on
-         * several screen locations see {@link DynamicLanguageConfiguration.Builder}
+         * several screen locations see {@link CustomStringConfiguration.Builder}
          *
-         * @param dynamicLanguageConfiguration your custom configurations.
+         * @param customStringConfiguration your custom configurations.
          * @return builder to keep operating
          */
-        public Builder setDynamicLanguageConfiguration(
-            @NonNull final DynamicLanguageConfiguration dynamicLanguageConfiguration) {
-            this.dynamicLanguageConfiguration = dynamicLanguageConfiguration;
+        public Builder setCustomStringConfiguration(
+            @NonNull final CustomStringConfiguration customStringConfiguration) {
+            this.customStringConfiguration = customStringConfiguration;
             return this;
         }
 
