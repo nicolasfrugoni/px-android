@@ -7,15 +7,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.mercadolibre.android.ui.widgets.MeliButton;
 import com.mercadopago.android.px.R;
-import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.internal.view.CopyAction;
 import com.mercadopago.android.px.internal.view.LinkAction;
 import com.mercadopago.android.px.internal.view.MPTextView;
 import com.mercadopago.android.px.internal.view.Renderer;
+import com.mercadopago.android.px.model.Action;
 import com.mercadopago.android.px.model.InstructionAction;
 import com.mercadopago.android.px.model.Interaction;
 
-import static android.view.View.GONE;
 import static com.mercadopago.android.px.model.InstructionAction.Tags.COPY;
 import static com.mercadopago.android.px.model.InstructionAction.Tags.LINK;
 
@@ -35,28 +34,28 @@ public class InstructionInteractionComponentRenderer extends Renderer<Instructio
         final InstructionAction action = interaction.getAction();
         if (action != null) {
             setText(button, action.getLabel());
-
-            final String tag = action.getTag();
-            if (TextUtil.isNotEmpty(tag)) {
-                if (tag.equals(COPY)) {
-                    button.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(final View v) {
-                            component.getDispatcher().dispatch(new CopyAction(interaction.getContent()));
-                        }
-                    });
-                } else if (tag.equals(LINK)) {
-                    button.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(final View v) {
-                            component.getDispatcher().dispatch(new LinkAction(interaction.getAction().getUrl()));
-                        }
-                    });
-                }
+            final Action tagAction = getAction(interaction);
+            if (tagAction != null) {
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(final View v) {
+                        component.getDispatcher().dispatch(tagAction);
+                    }
+                });
             }
-        } else {
-            button.setVisibility(GONE);
         }
         return view;
+    }
+
+    @Nullable
+    private Action getAction(@NonNull final Interaction interaction) {
+        switch (interaction.getAction().getTag()) {
+        case LINK:
+            return new CopyAction(interaction.getContent());
+        case COPY:
+            return new LinkAction(interaction.getAction().getUrl());
+        default:
+            return null;
+        }
     }
 }

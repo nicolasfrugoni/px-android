@@ -8,11 +8,7 @@ public class InstructionInteractionsProps {
 
     public final List<Interaction> interactions;
 
-    public InstructionInteractionsProps(@NonNull final List<Interaction> interactions) {
-        this.interactions = interactions;
-    }
-
-    public InstructionInteractionsProps(@NonNull Builder builder) {
+    public InstructionInteractionsProps(@NonNull final Builder builder) {
         interactions = builder.interactionsProps;
     }
 

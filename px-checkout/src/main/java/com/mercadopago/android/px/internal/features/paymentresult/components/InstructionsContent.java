@@ -46,10 +46,7 @@ public class InstructionsContent extends Component<InstructionsContentProps, Voi
 
     public boolean hasInstructionInteractions() {
         final List<Interaction> interactions = props.instruction.getInteractions();
-        if (interactions != null && !interactions.isEmpty()) {
-            return true;
-        }
-        return false;
+        return interactions != null && !interactions.isEmpty();
     }
 
     public boolean hasActions() {
