@@ -11,7 +11,6 @@ import com.mercadopago.android.px.model.PaymentMethodSearch;
 import com.mercadopago.android.px.model.PaymentMethodSearchItem;
 import com.mercadopago.android.px.tracking.internal.MPTracker;
 
-
 public class PaymentVaultProviderImpl implements PaymentVaultProvider {
 
     private final Context context;
@@ -28,7 +27,11 @@ public class PaymentVaultProviderImpl implements PaymentVaultProvider {
 
     @Override
     public String getTitle() {
-        return context.getString(R.string.px_title_activity_payment_vault);
+        final String mainVerb =
+            context.getString(
+                Session.getSession(context).getConfigurationModule().getPaymentSettings().getAdvancedConfiguration()
+                    .getDynamicLanguageConfiguration().getMainVerbStringResourceId());
+        return context.getString(R.string.px_title_activity_payment_vault, mainVerb);
     }
 
     @Override

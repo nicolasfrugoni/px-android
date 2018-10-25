@@ -20,6 +20,7 @@ public class AdvancedConfiguration implements Serializable {
     @NonNull private final ReviewAndConfirmConfiguration reviewAndConfirmConfiguration;
     @NonNull private final DynamicFragmentConfiguration dynamicFragmentConfiguration;
     @NonNull private final DynamicDialogConfiguration dynamicDialogConfiguration;
+    @NonNull private final DynamicLanguageConfiguration dynamicLanguageConfiguration;
 
     /* default */ AdvancedConfiguration(final Builder builder) {
         bankDealsEnabled = builder.bankDealsEnabled;
@@ -28,6 +29,7 @@ public class AdvancedConfiguration implements Serializable {
         reviewAndConfirmConfiguration = builder.reviewAndConfirmConfiguration;
         dynamicFragmentConfiguration = builder.dynamicFragmentConfiguration;
         dynamicDialogConfiguration = builder.dynamicDialogConfiguration;
+        dynamicLanguageConfiguration = builder.dynamicLanguageConfiguration;
     }
 
     public boolean isBankDealsEnabled() {
@@ -58,6 +60,11 @@ public class AdvancedConfiguration implements Serializable {
         return reviewAndConfirmConfiguration;
     }
 
+    @NonNull
+    public DynamicLanguageConfiguration getDynamicLanguageConfiguration(){
+        return dynamicLanguageConfiguration;
+    }
+
     @SuppressWarnings("unused")
     public static class Builder {
         /* default */ boolean bankDealsEnabled = true;
@@ -70,6 +77,8 @@ public class AdvancedConfiguration implements Serializable {
             new DynamicFragmentConfiguration.Builder().build();
         /* default */ @NonNull DynamicDialogConfiguration dynamicDialogConfiguration =
             new DynamicDialogConfiguration.Builder().build();
+        /* default */ @NonNull DynamicLanguageConfiguration dynamicLanguageConfiguration =
+            new DynamicLanguageConfiguration.Builder().build();
 
 
 
@@ -151,6 +160,20 @@ public class AdvancedConfiguration implements Serializable {
             this.dynamicDialogConfiguration = dynamicDialogConfiguration;
             return this;
         }
+
+        /**
+         * Enable to preset configurations to configure specific wordings on
+         * several screen locations see {@link DynamicLanguageConfiguration.Builder}
+         *
+         * @param dynamicLanguageConfiguration your custom configurations.
+         * @return builder to keep operating
+         */
+        public Builder setDynamicLanguageConfiguration(
+            @NonNull final DynamicLanguageConfiguration dynamicLanguageConfiguration) {
+            this.dynamicLanguageConfiguration = dynamicLanguageConfiguration;
+            return this;
+        }
+
 
         public AdvancedConfiguration build() {
             return new AdvancedConfiguration(this);

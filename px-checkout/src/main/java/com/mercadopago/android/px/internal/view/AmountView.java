@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.mercadopago.android.px.R;
+import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.util.textformatter.TextFormatter;
 import com.mercadopago.android.px.model.Campaign;
@@ -131,7 +132,10 @@ public class AmountView extends LinearLayoutCompat {
 
     private void show(@NonNull final BigDecimal totalAmount, @NonNull final Site site) {
         configureViewsVisibilityDefault();
-        amountDescription.setText(R.string.px_total_to_pay);
+        final String mainVerb =
+            getContext().getString(Session.getSession(getContext()).getConfigurationModule().getPaymentSettings()
+                .getAdvancedConfiguration().getDynamicLanguageConfiguration().getMainVerbStringResourceId());
+        amountDescription.setText(getContext().getString(R.string.px_title_activity_payment_vault, mainVerb));
         amountDescription.setTextColor(getResources().getColor(R.color.px_form_text));
         showEffectiveAmount(totalAmount, site);
     }
