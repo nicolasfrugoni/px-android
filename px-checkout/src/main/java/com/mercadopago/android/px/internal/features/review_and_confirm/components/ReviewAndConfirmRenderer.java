@@ -49,9 +49,18 @@ public class ReviewAndConfirmRenderer extends Renderer<ReviewAndConfirmContainer
                 component.props.preferences.getTopFragment());
         }
 
-        if (component.props.payer != null) {
-            addPayerInformation(component.props.payer, component.getDispatcher(), linearLayout);
-        }
+        new DefaultPayerInformationDriver(component.props.payer).drive(
+            new DefaultPayerInformationDriver.PayerInformationDriverCallback() {
+                @Override
+                public void driveToNewPayerData() {
+                    // If payer is not valid, do nothing
+                }
+
+                @Override
+                public void driveToReviewConfirm() {
+                    addPayerInformation(component.props.payer, component.getDispatcher(), linearLayout);
+                }
+            });
 
         final Session session = Session.getSession(context);
         final CheckoutPreference checkoutPreference =
