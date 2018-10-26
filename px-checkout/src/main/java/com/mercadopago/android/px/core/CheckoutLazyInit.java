@@ -33,7 +33,12 @@ public abstract class CheckoutLazyInit {
         prefetchService.prefetch();
     }
 
-    public final void fail() {
+    /**
+     * @deprecated  Not for public use.
+     *    This method is expected to be retained only as a
+     *    private method.  Please use {@link #cancel()})}
+     */
+    @Deprecated public final void fail() {
         // Generates new session.
         fail(builder.build());
     }

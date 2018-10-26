@@ -335,7 +335,7 @@ public class PaymentResultContainer extends Component<PaymentResultProps, Void> 
         } else if (props.paymentResult == null) {
             return paymentResultProvider.getEmptyText();
         } else {
-            if (isLabelEmpty(props.paymentResult) || isPaymentMethodOff(props.paymentResult)) {
+            if (isLabelEmpty(props.paymentResult)) {
                 return paymentResultProvider.getEmptyText();
             } else if (isLabelPending(props.paymentResult)) {
                 return paymentResultProvider.getPendingLabel();
@@ -352,7 +352,8 @@ public class PaymentResultContainer extends Component<PaymentResultProps, Void> 
         return status.equals(Payment.StatusCodes.STATUS_APPROVED) ||
             status.equals(Payment.StatusCodes.STATUS_IN_PROCESS) ||
             (status.equals(Payment.StatusCodes.STATUS_PENDING)
-                && !statusDetail.equals(Payment.StatusDetail.STATUS_DETAIL_PENDING_WAITING_PAYMENT));
+                && (!statusDetail.equals(Payment.StatusDetail.STATUS_DETAIL_PENDING_WAITING_PAYMENT)
+                || isPaymentMethodOff(props.paymentResult)));
     }
 
     private boolean isLabelPending(@NonNull final PaymentResult paymentResult) {

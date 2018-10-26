@@ -4,10 +4,10 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import com.mercadopago.android.px.internal.callbacks.TaggedCallback;
 import com.mercadopago.android.px.internal.controllers.PaymentMethodGuessingController;
+import com.mercadopago.android.px.internal.datasource.CardAssociationGatewayService;
 import com.mercadopago.android.px.internal.datasource.CardAssociationService;
 import com.mercadopago.android.px.internal.datasource.MercadoPagoESC;
 import com.mercadopago.android.px.internal.repository.CardPaymentMethodRepository;
-import com.mercadopago.android.px.internal.services.GatewayService;
 import com.mercadopago.android.px.internal.util.ApiUtil;
 import com.mercadopago.android.px.model.BankDeal;
 import com.mercadopago.android.px.model.Card;
@@ -27,7 +27,7 @@ public class GuessingCardStoragePresenter extends GuessingCardPresenter {
     /* default */ final String accessToken;
     private final CardPaymentMethodRepository cardPaymentMethodRepository;
     private final CardAssociationService cardAssociationService;
-    private final GatewayService gatewayService;
+    private final CardAssociationGatewayService gatewayService;
     @Nullable
     private PaymentMethod currentPaymentMethod;
 
@@ -35,7 +35,7 @@ public class GuessingCardStoragePresenter extends GuessingCardPresenter {
         final CardPaymentMethodRepository cardPaymentMethodRepository,
         final CardAssociationService cardAssociationService,
         final MercadoPagoESC mercadoPagoESC,
-        final GatewayService gatewayService) {
+        final CardAssociationGatewayService gatewayService) {
         super();
         this.accessToken = accessToken;
         this.cardPaymentMethodRepository = cardPaymentMethodRepository;
@@ -130,7 +130,7 @@ public class GuessingCardStoragePresenter extends GuessingCardPresenter {
 
     @Override
     public void createToken() {
-        gatewayService.createToken(null, accessToken, mCardToken)
+        gatewayService.createToken(accessToken, mCardToken)
             .enqueue(new TaggedCallback<Token>(ApiUtil.RequestOrigin.CREATE_TOKEN) {
                 @Override
                 public void onSuccess(final Token token) {
@@ -184,7 +184,7 @@ public class GuessingCardStoragePresenter extends GuessingCardPresenter {
     /* default */ void saveCardEsc(final Card card) {
         final SavedESCCardToken savedESCCardToken =
             SavedESCCardToken.createWithSecurityCode(card.getId(), getCardToken().getSecurityCode());
-        gatewayService.createToken(null, accessToken, savedESCCardToken)
+        gatewayService.createEscToken(accessToken, savedESCCardToken)
             .enqueue(new TaggedCallback<Token>(CREATE_TOKEN) {
                 @Override
                 public void onSuccess(final Token token) {

@@ -89,9 +89,9 @@ You can join the MercadoPago Developers Community on MercadoPago Developers Site
 
 ## 🌈 Basic color customization
 
-```
+```xml
 
-	<!-- Main color -->
+    <!-- Main color -->
     <color name="ui_components_android_color_primary">@color/your_color</color>
 
     <!-- Toolbar's text color -->
@@ -109,9 +109,9 @@ You can join the MercadoPago Developers Community on MercadoPago Developers Site
     <!-- Default: @color/ui_components_android_color_primary -->
     <color name="ui_components_spinner_secondary_color">@color/your_color</color>
 
-	<!-- Spinner background color -->
-	<!-- Default: @color/ui_components_white_color -->
-	<color name="px_background_loading">@color/your_color</color>
+    <!-- Spinner background color -->
+    <!-- Default: @color/ui_components_white_color -->
+    <color name="px_background_loading">@color/your_color</color>
 
     <!-- Payment method icon color -->
     <!-- Default: @color/ui_components_android_color_primary -->

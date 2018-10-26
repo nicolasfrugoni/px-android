@@ -554,7 +554,7 @@ public class PaymentResultContainerTest {
         final PaymentResult paymentResult = PaymentResults.getPaymentMethodOffPaymentResult();
         final HeaderProps headerProps = getHeaderPropsFromContainerWith(paymentResult);
 
-        Assert.assertEquals(headerProps.label, paymentResultProvider.getPendingLabel());
+        Assert.assertEquals(headerProps.label, paymentResultProvider.getEmptyText());
     }
 
     @Test

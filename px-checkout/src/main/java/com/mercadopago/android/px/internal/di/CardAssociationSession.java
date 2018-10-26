@@ -3,6 +3,7 @@ package com.mercadopago.android.px.internal.di;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import com.mercadopago.android.px.internal.datasource.CardAssociationGatewayService;
 import com.mercadopago.android.px.internal.datasource.CardAssociationService;
 import com.mercadopago.android.px.internal.datasource.CardPaymentMethodService;
 import com.mercadopago.android.px.internal.datasource.MercadoPagoESC;
@@ -11,6 +12,7 @@ import com.mercadopago.android.px.internal.repository.CardPaymentMethodRepositor
 import com.mercadopago.android.px.internal.services.CardService;
 import com.mercadopago.android.px.internal.services.GatewayService;
 import com.mercadopago.android.px.internal.util.RetrofitUtil;
+import com.mercadopago.android.px.model.Device;
 
 public final class CardAssociationSession extends ApplicationModule {
 
@@ -47,7 +49,9 @@ public final class CardAssociationSession extends ApplicationModule {
         return new MercadoPagoESCImpl(getContext(), true);
     }
 
-    public GatewayService getGatewayService(){
-        return RetrofitUtil.getRetrofitClient(getContext()).create(GatewayService.class);
+    @NonNull
+    public CardAssociationGatewayService getGatewayService() {
+        return new CardAssociationGatewayService(
+            RetrofitUtil.getRetrofitClient(getContext()).create(GatewayService.class), new Device(getContext()));
     }
 }

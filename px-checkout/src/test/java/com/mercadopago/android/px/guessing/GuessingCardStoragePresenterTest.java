@@ -1,6 +1,7 @@
 package com.mercadopago.android.px.guessing;
 
 import com.mercadopago.android.px.internal.callbacks.TaggedCallback;
+import com.mercadopago.android.px.internal.datasource.CardAssociationGatewayService;
 import com.mercadopago.android.px.internal.datasource.CardAssociationService;
 import com.mercadopago.android.px.internal.datasource.MercadoPagoESC;
 import com.mercadopago.android.px.internal.features.guessing_card.GuessingCardActivityView;
@@ -9,12 +10,12 @@ import com.mercadopago.android.px.internal.features.providers.GuessingCardProvid
 import com.mercadopago.android.px.internal.features.uicontrollers.card.CardView;
 import com.mercadopago.android.px.internal.repository.CardPaymentMethodRepository;
 import com.mercadopago.android.px.internal.services.CardService;
-import com.mercadopago.android.px.internal.services.GatewayService;
 import com.mercadopago.android.px.mocks.Cards;
 import com.mercadopago.android.px.mocks.IdentificationTypes;
 import com.mercadopago.android.px.mocks.PaymentMethods;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.CardToken;
+import com.mercadopago.android.px.model.Device;
 import com.mercadopago.android.px.model.IdentificationType;
 import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.SavedESCCardToken;
@@ -26,19 +27,14 @@ import com.mercadopago.android.px.utils.StubSuccessMpCall;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.apache.commons.lang3.ObjectUtils;
-import org.hamcrest.core.AnyOf;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.internal.matchers.Any;
-import org.mockito.internal.matchers.Null;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
-import static com.mercadopago.android.px.internal.util.ApiUtil.RequestOrigin.CREATE_TOKEN;
 import static com.mercadopago.android.px.internal.util.ApiUtil.RequestOrigin.GET_IDENTIFICATION_TYPES;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -46,12 +42,10 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 @SuppressWarnings({ "PMD.ExcessiveClassLength", "unchecked" })
@@ -67,7 +61,7 @@ public class GuessingCardStoragePresenterTest {
     private GuessingCardStoragePresenter presenter;
     @Mock private CardPaymentMethodRepository cardPaymentMethodRepository;
     @Mock private MercadoPagoESC mercadoPagoESC;
-    @Mock private GatewayService gatewayService;
+    @Mock private CardAssociationGatewayService gatewayService;
     @Mock private GuessingCardActivityView guessingCardActivityView;
     @Mock private GuessingCardProvider guessingCardProvider;
     @Mock private CardService cardService;
@@ -232,7 +226,7 @@ public class GuessingCardStoragePresenterTest {
 
         final Token token = null;
 
-        when(gatewayService.createToken((String) isNull(), eq(DUMMY_ACCESS_TOKEN), any(CardToken.class)))
+        when(gatewayService.createToken(eq(DUMMY_ACCESS_TOKEN), any(CardToken.class)))
             .thenReturn(new StubSuccessMpCall<>(token));
 
         presenter.createToken();
@@ -245,7 +239,7 @@ public class GuessingCardStoragePresenterTest {
 
         initializePresenterWithValidCardPaymentMethods();
 
-        when(gatewayService.createToken((String) isNull(), eq(DUMMY_ACCESS_TOKEN), any(CardToken.class)))
+        when(gatewayService.createToken(eq(DUMMY_ACCESS_TOKEN), any(CardToken.class)))
             .thenReturn(new StubFailMpCall<Token>(new ApiException()));
 
         presenter.createToken();
@@ -265,14 +259,14 @@ public class GuessingCardStoragePresenterTest {
         final Token token = new Token();
         token.setId(DUMMY_TOKEN_ID);
 
-        when(gatewayService.createToken((String) isNull(), eq(DUMMY_ACCESS_TOKEN), any(CardToken.class)))
+        when(gatewayService.createToken(eq(DUMMY_ACCESS_TOKEN), any(CardToken.class)))
             .thenReturn(new StubSuccessMpCall<>(token));
 
         when(cardAssociationService
             .associateCardToUser(DUMMY_ACCESS_TOKEN, DUMMY_TOKEN_ID, mockedGuessedPaymentMethods.get(0).getId()))
             .thenReturn(new StubSuccessMpCall<>(new Card()));
 
-        when(gatewayService.createToken((String) isNull(), eq(DUMMY_ACCESS_TOKEN), any(SavedESCCardToken.class)))
+        when(gatewayService.createEscToken(eq(DUMMY_ACCESS_TOKEN), any(SavedESCCardToken.class)))
             .thenReturn(new StubSuccessMpCall<>(token));
 
         presenter.createToken();
@@ -293,7 +287,7 @@ public class GuessingCardStoragePresenterTest {
         final Token token = new Token();
         token.setId(DUMMY_TOKEN_ID);
 
-        when(gatewayService.createToken((String) isNull(), eq(DUMMY_ACCESS_TOKEN), any(CardToken.class)))
+        when(gatewayService.createToken(eq(DUMMY_ACCESS_TOKEN), any(CardToken.class)))
             .thenReturn(new StubSuccessMpCall<>(token));
 
         when(cardAssociationService
@@ -321,14 +315,14 @@ public class GuessingCardStoragePresenterTest {
 
         final Card stubCard = new Card();
 
-        when(gatewayService.createToken((String) isNull(), eq(DUMMY_ACCESS_TOKEN), any(CardToken.class)))
+        when(gatewayService.createToken(eq(DUMMY_ACCESS_TOKEN), any(CardToken.class)))
             .thenReturn(new StubSuccessMpCall<>(token));
 
         when(cardAssociationService
             .associateCardToUser(DUMMY_ACCESS_TOKEN, DUMMY_TOKEN_ID, mockedGuessedPaymentMethods.get(0).getId()))
             .thenReturn(new StubSuccessMpCall<>(stubCard));
 
-        when(gatewayService.createToken((String) isNull(), eq(DUMMY_ACCESS_TOKEN), any(SavedESCCardToken.class)))
+        when(gatewayService.createEscToken(eq(DUMMY_ACCESS_TOKEN), any(SavedESCCardToken.class)))
             .thenReturn(new StubSuccessMpCall<>(token));
 
         presenter.createToken();
@@ -349,7 +343,7 @@ public class GuessingCardStoragePresenterTest {
         final Token token = new Token();
         token.setId(DUMMY_TOKEN_ID);
 
-        when(gatewayService.createToken((String) isNull(), eq(DUMMY_ACCESS_TOKEN), any(CardToken.class)))
+        when(gatewayService.createToken(eq(DUMMY_ACCESS_TOKEN), any(CardToken.class)))
             .thenReturn(new StubSuccessMpCall<>(token));
 
         final Card stubCard = new Card();
@@ -358,7 +352,7 @@ public class GuessingCardStoragePresenterTest {
             .associateCardToUser(DUMMY_ACCESS_TOKEN, DUMMY_TOKEN_ID, mockedGuessedPaymentMethods.get(0).getId()))
             .thenReturn(new StubSuccessMpCall<>(stubCard));
 
-        when(gatewayService.createToken((String) isNull(), eq(DUMMY_ACCESS_TOKEN), any(SavedESCCardToken.class)))
+        when(gatewayService.createEscToken(eq(DUMMY_ACCESS_TOKEN), any(SavedESCCardToken.class)))
             .thenReturn(new StubFailMpCall<Token>(new ApiException()));
 
         presenter.createToken();
