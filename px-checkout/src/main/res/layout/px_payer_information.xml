@@ -10,7 +10,6 @@
     android:paddingTop="@dimen/px_l_margin">
 
     <LinearLayout
-        android:id="@+id/payer_information_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
