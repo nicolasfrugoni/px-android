@@ -9,6 +9,7 @@ import com.mercadopago.android.px.internal.datasource.CheckoutStore;
 import com.mercadopago.android.px.internal.features.hooks.Hook;
 import com.mercadopago.android.px.internal.features.hooks.HookHelper;
 import com.mercadopago.android.px.internal.features.providers.PaymentVaultProvider;
+import com.mercadopago.android.px.internal.navigation.DefaultPayerInformationDriver;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.GroupsRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
@@ -295,13 +296,29 @@ public class PaymentVaultPresenter extends MvpPresenter<PaymentVaultView, Paymen
                 showMismatchingPaymentMethodError();
             } else if (PaymentMethods.BRASIL.BOLBRADESCO.equalsIgnoreCase(selectedPaymentMethod.getId())
                 || PaymentMethods.BRASIL.PEC.equalsIgnoreCase(selectedPaymentMethod.getId())) {
-                getView().collectPayerInformation();
+                handleCollectPayerInformation();
             } else {
                 getView().finishPaymentMethodSelection(selectedPaymentMethod);
             }
         } else {
             resumeItem = item;
         }
+    }
+
+    private void handleCollectPayerInformation() {
+        new DefaultPayerInformationDriver(configuration.getCheckoutPreference().getPayer())
+            .drive(
+                new DefaultPayerInformationDriver.PayerInformationDriverCallback() {
+                    @Override
+                    public void driveToNewPayerData() {
+                        getView().collectPayerInformation();
+                    }
+
+                    @Override
+                    public void driveToReviewConfirm() {
+                        getView().finishPaymentMethodSelection(userSelectionRepository.getPaymentMethod());
+                    }
+                });
     }
 
     public boolean isOnlyOneItemAvailable() {

@@ -34,6 +34,8 @@
     <!-- Installments -->
     <string name="px_card_installments_title">Em quantas parcelas?</string>
 
+    <!-- Payer Information -->
+    <string name="px_payer_information_modify">Modificar</string>
 
     <!-- Terms And Conditions -->
     <string name="px_terms_and_conditions_message">Ao pagar, declaro que sou maior de idade e aceito os</string>

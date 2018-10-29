@@ -41,6 +41,11 @@
     <string name="px_installments_by" translatable="false">x</string>
     <string name="px_installments_cft" translatable="false">CFT: %1$s</string>
 
+    <!-- Payer Information -->
+    <string name="px_payer_information_identification_type_and_number" translatable="false">%1$s: %2$s</string>
+    <string name="px_payer_information_first_and_last_name" translatable="false">%1$s %2$s</string>
+    <string name="px_payer_information_modify">Modify</string>
+
     <!-- Terms And Conditions -->
     <string name="px_terms_and_conditions_message">By paying, I claim to be an adult and that I accept the</string>
     <string name="px_terms_and_conditions_linked_message">Terms and conditions.</string>

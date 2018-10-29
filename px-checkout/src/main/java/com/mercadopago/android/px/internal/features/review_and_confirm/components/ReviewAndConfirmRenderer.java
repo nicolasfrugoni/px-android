@@ -10,15 +10,19 @@ import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.configuration.DynamicFragmentConfiguration;
 import com.mercadopago.android.px.core.DynamicFragmentCreator;
 import com.mercadopago.android.px.internal.di.Session;
+import com.mercadopago.android.px.internal.features.review_and_confirm.components.actions.ChangePayerInformationAction;
 import com.mercadopago.android.px.internal.features.review_and_confirm.components.actions.ChangePaymentMethodAction;
 import com.mercadopago.android.px.internal.features.review_and_confirm.components.items.ReviewItems;
+import com.mercadopago.android.px.internal.features.review_and_confirm.components.payer_information.PayerInformationComponent;
 import com.mercadopago.android.px.internal.features.review_and_confirm.components.payment_method.PaymentMethodComponent;
 import com.mercadopago.android.px.internal.features.review_and_confirm.models.PaymentModel;
+import com.mercadopago.android.px.internal.navigation.DefaultPayerInformationDriver;
 import com.mercadopago.android.px.internal.util.FragmentUtil;
 import com.mercadopago.android.px.internal.view.ActionDispatcher;
 import com.mercadopago.android.px.internal.view.Renderer;
 import com.mercadopago.android.px.internal.view.RendererFactory;
 import com.mercadopago.android.px.internal.view.TermsAndConditionsComponent;
+import com.mercadopago.android.px.model.Payer;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 
 public class ReviewAndConfirmRenderer extends Renderer<ReviewAndConfirmContainer> {
@@ -46,11 +50,23 @@ public class ReviewAndConfirmRenderer extends Renderer<ReviewAndConfirmContainer
                 component.props.preferences.getTopFragment());
         }
 
+        new DefaultPayerInformationDriver(component.props.payer).drive(
+            new DefaultPayerInformationDriver.PayerInformationDriverCallback() {
+                @Override
+                public void driveToNewPayerData() {
+                    // If payer is not valid, do nothing
+                }
+
+                @Override
+                public void driveToReviewConfirm() {
+                    addPayerInformation(component.props.payer, component.getDispatcher(), linearLayout);
+                }
+            });
+
         final Session session = Session.getSession(context);
         final CheckoutPreference checkoutPreference =
             session.getConfigurationModule().getPaymentSettings().getCheckoutPreference();
 
-            ;
         final DynamicFragmentCreator.CheckoutData data =
             new DynamicFragmentCreator.CheckoutData(checkoutPreference, session.getPaymentRepository().getPaymentData());
 
@@ -95,6 +111,20 @@ public class ReviewAndConfirmRenderer extends Renderer<ReviewAndConfirmContainer
         parent.addView(linearLayout);
 
         return parent;
+    }
+
+    private void addPayerInformation(final Payer payer, final ActionDispatcher dispatcher,
+        final LinearLayout linearLayout) {
+        final PayerInformationComponent payerInformationComponent =
+            new PayerInformationComponent(payer, linearLayout.getContext(),
+                new PayerInformationComponent.Actions() {
+                    @Override
+                    public void onModifyPayerInformationClicked() {
+                        dispatcher.dispatch(new ChangePayerInformationAction());
+                    }
+                });
+        final View payerView = payerInformationComponent.render(linearLayout);
+        linearLayout.addView(payerView);
     }
 
     private void addSummary(@NonNull final ReviewAndConfirmContainer component, final LinearLayout linearLayout) {

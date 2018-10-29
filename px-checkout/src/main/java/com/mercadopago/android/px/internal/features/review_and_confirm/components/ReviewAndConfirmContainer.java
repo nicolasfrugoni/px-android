@@ -11,6 +11,7 @@ import com.mercadopago.android.px.internal.features.review_and_confirm.models.Te
 import com.mercadopago.android.px.internal.view.ActionDispatcher;
 import com.mercadopago.android.px.internal.view.Component;
 import com.mercadopago.android.px.internal.view.RendererFactory;
+import com.mercadopago.android.px.model.Payer;
 
 public class ReviewAndConfirmContainer extends Component<ReviewAndConfirmContainer.Props, Void> {
 
@@ -42,6 +43,7 @@ public class ReviewAndConfirmContainer extends Component<ReviewAndConfirmContain
         /* default */ @NonNull final DynamicFragmentConfiguration dynamicFragments;
         /* default */ @NonNull final ItemsModel itemsModel;
         /* default */ @Nullable final TermsAndConditionsModel discountTermsAndConditionsModel;
+        /* default */ @Nullable final Payer payer;
 
         public Props(@Nullable final TermsAndConditionsModel mercadoPagoTermsAndConditionsModel,
             @NonNull final PaymentModel paymentModel,
@@ -49,7 +51,8 @@ public class ReviewAndConfirmContainer extends Component<ReviewAndConfirmContain
             @NonNull final ReviewAndConfirmConfiguration preferences,
             @NonNull final DynamicFragmentConfiguration dynamicFragments,
             @NonNull final ItemsModel itemsModel,
-            @Nullable final TermsAndConditionsModel discountTermsAndConditionsModel) {
+            @Nullable final TermsAndConditionsModel discountTermsAndConditionsModel,
+            @Nullable final Payer payer) {
 
             this.mercadoPagoTermsAndConditionsModel = mercadoPagoTermsAndConditionsModel;
             this.paymentModel = paymentModel;
@@ -58,6 +61,7 @@ public class ReviewAndConfirmContainer extends Component<ReviewAndConfirmContain
             this.dynamicFragments = dynamicFragments;
             this.itemsModel = itemsModel;
             this.discountTermsAndConditionsModel = discountTermsAndConditionsModel;
+            this.payer = payer;
         }
     }
 }

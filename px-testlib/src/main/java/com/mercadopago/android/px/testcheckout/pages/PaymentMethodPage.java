@@ -44,6 +44,18 @@ public class PaymentMethodPage extends PageObject<CheckoutValidator> {
         return new CashPage(validator);
     }
 
+    public ReviewAndConfirmPage selectTicketWithDefaultPayer() {
+        onView(withId(R.id.mpsdkGroupsList))
+            .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+        return new ReviewAndConfirmPage();
+    }
+
+    public PayerInformationPage selectTicketWithoutPayer() {
+        onView(withId(R.id.mpsdkGroupsList))
+            .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+        return new PayerInformationPage();
+    }
+
     public DiscountDetailPage pressOnDiscountDetail() {
         onView(withId(R.id.amount_view)).perform(click());
         return new DiscountDetailPage(validator);
