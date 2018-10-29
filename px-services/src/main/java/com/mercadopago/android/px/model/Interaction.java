@@ -6,12 +6,6 @@ public class Interaction {
     private String title;
     private String content;
 
-    public Interaction(final InstructionAction action, final String title, final String content) {
-        this.action = action;
-        this.title = title;
-        this.content = content;
-    }
-
     public InstructionAction getAction() {
         return action;
     }
