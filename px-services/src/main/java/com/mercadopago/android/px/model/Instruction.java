@@ -10,9 +10,16 @@ public class Instruction {
     private List<String> tertiaryInfo;
     private String accreditationMessage;
     private String type;
+    private List<Interaction> interactions;
     private List<String> accreditationComments;
     private List<InstructionAction> actions;
     private List<InstructionReference> references;
+
+    public Instruction(final String title,
+        final List<Interaction> interactions) {
+        this.title = title;
+        this.interactions = interactions;
+    }
 
     public List<InstructionReference> getReferences() {
         return references;
@@ -48,6 +55,10 @@ public class Instruction {
 
     public List<InstructionAction> getActions() {
         return actions;
+    }
+
+    public List<Interaction> getInteractions() {
+        return interactions;
     }
 
     public String getType() {

@@ -28,6 +28,9 @@ public class InstructionsContentRenderer extends Renderer<InstructionsContent> {
         if (component.hasInfo()) {
             RendererFactory.create(context, component.getInfoComponent()).render(parentViewGroup);
         }
+        if(component.hasInstructionInteractions()){
+            RendererFactory.create(context, component.getInteractionsComponent()).render(parentViewGroup);
+        }
         if (component.hasReferences()) {
             RendererFactory.create(context, component.getReferencesComponent()).render(parentViewGroup);
         }

@@ -1,6 +1,7 @@
 package com.mercadopago.android.px.internal.features.paymentresult.components;
 
 import android.support.annotation.NonNull;
+import com.mercadopago.android.px.internal.features.paymentresult.props.InstructionInteractionsProps;
 import com.mercadopago.android.px.internal.features.paymentresult.props.InstructionsActionsProps;
 import com.mercadopago.android.px.internal.features.paymentresult.props.InstructionsContentProps;
 import com.mercadopago.android.px.internal.features.paymentresult.props.InstructionsInfoProps;
@@ -9,6 +10,7 @@ import com.mercadopago.android.px.internal.features.paymentresult.props.Instruct
 import com.mercadopago.android.px.internal.view.ActionDispatcher;
 import com.mercadopago.android.px.internal.view.Component;
 import com.mercadopago.android.px.model.InstructionAction;
+import com.mercadopago.android.px.model.Interaction;
 import com.mercadopago.android.px.model.InstructionReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +42,11 @@ public class InstructionsContent extends Component<InstructionsContentProps, Voi
         final List<String> accreditationComments = props.instruction.getAccreditationComments();
         final boolean hasComments = accreditationComments != null && !accreditationComments.isEmpty();
         return hasMessage || hasComments;
+    }
+
+    public boolean hasInstructionInteractions() {
+        final List<Interaction> interactions = props.instruction.getInteractions();
+        return interactions != null && !interactions.isEmpty();
     }
 
     public boolean hasActions() {
@@ -146,5 +153,13 @@ public class InstructionsContent extends Component<InstructionsContentProps, Voi
             .build();
 
         return new InstructionsActions(instructionsActionsProps, getDispatcher());
+    }
+
+    public InstructionInteractions getInteractionsComponent() {
+        final InstructionInteractionsProps instructionInteractionsProps = new InstructionInteractionsProps.Builder()
+            .setInstructionInteractions(props.instruction.getInteractions())
+            .build();
+
+        return new InstructionInteractions(instructionInteractionsProps, getDispatcher());
     }
 }
