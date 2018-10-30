@@ -24,7 +24,7 @@ public class PayerInformationComponent extends CompactComponent<Payer, PayerInfo
         void onModifyPayerInformationClicked();
     }
 
-    public PayerInformationComponent(@NonNull final Payer props, @Nonnull Context context, @Nonnull Actions actions) {
+    public PayerInformationComponent(@NonNull final Payer props, @Nonnull final Context context, @Nonnull final Actions actions) {
         super(props, actions);
         this.context = context;
     }
