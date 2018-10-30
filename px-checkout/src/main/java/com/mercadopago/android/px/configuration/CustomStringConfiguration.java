@@ -35,6 +35,7 @@ public class CustomStringConfiguration {
          * @param mainVerbStringResId the string resource that will be used
          * @return builder to keep operating
          */
+        @SuppressWarnings("unused")
         public Builder setMainVerbStringResourceId(@StringRes final int mainVerbStringResId) {
             mainVerbStringResourceId = mainVerbStringResId;
             return this;
