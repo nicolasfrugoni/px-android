@@ -10,15 +10,13 @@ import com.google.gson.reflect.TypeToken;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.internal.adapters.ReviewPaymentMethodsAdapter;
 import com.mercadopago.android.px.internal.features.providers.ReviewPaymentMethodsProviderImpl;
+import com.mercadopago.android.px.internal.tracker.Tracker;
 import com.mercadopago.android.px.internal.util.ErrorUtil;
 import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.tracking.internal.utils.TrackingUtil;
 import java.lang.reflect.Type;
 import java.util.List;
-
-/**
- * Created by vaserber on 8/17/17.
- */
 
 public class ReviewPaymentMethodsActivity extends MercadoPagoBaseActivity implements ReviewPaymentMethodsView {
 
@@ -41,6 +39,9 @@ public class ReviewPaymentMethodsActivity extends MercadoPagoBaseActivity implem
         initializeControls();
         setListeners();
         mPresenter.initialize();
+
+        Tracker.trackScreen(TrackingUtil.SCREEN_ID_EXCLUDED_CARD, TrackingUtil.SCREEN_ID_EXCLUDED_CARD,
+            getApplicationContext());
     }
 
     protected void createPresenter() {

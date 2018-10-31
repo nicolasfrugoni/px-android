@@ -75,7 +75,7 @@ public class TermsAndConditionsActivity extends MercadoPagoActivity {
 
     @Override
     protected void onValidStart() {
-        Tracker.trackDiscountTermsAndConditions(getApplicationContext());
+        Tracker.trackReviewAndConfirmTermsAndConditions(getApplicationContext());
         showMPTermsAndConditions();
     }
 

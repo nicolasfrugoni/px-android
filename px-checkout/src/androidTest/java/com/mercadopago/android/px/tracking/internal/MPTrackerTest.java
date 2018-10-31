@@ -121,8 +121,8 @@ public class MPTrackerTest {
 
         MPTracker.getInstance().setTracksListener(new PXEventListener() {
             @Override
-            public void onScreenLaunched(@NonNull final String screenName, @Nullable final Map extraParams) {
-                assertEquals(((ScreenViewEvent) screenViewEvent).getScreenName(), screenName);
+            public void onScreenLaunched(@NonNull final String screenId, @Nullable final Map extraParams) {
+                assertEquals(((ScreenViewEvent) screenViewEvent).getScreenId(), screenId);
             }
 
             @Override
@@ -162,8 +162,7 @@ public class MPTrackerTest {
             public void onScreenLaunched(@NonNull final String screenName,
                 @NonNull final Map<String, String> extraParams) {
                 assertNotNull(extraParams);
-                assertEquals(1, extraParams.size());
-                assertEquals(MOCKED_PROPERTY_VALUE_1, extraParams.get(MOCKED_PROPERTY_KEY_1));
+                assertEquals(0, extraParams.size());
             }
 
             @Override

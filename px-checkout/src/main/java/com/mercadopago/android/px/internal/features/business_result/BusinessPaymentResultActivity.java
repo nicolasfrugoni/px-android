@@ -15,8 +15,6 @@ import com.mercadopago.android.px.model.Action;
 import com.mercadopago.android.px.model.ExitAction;
 
 import static com.mercadopago.android.px.internal.features.Constants.RESULT_CUSTOM_EXIT;
-import static com.mercadopago.android.px.tracking.internal.utils.TrackingUtil.SCREEN_ID_PAYMENT_RESULT_BUSINESS;
-import static com.mercadopago.android.px.tracking.internal.utils.TrackingUtil.SCREEN_NAME_PAYMENT_RESULT;
 
 public class BusinessPaymentResultActivity extends AppCompatActivity implements ActionDispatcher {
 
@@ -39,7 +37,10 @@ public class BusinessPaymentResultActivity extends AppCompatActivity implements 
         } else {
             throw new IllegalStateException("BusinessPayment can't be loaded");
         }
-        Tracker.trackScreen(SCREEN_ID_PAYMENT_RESULT_BUSINESS, SCREEN_NAME_PAYMENT_RESULT,
+
+        Tracker.trackBusinessPaymentResultScreen(
+            model.payment.getPaymentStatus(),
+            model.payment.getPaymentStatusDetail(),
             getApplicationContext());
     }
 

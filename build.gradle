@@ -28,8 +28,8 @@ ext {
 subprojects {
     repositories {
         mavenLocal()
-        jcenter()
         google()
+        jcenter()
     }
 }
 

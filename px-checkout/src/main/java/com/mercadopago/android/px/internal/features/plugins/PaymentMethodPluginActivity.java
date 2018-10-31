@@ -9,23 +9,18 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import com.mercadopago.android.px.BuildConfig;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.core.PaymentMethodPlugin;
 import com.mercadopago.android.px.internal.di.ConfigurationModule;
 import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.internal.repository.PluginRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
-import com.mercadopago.android.px.internal.tracker.FlowHandler;
-import com.mercadopago.android.px.internal.tracker.MPTrackingContext;
 import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.PaymentMethodInfo;
-import com.mercadopago.android.px.model.ScreenViewEvent;
 
 public class PaymentMethodPluginActivity extends AppCompatActivity implements
     PaymentMethodPlugin.OnPaymentMethodListener {
 
-    private static final String SCREEN_NAME_CONFIG_PAYMENT_METHOD_PLUGIN = "CONFIG_PAYMENT_METHOD";
     private static final String PLUGIN_FRAGMENT = PaymentMethodPluginActivity.class.getName() + "_fragment";
 
     public static Intent getIntent(@NonNull final Context context) {
@@ -72,24 +67,6 @@ public class PaymentMethodPluginActivity extends AppCompatActivity implements
                 .replace(R.id.px_main_container, fragment, PLUGIN_FRAGMENT)
                 .commit();
         }
-
-        trackScreen(plugin.getId());
-    }
-
-    private void trackScreen(final String id) {
-        final String screenName = SCREEN_NAME_CONFIG_PAYMENT_METHOD_PLUGIN + "_" + id;
-        final String publicKey = Session.getSession(this).getConfigurationModule().getPaymentSettings().getPublicKey();
-        final MPTrackingContext mTrackingContext = new MPTrackingContext.Builder(this, publicKey)
-            .setVersion(BuildConfig.VERSION_NAME)
-            .build();
-
-        final ScreenViewEvent event = new ScreenViewEvent.Builder()
-            .setFlowId(FlowHandler.getInstance().getFlowId())
-            .setScreenId(screenName)
-            .setScreenName(screenName)
-            .build();
-
-        mTrackingContext.trackEvent(event);
     }
 
     @Override

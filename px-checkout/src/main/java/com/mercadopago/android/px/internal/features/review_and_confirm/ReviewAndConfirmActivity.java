@@ -587,7 +587,6 @@ public final class ReviewAndConfirmActivity extends MercadoPagoBaseActivity impl
     public void showErrorSnackBar(@NonNull final MercadoPagoError error) {
         MeliSnackbar.make(floatingConfirmLayout, error.getMessage(), Snackbar.LENGTH_LONG,
             MeliSnackbar.SnackbarType.ERROR).show();
-        Tracker.trackError(getApplicationContext(), error);
     }
 
     @Override

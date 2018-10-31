@@ -1,12 +1,12 @@
 package com.mercadopago.android.px.internal.features;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import com.mercadopago.android.px.internal.base.MvpPresenter;
 import com.mercadopago.android.px.internal.callbacks.FailureRecovery;
 import com.mercadopago.android.px.internal.callbacks.OnSelectedCallback;
 import com.mercadopago.android.px.internal.callbacks.TaggedCallback;
 import com.mercadopago.android.px.internal.features.providers.IssuersProvider;
-import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.internal.util.ApiUtil;
 import com.mercadopago.android.px.model.CardInfo;
 import com.mercadopago.android.px.model.Issuer;
@@ -15,23 +15,21 @@ import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by vaserber on 10/11/16.
- */
-
 public class IssuersPresenter extends MvpPresenter<IssuersActivityView, IssuersProvider> {
 
-    @NonNull private final UserSelectionRepository userSelectionRepository;
+    @Nullable private PaymentMethod paymentMethod;
     //Local vars
-    private List<Issuer> mIssuers;
+    @Nullable private List<Issuer> mIssuers;
     private CardInfo mCardInfo;
     private FailureRecovery mFailureRecovery;
+    private boolean comesFromStorageFlow = false;
 
     //Card Info
     private String mBin = "";
 
-    public IssuersPresenter(@NonNull final UserSelectionRepository userSelectionRepository) {
-        this.userSelectionRepository = userSelectionRepository;
+    public IssuersPresenter(@Nullable final PaymentMethod paymentMethod, final boolean comesFromStorageFlow) {
+        this.paymentMethod = paymentMethod;
+        this.comesFromStorageFlow = comesFromStorageFlow;
     }
 
     public void initialize() {
@@ -46,38 +44,37 @@ public class IssuersPresenter extends MvpPresenter<IssuersActivityView, IssuersP
         return mIssuers != null;
     }
 
-    private void resolveIssuers(List<Issuer> issuers) {
+    /* default */ void resolveIssuers(@Nullable List<Issuer> issuers) {
         if (issuers == null) {
             issuers = new ArrayList<>();
         }
 
-        mIssuers = issuers;
+        setIssuers(issuers);
 
         if (mIssuers.isEmpty()) {
             getView().showError(getResourcesProvider().getEmptyIssuersError(), "");
         } else if (mIssuers.size() == 1) {
             final Issuer issuer = issuers.get(0);
-            storeIssuerSelection(issuer);
-            getView().finishWithResult();
+            getView().finishWithResult(issuer);
         } else {
             getView().showHeader();
             getView().showIssuers(issuers, getDpadSelectionCallback());
         }
     }
 
-    private void getIssuersAsync() {
+    /* default */ void getIssuersAsync() {
         getView().showLoadingView();
 
-        getResourcesProvider().getIssuers(userSelectionRepository.getPaymentMethod().getId(), mBin,
+        getResourcesProvider().getIssuers(getPaymentMethod().getId(), mBin,
             new TaggedCallback<List<Issuer>>(ApiUtil.RequestOrigin.GET_ISSUERS) {
                 @Override
-                public void onSuccess(List<Issuer> issuers) {
+                public void onSuccess(final List<Issuer> issuers) {
                     getView().stopLoadingView();
                     resolveIssuers(issuers);
                 }
 
                 @Override
-                public void onFailure(MercadoPagoError error) {
+                public void onFailure(final MercadoPagoError error) {
                     getView().stopLoadingView();
 
                     setFailureRecovery(new FailureRecovery() {
@@ -95,7 +92,7 @@ public class IssuersPresenter extends MvpPresenter<IssuersActivityView, IssuersP
     private OnSelectedCallback<Integer> getDpadSelectionCallback() {
         return new OnSelectedCallback<Integer>() {
             @Override
-            public void onSelected(Integer position) {
+            public void onSelected(final Integer position) {
                 onItemSelected(position);
             }
         };
@@ -103,12 +100,11 @@ public class IssuersPresenter extends MvpPresenter<IssuersActivityView, IssuersP
 
     public void onItemSelected(final int position) {
         final Issuer issuer = mIssuers.get(position);
-        storeIssuerSelection(issuer);
-        getView().finishWithResult();
-    }
-
-    private void storeIssuerSelection(@NonNull final Issuer issuer) {
-        userSelectionRepository.select(issuer);
+        if (comesFromStorageFlow) {
+            getView().finishWithResultForCardStorage(issuer.getId());
+        } else {
+            getView().finishWithResult(issuer);
+        }
     }
 
     public void recoverFromFailure() {
@@ -117,11 +113,16 @@ public class IssuersPresenter extends MvpPresenter<IssuersActivityView, IssuersP
         }
     }
 
+    @Nullable
     public PaymentMethod getPaymentMethod() {
-        return userSelectionRepository.getPaymentMethod();
+        return paymentMethod;
     }
 
-    public void setIssuers(List<Issuer> issuers) {
+    public void setPaymentMethod(@NonNull final PaymentMethod paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
+    public void setIssuers(@Nullable final List<Issuer> issuers) {
         mIssuers = issuers;
     }
 
@@ -129,15 +130,7 @@ public class IssuersPresenter extends MvpPresenter<IssuersActivityView, IssuersP
         return mCardInfo;
     }
 
-    public void setFailureRecovery(FailureRecovery failureRecovery) {
-        mFailureRecovery = failureRecovery;
-    }
-
-    public FailureRecovery getFailureRecovery() {
-        return mFailureRecovery;
-    }
-
-    public void setCardInfo(CardInfo cardInfo) {
+    public void setCardInfo(final CardInfo cardInfo) {
         mCardInfo = cardInfo;
 
         if (mCardInfo != null) {
@@ -145,11 +138,19 @@ public class IssuersPresenter extends MvpPresenter<IssuersActivityView, IssuersP
         }
     }
 
+    public FailureRecovery getFailureRecovery() {
+        return mFailureRecovery;
+    }
+
+    public void setFailureRecovery(final FailureRecovery failureRecovery) {
+        mFailureRecovery = failureRecovery;
+    }
+
     public String getBin() {
         return mBin;
     }
 
     public boolean isRequiredCardDrawn() {
-        return mCardInfo != null && userSelectionRepository.getPaymentMethod() != null;
+        return mCardInfo != null && paymentMethod != null;
     }
 }

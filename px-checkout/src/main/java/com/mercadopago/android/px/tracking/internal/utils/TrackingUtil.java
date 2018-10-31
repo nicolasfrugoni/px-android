@@ -8,52 +8,34 @@ public final class TrackingUtil {
     public static final String ACTION_CANCEL_ONE_TAP = "/back_action";
 
     //Screen IDs
-    public static final String SCREEN_ID_CHECKOUT = "/init";
-    public static final String SCREEN_ID_PAYMENT_VAULT = "/payment_option";
-    public static final String SCREEN_ID_PAYMENT_VAULT_TICKET = "/payment_option/ticket";
-    public static final String SCREEN_ID_PAYMENT_VAULT_BANK_TRANSFER = "/payment_option/bank_transfer";
-    public static final String SCREEN_ID_PAYMENT_VAULT_CARDS = "/payment_option/card";
-    public static final String SCREEN_ID_REVIEW_AND_CONFIRM = "/review";
-    public static final String SCREEN_ID_PAYMENT_RESULT_APPROVED = "/congrats/approved";
-    public static final String SCREEN_ID_PAYMENT_RESULT_PENDING = "/congrats/in_process";
-    public static final String SCREEN_ID_PAYMENT_RESULT_REJECTED = "/congrats/rejected";
-    public static final String SCREEN_ID_PAYMENT_RESULT_INSTRUCTIONS = "/congrats/instructions";
-    public static final String SCREEN_ID_PAYMENT_RESULT_BUSINESS = "/congrats/business";
-    public static final String SCREEN_ID_BANK_DEALS = "/bank_deals";
-    public static final String SCREEN_ID_CARD_FORM = "/card/";
-    public static final String SCREEN_ID_ERROR = "/failure";
-    public static final String SCREEN_ID_PAYMENT_TYPES = "/card/payment_types";
-    public static final String SCREEN_ID_IDENTIFICATION = "/identification";
-    public static final String SCREEN_ID_ISSUERS = "/card/issuer";
-    public static final String SCREEN_ID_INSTALLMENTS = "/card/installments";
-    public static final String SCREEN_ID_ONE_TAP = "/express";
-    public static final String SCREEN_ID_DISCOUNT_TERMS = "/discount_terms_conditions";
+    public static final String SCREEN_ID_PAYMENT_VAULT = "/px_checkout/payments/select_method";
+    public static final String SCREEN_ID_PAYMENT_VAULT_TICKET = "/px_checkout/payments/select_method/ticket";
+    public static final String SCREEN_ID_PAYMENT_VAULT_CARDS = "/px_checkout/payments/select_method/select_card_type";
+    public static final String SCREEN_ID_APPLIED_DISCOUNT = "/px_checkout/payments/select_method/applied_discount";
+    public static final String SCREEN_ID_PROMOTIONS = "/px_checkout/add_payment_method/promotions";
+    public static final String SCREEN_ID_PROMOTIONS_TERMS_AND_CONDITIONS =
+        "/px_checkout/add_payment_method/promotions/terms_and_conditions";
 
-    //Screen Names
-    public static final String SCREEN_NAME_PAYMENT_VAULT = "PAYMENT_METHOD_SEARCH";
-    public static final String SCREEN_NAME_PAYMENT_VAULT_TICKET = "PAYMENT_METHOD_SEARCH";
-    public static final String SCREEN_NAME_PAYMENT_VAULT_BANK_TRANSFER = "PAYMENT_METHOD_SEARCH";
-    public static final String SCREEN_NAME_PAYMENT_VAULT_CARDS = "PAYMENT_METHOD_SEARCH";
-    public static final String SCREEN_NAME_REVIEW_AND_CONFIRM = "REVIEW_AND_CONFIRM";
-    public static final String SCREEN_NAME_PAYMENT_RESULT = "RESULT";
-    public static final String SCREEN_NAME_PAYMENT_RESULT_CALL_FOR_AUTH = "CALL_FOR_AUTHORIZE";
-    public static final String SCREEN_NAME_PAYMENT_RESULT_INSTRUCTIONS = "INSTRUCTIONS";
-    public static final String SCREEN_NAME_BANK_DEALS = "BANK_DEALS";
-    public static final String SCREEN_NAME_CARD_FORM = "CARD_VAULT";
-    public static final String SCREEN_NAME_CARD_FORM_NUMBER = "CARD_NUMBER";
-    public static final String SCREEN_NAME_CARD_FORM_NAME = "CARD_HOLDER_NAME";
-    public static final String SCREEN_NAME_CARD_FORM_EXPIRY = "CARD_EXPIRY_DATE";
-    public static final String SCREEN_NAME_CARD_FORM_CVV = "CARD_SECURITY_CODE";
-    public static final String SCREEN_NAME_CARD_FORM_IDENTIFICATION_NUMBER = "IDENTIFICATION_NUMBER";
-    public static final String SCREEN_NAME_CARD_FORM_ISSUERS = "CARD_ISSUERS";
-    public static final String SCREEN_NAME_CARD_FORM_INSTALLMENTS = "CARD_INSTALLMENTS";
-    public static final String SCREEN_NAME_ERROR = "ERROR_VIEW";
-    public static final String SCREEN_NAME_PAYMENT_TYPES = "CARD_PAYMENT_TYPES";
-    public static final String SCREEN_NAME_SECURITY_CODE = "SECURITY_CODE_CARD";
+    public static final String SCREEN_ID_CARD_FORM = "/px_checkout/add_payment_method/";
+    public static final String SCREEN_ID_EXCLUDED_CARD =
+        "/px_checkout/add_payment_method/credit_card/number/error_more_info";
+    public static final String SCREEN_ID_ISSUERS = "/px_checkout/payments/card_issuer";
+    public static final String SCREEN_ID_INSTALLMENTS = "/px_checkout/payments/installments";
+
+    public static final String SCREEN_ID_BOLBRADESCO_CPF = "/px_checkout/select_method/ticket/cpf";
+    public static final String SCREEN_ID_BOLBRADESCO_NAME = "/px_checkout/select_method/ticket/name";
+    public static final String SCREEN_ID_BOLBRADESCO_LASTNAME = "/px_checkout/select_method/ticket/lastname";
+
+    public static final String SCREEN_ID_REVIEW_AND_CONFIRM = "/px_checkout/review/traditional";
+    public static final String SCREEN_NAME_REVIEW_TERMS_AND_CONDITIONS =
+        "/px_checkout/review/traditional/terms_and_conditions";
+    public static final String SCREEN_ID_ONE_TAP = "/px_checkout/review/one_tap";
+
+    public static final String SCREEN_ID_PAYMENT_RESULT_APPROVED = "/px_checkout/result/success";
+    public static final String SCREEN_ID_PAYMENT_RESULT_PENDING = "/px_checkout/result/further_action_needed";
+    public static final String SCREEN_ID_PAYMENT_RESULT_REJECTED = "/px_checkout/result/error";
 
     //Payment Vault Group Ids
-    public static final String GROUP_TICKET = "ticket";
-    public static final String GROUP_BANK_TRANSFER = "bank_transfer";
     public static final String GROUP_CARDS = "cards";
 
     //Security Code Reason
@@ -64,9 +46,9 @@ public final class TrackingUtil {
     //Sufix
     public static final String CARD_NUMBER = "/number";
     public static final String CARD_HOLDER_NAME = "/name";
-    public static final String CARD_EXPIRATION_DATE = "/expiration";
+    public static final String CARD_HOLDER_IDENTIFICATION = "/document";
+    public static final String CARD_EXPIRATION_DATE = "/expiration_date";
     public static final String CARD_SECURITY_CODE = "/cvv";
-    public static final String CARD_SECURITY_CODE_VIEW = "/security_code";
 
     //Additional Info Keys
     public static final String PROPERTY_PAYMENT_METHOD_ID = "payment_method";

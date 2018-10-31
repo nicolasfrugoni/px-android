@@ -137,6 +137,8 @@ public interface GuessingCardActivityView extends MvpView {
 
     void setPaymentMethod(PaymentMethod paymentMethod);
 
+    void askForIssuer(CardInfo cardInfo, List<Issuer> issuers, PaymentMethod paymentMethod);
+
     void recoverCardViews(boolean lowResActive, String cardNumber, String cardHolderName, String expiryMonth,
         String expiryYear, String identificationNumber, IdentificationType identificationType);
 }

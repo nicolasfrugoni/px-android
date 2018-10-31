@@ -12,18 +12,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import com.google.gson.reflect.TypeToken;
-import com.mercadopago.android.px.BuildConfig;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.internal.adapters.PaymentTypesAdapter;
 import com.mercadopago.android.px.internal.callbacks.OnSelectedCallback;
 import com.mercadopago.android.px.internal.callbacks.RecyclerItemClickListener;
 import com.mercadopago.android.px.internal.controllers.CheckoutTimer;
-import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.internal.features.uicontrollers.FontCache;
 import com.mercadopago.android.px.internal.features.uicontrollers.card.CardRepresentationModes;
 import com.mercadopago.android.px.internal.features.uicontrollers.card.FrontCardView;
-import com.mercadopago.android.px.internal.tracker.FlowHandler;
-import com.mercadopago.android.px.internal.tracker.MPTrackingContext;
 import com.mercadopago.android.px.internal.util.ErrorUtil;
 import com.mercadopago.android.px.internal.util.JsonUtil;
 import com.mercadopago.android.px.internal.util.ScaleUtil;
@@ -31,8 +27,6 @@ import com.mercadopago.android.px.internal.view.MPTextView;
 import com.mercadopago.android.px.model.CardInfo;
 import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.PaymentType;
-import com.mercadopago.android.px.model.ScreenViewEvent;
-import com.mercadopago.android.px.tracking.internal.utils.TrackingUtil;
 import com.mercadopago.android.px.model.exceptions.ApiException;
 import java.lang.reflect.Type;
 import java.util.List;
@@ -124,20 +118,6 @@ public class PaymentTypesActivity extends MercadoPagoBaseActivity implements Pay
         showTimer();
         initializeAdapter();
         mPresenter.loadPaymentTypes();
-        trackScreen(Session.getSession(this).getConfigurationModule().getPaymentSettings().getPublicKey());
-    }
-
-    protected void trackScreen(final String publicKey) {
-        MPTrackingContext mpTrackingContext = new MPTrackingContext.Builder(this, publicKey)
-            .setVersion(BuildConfig.VERSION_NAME)
-            .build();
-
-        final ScreenViewEvent event = new ScreenViewEvent.Builder()
-            .setFlowId(FlowHandler.getInstance().getFlowId())
-            .setScreenId(TrackingUtil.SCREEN_ID_PAYMENT_TYPES)
-            .setScreenName(TrackingUtil.SCREEN_NAME_PAYMENT_TYPES)
-            .build();
-        mpTrackingContext.trackEvent(event);
     }
 
     private void showTimer() {

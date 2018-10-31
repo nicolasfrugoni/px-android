@@ -55,8 +55,8 @@ public class BankDealsActivity extends MercadoPagoActivity implements OnSelected
             .build();
         ScreenViewEvent event = new ScreenViewEvent.Builder()
             .setFlowId(FlowHandler.getInstance().getFlowId())
-            .setScreenId(TrackingUtil.SCREEN_ID_BANK_DEALS)
-            .setScreenName(TrackingUtil.SCREEN_NAME_BANK_DEALS)
+            .setScreenId(TrackingUtil.SCREEN_ID_PROMOTIONS)
+            .setScreenName(TrackingUtil.SCREEN_ID_PROMOTIONS)
             .build();
 
         mpTrackingContext.trackEvent(event);

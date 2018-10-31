@@ -1,6 +1,5 @@
 package com.mercadopago.android.px.issuers;
 
-import android.support.annotation.NonNull;
 import com.mercadopago.android.px.internal.callbacks.OnSelectedCallback;
 import com.mercadopago.android.px.internal.callbacks.TaggedCallback;
 import com.mercadopago.android.px.internal.features.IssuersActivityView;
@@ -17,7 +16,6 @@ import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -30,7 +28,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class IssuersPresenterTest {
@@ -50,7 +47,8 @@ public class IssuersPresenterTest {
     @Before
     public void setUp() {
         //Simulation no charge - no discount
-        presenter = new IssuersPresenter(userSelectionRepository);
+        final PaymentMethod paymentMethod = PaymentMethods.getPaymentMethodOnVisa();
+        presenter = new IssuersPresenter(paymentMethod, false);
         presenter.attachView(stubView);
         presenter.attachResourcesProvider(provider);
     }
@@ -59,10 +57,6 @@ public class IssuersPresenterTest {
     public void whenIssuersAreNullThenGetIssuersAndShow() {
         final List<Issuer> issuers = Issuers.getIssuersListMLA();
         provider.setResponse(issuers);
-
-        final PaymentMethod paymentMethod = PaymentMethods.getPaymentMethodOnVisa();
-
-        when(userSelectionRepository.getPaymentMethod()).thenReturn(paymentMethod);
 
         presenter.initialize();
 
@@ -78,22 +72,19 @@ public class IssuersPresenterTest {
     public void whenInitIssuersWithNoIssuersAndRetrieveIssuersAndOnlyOneIssuerGivenThenFinish() {
         //Param for issuer provider
         final PaymentMethod mockedPaymentMethod = mock(PaymentMethod.class);
-        when(userSelectionRepository.getPaymentMethod()).thenReturn(mockedPaymentMethod);
+        presenter = new IssuersPresenter(mockedPaymentMethod, false);
 
         //The returned issuer list from provider
         final List<Issuer> issuers = Issuers.getOneIssuerListMLA();
-        presenter = new IssuersPresenter(userSelectionRepository);
         provider.setResponse(issuers);
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
 
         presenter.initialize();
 
-        verify(userSelectionRepository).getPaymentMethod();
-        verify(userSelectionRepository).select(issuers.get(0));
         verify(mockedView).showLoadingView();
         verify(mockedView).stopLoadingView();
-        verify(mockedView).finishWithResult();
+        verify(mockedView).finishWithResult(issuers.get(0));
 
         verifyNoMoreInteractions(mockedView);
         verifyNoMoreInteractions(userSelectionRepository);
@@ -120,10 +111,6 @@ public class IssuersPresenterTest {
         final List<Issuer> issuers = new ArrayList<Issuer>();
         provider.setResponse(issuers);
 
-        final PaymentMethod paymentMethod = PaymentMethods.getPaymentMethodOnVisa();
-
-        when(userSelectionRepository.getPaymentMethod()).thenReturn(paymentMethod);
-
         presenter.initialize();
 
         assertTrue(stubView.errorShown);
@@ -133,10 +120,6 @@ public class IssuersPresenterTest {
     public void whenGetIssuersFailThenShowMercadoPagoError() {
         final MercadoPagoError mercadoPagoError = new MercadoPagoError("Error", true);
         provider.setResponse(mercadoPagoError);
-
-        final PaymentMethod paymentMethod = PaymentMethods.getPaymentMethodOnVisa();
-
-        when(userSelectionRepository.getPaymentMethod()).thenReturn(paymentMethod);
 
         presenter.initialize();
 
@@ -148,9 +131,6 @@ public class IssuersPresenterTest {
     public void whenGetIssuersReturnNullThenShowMercadoPagoError() {
         final List<Issuer> issuers = null;
         provider.setResponse(issuers);
-        final PaymentMethod paymentMethod = PaymentMethods.getPaymentMethodOnVisa();
-
-        when(userSelectionRepository.getPaymentMethod()).thenReturn(paymentMethod);
 
         presenter.initialize();
 
@@ -163,10 +143,6 @@ public class IssuersPresenterTest {
     public void whenRecoverFromFailureThenGetIssuersAgain() {
         final MercadoPagoError mercadoPagoError = new MercadoPagoError("Error", true);
         provider.setResponse(mercadoPagoError);
-
-        final PaymentMethod paymentMethod = PaymentMethods.getPaymentMethodOnVisa();
-
-        when(userSelectionRepository.getPaymentMethod()).thenReturn(paymentMethod);
 
         presenter.initialize();
 
@@ -203,18 +179,14 @@ public class IssuersPresenterTest {
     @Test
     public void whenIsCardInfoAndPaymentMethodAvailableThenIsNotRequiredCardDrawn() {
         final CardInfo cardInfo = getCardInfo();
-        final PaymentMethod paymentMethod = PaymentMethods.getPaymentMethodOnVisa();
-
         presenter.setCardInfo(cardInfo);
-        when(userSelectionRepository.getPaymentMethod()).thenReturn(paymentMethod);
-
         assertTrue(presenter.isRequiredCardDrawn());
     }
 
     @Test
     public void whenIsNotPaymentMethodAvailableThenIsNotRequiredCardDrawn() {
         final CardInfo cardInfo = getCardInfo();
-
+        presenter = new IssuersPresenter(null, false);
         presenter.setCardInfo(cardInfo);
 
         assertFalse(presenter.isRequiredCardDrawn());
@@ -231,6 +203,26 @@ public class IssuersPresenterTest {
         card.setFirstSixDigits("123456");
 
         return new CardInfo(card);
+    }
+
+    @Test
+    public void whenIssuersSelectionComesFromStorageThenReturnSelectedIssuerId() {
+        final PaymentMethod paymentMethod = PaymentMethods.getPaymentMethodOnVisa();
+        presenter = new IssuersPresenter(paymentMethod, true);
+        presenter.attachView(stubView);
+        presenter.attachResourcesProvider(provider);
+        final List<Issuer> issuers = Issuers.getIssuersListMLA();
+
+        presenter.setIssuers(issuers);
+
+        presenter.initialize();
+
+        stubView.simulateIssuerSelection(0);
+
+        assertTrue(stubView.issuersShown);
+        assertTrue(stubView.headerShown);
+        assertEquals(issuers.get(0), stubView.selectedIssuer);
+        assertTrue(stubView.finishWithResult);
     }
 
     private class MockedProvider implements IssuersProvider {
@@ -263,7 +255,7 @@ public class IssuersPresenterTest {
 
         @Override
         public MercadoPagoError getEmptyIssuersError() {
-            this.emptyIssuersErrorGotten = true;
+            emptyIssuersErrorGotten = true;
             return null;
         }
 
@@ -286,34 +278,39 @@ public class IssuersPresenterTest {
 
         @Override
         public void showIssuers(List<Issuer> issuers, OnSelectedCallback<Integer> onSelectedCallback) {
-            this.issuerSelectionCallback = onSelectedCallback;
-            this.issuersShown = true;
-            this.issuersList = issuers;
+            issuerSelectionCallback = onSelectedCallback;
+            issuersShown = true;
+            issuersList = issuers;
         }
 
         @Override
         public void showHeader() {
-            this.headerShown = true;
+            headerShown = true;
         }
 
         @Override
         public void showLoadingView() {
-            this.loadingViewShown = true;
+            loadingViewShown = true;
         }
 
         @Override
         public void stopLoadingView() {
-            this.loadingViewShown = false;
+            loadingViewShown = false;
         }
 
         @Override
         public void showError(MercadoPagoError error, String requestOrigin) {
-            this.errorShown = true;
+            errorShown = true;
         }
 
         @Override
-        public void finishWithResult() {
-            this.finishWithResult = true;
+        public void finishWithResult(final Issuer issuer) {
+            finishWithResult = true;
+        }
+
+        @Override
+        public void finishWithResultForCardStorage(final Long issuerId) {
+            finishWithResult = true;
         }
 
         private void simulateIssuerSelection(int index) {

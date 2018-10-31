@@ -3,7 +3,6 @@ package com.mercadopago.android.px.internal.features;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 import com.mercadopago.android.px.BuildConfig;
@@ -43,7 +42,6 @@ public class ErrorActivity extends MercadoPagoBaseActivity {
         getActivityParameters();
         if (validParameters()) {
             initializeControls();
-            trackScreen();
             fillData();
         } else {
             Intent intent = new Intent();
@@ -64,25 +62,6 @@ public class ErrorActivity extends MercadoPagoBaseActivity {
         mMercadoPagoError = JsonUtil.getInstance()
             .fromJson(getIntent().getStringExtra(EXTRA_ERROR), MercadoPagoError.class);
         mPublicKey = getIntent().getStringExtra(ErrorUtil.PUBLIC_KEY_EXTRA);
-    }
-
-    private void trackScreen() {
-        final MPTrackingContext mpTrackingContext = new MPTrackingContext.Builder(getApplicationContext(), mPublicKey)
-            .setVersion(BuildConfig.VERSION_NAME)
-            .build();
-
-        ScreenViewEvent.Builder builder = new ScreenViewEvent.Builder()
-            .setFlowId(FlowHandler.getInstance().getFlowId())
-            .setScreenId(TrackingUtil.SCREEN_ID_ERROR)
-            .setScreenName(TrackingUtil.SCREEN_NAME_ERROR);
-
-        if (mMercadoPagoError != null) {
-            builder = mMercadoPagoError.getErrorEvent(builder);
-        }
-
-        final ScreenViewEvent event = builder.build();
-
-        mpTrackingContext.trackEvent(event);
     }
 
     private void initializeControls() {

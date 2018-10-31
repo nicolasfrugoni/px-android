@@ -195,7 +195,7 @@ public final class MPTracker {
             trackEventPerformedListener(eventMap);
         } else if (event.getType().equals(Event.TYPE_SCREEN_VIEW)) {
             final ScreenViewEvent screenViewEvent = (ScreenViewEvent) event;
-            trackScreenLaunchedListener(screenViewEvent.getScreenName(), screenViewEvent.getProperties());
+            trackScreenLaunchedListener(screenViewEvent.getScreenId(), new HashMap<String, String>());
         }
     }
 

@@ -216,7 +216,6 @@ public class OneTapFragment extends Fragment implements OneTap.View {
         if (getView() != null && getActivity() != null) {
             MeliSnackbar.make(getView(), error.getMessage(), Snackbar.LENGTH_LONG,
                 MeliSnackbar.SnackbarType.ERROR).show();
-            Tracker.trackError(getActivity().getApplicationContext(), error);
         }
     }
 

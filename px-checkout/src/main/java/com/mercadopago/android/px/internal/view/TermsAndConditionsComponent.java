@@ -21,16 +21,16 @@ public class TermsAndConditionsComponent extends CompactComponent<TermsAndCondit
         final Context context = parent.getContext();
         final LinearLayout linearContainer = CompactComponent.createLinearContainer(context);
 
-        final View discountTermsAndConditionsView = inflate(parent, R.layout.px_view_terms_and_conditions);
+        final View termsAndConditionsView = inflate(parent, R.layout.px_view_terms_and_conditions);
         final MPTextView mTermsAndConditionsMessageView =
-            discountTermsAndConditionsView.findViewById(R.id.terms_and_conditions_message);
+            termsAndConditionsView.findViewById(R.id.terms_and_conditions_message);
         final MPTextView mTermsAndConditionsLinkView =
-            discountTermsAndConditionsView.findViewById(R.id.terms_and_conditions_link);
+            termsAndConditionsView.findViewById(R.id.terms_and_conditions_link);
 
         mTermsAndConditionsMessageView.setText(props.getMessage());
         mTermsAndConditionsLinkView.setText(props.getMessageLinked());
 
-        discountTermsAndConditionsView.setOnClickListener(new View.OnClickListener() {
+        termsAndConditionsView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
                 TermsAndConditionsActivity.start(context, props.getUrl());
@@ -42,14 +42,14 @@ public class TermsAndConditionsComponent extends CompactComponent<TermsAndCondit
         switch (props.getLineSeparatorType()) {
         case TOP_LINE_SEPARATOR:
             linearContainer.addView(lineSeparator.render(linearContainer));
-            linearContainer.addView(discountTermsAndConditionsView);
+            linearContainer.addView(termsAndConditionsView);
             break;
         case BOTTOM_LINE_SEPARATOR:
-            linearContainer.addView(discountTermsAndConditionsView);
+            linearContainer.addView(termsAndConditionsView);
             linearContainer.addView(lineSeparator.render(linearContainer));
             break;
         default:
-            linearContainer.addView(discountTermsAndConditionsView);
+            linearContainer.addView(termsAndConditionsView);
             break;
         }
 

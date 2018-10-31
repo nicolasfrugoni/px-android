@@ -1333,9 +1333,7 @@ public class GuessingCardActivity extends MercadoPagoBaseActivity implements Gue
     @Override
     public void showFinishCardFlow() {
         ViewUtils.hideKeyboard(this);
-        mButtonContainer.setVisibility(View.GONE);
-        mInputContainer.setVisibility(View.GONE);
-        mProgressLayout.setVisibility(View.VISIBLE);
+        showProgress();
         mPresenter.createToken();
     }
 
@@ -1366,6 +1364,13 @@ public class GuessingCardActivity extends MercadoPagoBaseActivity implements Gue
             }
         } else if (requestCode == Constants.Activities.BANK_DEALS_REQUEST_CODE) {
             setSoftInputMode();
+        } else if (requestCode == Constants.Activities.ISSUERS_REQUEST_CODE) {
+            if (resultCode == RESULT_OK && data != null && data.getExtras() != null) {
+                final Long issuerId = data.getExtras().getLong("issuerId");
+                ViewUtils.hideKeyboard(this);
+                showProgress();
+                mPresenter.onIssuerSelected(issuerId);
+            }
         }
     }
 
@@ -1385,6 +1390,17 @@ public class GuessingCardActivity extends MercadoPagoBaseActivity implements Gue
         returnIntent.putExtra("issuers", JsonUtil.getInstance().toJson(issuers));
         setResult(RESULT_OK, returnIntent);
         finish();
+        overridePendingTransition(R.anim.px_slide_right_to_left_in, R.anim.px_slide_right_to_left_out);
+    }
+
+    @Override
+    public void askForIssuer(final CardInfo cardInfo, final List<Issuer> issuers, final PaymentMethod paymentMethod) {
+        new Constants.Activities.IssuersActivityBuilder()
+            .setActivity(this)
+            .setIssuers(issuers)
+            .setCardInfo(cardInfo)
+            .setPaymentMethod(paymentMethod)
+            .startActivity();
         overridePendingTransition(R.anim.px_slide_right_to_left_in, R.anim.px_slide_right_to_left_out);
     }
 

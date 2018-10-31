@@ -17,8 +17,8 @@ public class OpenPayer extends Payer {
         setLastName(builder.lastName);
     }
 
-    @SuppressWarnings("unused")
-    public static class Builder {
+@SuppressWarnings("unused")
+public static class Builder {
 
         //region mandatory params
         /* default */ @NonNull String email;

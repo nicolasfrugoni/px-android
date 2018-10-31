@@ -29,7 +29,6 @@ public class BusinessPayment implements IPayment, Parcelable {
     @Nullable private final ExternalFragment topFragment;
     @Nullable private final ExternalFragment bottomFragment;
 
-
     @Nullable
     private final String subtitle;
 
