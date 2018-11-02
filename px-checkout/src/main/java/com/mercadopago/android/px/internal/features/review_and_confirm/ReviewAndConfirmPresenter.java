@@ -211,4 +211,8 @@ import com.mercadopago.android.px.preferences.CheckoutPreference;
             }
         });
     }
+
+    public void onPayerInformationResponse() {
+        getView().reloadBody();
+    }
 }

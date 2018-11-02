@@ -212,11 +212,12 @@ public final class ReviewAndConfirmActivity extends MercadoPagoBaseActivity impl
 
     private void resolvePayerInformationRequest(final int resultCode) {
         if (resultCode == RESULT_OK) {
-            reloadBody();
+            presenter.onPayerInformationResponse();
         }
     }
 
-    private void reloadBody() {
+    @Override
+    public void reloadBody() {
         final ViewGroup mainContent = findViewById(R.id.scroll_view);
         mainContent.removeAllViews();
         initBody();
@@ -398,6 +399,10 @@ public final class ReviewAndConfirmActivity extends MercadoPagoBaseActivity impl
         }
     }
 
+    /**
+     * Start the Payer Information flow to modify existing
+     * payer's data
+     */
     private void changePayerInformation() {
         overrideTransitionIn();
         PayerInformationActivity.start(this, PAYER_INFORMATION_REQUEST_CODE);

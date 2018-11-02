@@ -48,6 +48,8 @@ public interface ReviewAndConfirm {
 
         void showDynamicDialog(@NonNull final DynamicDialogCreator creator,
             @NonNull final DynamicDialogCreator.CheckoutData checkoutData);
+
+        void reloadBody();
     }
 
     interface Action extends PaymentServiceHandler {
