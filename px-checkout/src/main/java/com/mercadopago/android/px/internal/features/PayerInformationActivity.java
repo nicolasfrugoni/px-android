@@ -30,6 +30,7 @@ import com.mercadopago.android.px.internal.features.card.TicketIdentificationNam
 import com.mercadopago.android.px.internal.features.card.TicketIdentificationNumberTextWatcher;
 import com.mercadopago.android.px.internal.features.providers.PayerInformationProviderImpl;
 import com.mercadopago.android.px.internal.features.uicontrollers.identification.IdentificationTicketView;
+import com.mercadopago.android.px.internal.tracker.Tracker;
 import com.mercadopago.android.px.internal.util.ErrorUtil;
 import com.mercadopago.android.px.internal.util.JsonUtil;
 import com.mercadopago.android.px.internal.util.ScaleUtil;
@@ -40,6 +41,7 @@ import com.mercadopago.android.px.model.Identification;
 import com.mercadopago.android.px.model.IdentificationType;
 import com.mercadopago.android.px.model.exceptions.ApiException;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.tracking.internal.utils.TrackingUtil;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -640,16 +642,19 @@ public class PayerInformationActivity extends MercadoPagoBaseActivity implements
     }
 
     private void requestIdentificationNumberFocus() {
+        Tracker.trackScreen(TrackingUtil.SCREEN_ID_BOLBRADESCO_CPF, TrackingUtil.SCREEN_ID_BOLBRADESCO_CPF, getApplicationContext());
         mCurrentEditingEditText = IDENTIFICATION_NUMBER_INPUT;
         openKeyboard(mIdentificationNumberEditText);
     }
 
     private void requestIdentificationNameFocus() {
+        Tracker.trackScreen(TrackingUtil.SCREEN_ID_BOLBRADESCO_NAME, TrackingUtil.SCREEN_ID_BOLBRADESCO_NAME, getApplicationContext());
         mCurrentEditingEditText = IDENTIFICATION_NAME_INPUT;
         openKeyboard(mIdentificationNameEditText);
     }
 
     private void requestIdentificationLastNameFocus() {
+        Tracker.trackScreen(TrackingUtil.SCREEN_ID_BOLBRADESCO_LASTNAME, TrackingUtil.SCREEN_ID_BOLBRADESCO_LASTNAME, getApplicationContext());
         mCurrentEditingEditText = IDENTIFICATION_LAST_NAME_INPUT;
         openKeyboard(mIdentificationLastNameEditText);
     }

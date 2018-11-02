@@ -67,7 +67,6 @@ public class GuessingCardPaymentPresenter extends GuessingCardPresenter {
     @Override
     public void initialize() {
         getView().onValidStart();
-        trackScreen();
         initializeCardToken();
         resolveBankDeals();
         getPaymentMethods();
@@ -174,6 +173,11 @@ public class GuessingCardPaymentPresenter extends GuessingCardPresenter {
 
     private void setBankDealsList(@Nullable final List<BankDeal> bankDealsList) {
         mBankDealsList = bankDealsList;
+    }
+
+    @Override
+    public void onIssuerSelected(final Long issuerId) {
+        // Empty body, this behavior only exists on CardStoragePresenter
     }
 
     @Override

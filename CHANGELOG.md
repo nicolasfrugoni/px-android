@@ -1,59 +1,62 @@
-Change Log
-==========
+## VERSION 4.2.0
+_25_10_2018_
 
-## VERSION 2.3.6
+* FEATURE - dynamic custom dialogs for certain locations.
+* FEATURE - dynamic custom views for review and confirm.
+* ENHANCEMENT - tracking screen's names and paths unified.
+* ENHANCEMENT/FIX - card addition flow now supports installments and ESC. 
 
-_14-12-2016_
+## VERSION 4.1.0
+_04_10_2018_
 
-* New: Assets optimized.
-* Fix: Card flow restarts after finishing running in low memory devices.
-* Fix: Basic checkout fails with multiple items in preference.
+* FIX - Show app bar when tap back from CVV screen.
+* FIX - Tracking of PaymentMethodSearchItem.
+* ENHANCEMENT - Standalone Card Association
 
-## VERSION 2.3.5
+## VERSION 4.0.6
+_08_10_2018_
 
-_06-12-2016_
+* FIX - Double congrats one tap.
 
-* Fix: Removed default multi dex configuration.
+## VERSION 4.0.5
 
-## VERSION 2.3.4
+* FIX - Show app bar when tap back from CVV screen.
+* FIX - Tracking of PaymentMethodSearchItem.
+* FIX - Payment processor - visual attach bug
 
-_05-12-2016_
+## VERSION 4.0.4
+_25_09_2018_
 
-* Fix: Wrong automatic selection when only account money and cards payment methods available.
-* Fix: Promotions can't be hidden.
+* FIX - DefaultPaymentTypeId debit card error, can't look for settings.
+* FIX - Colombia currency utils.
 
-## VERSION 2.3.3
+## VERSION 4.0.3
 
-_02-12-2016_
+_20_09_2018_
 
-* New: Resources optimized.
+* FIX - Payment recovery call for auth.
+* FIX - destroy activity behaviour.
+* FIX - NPE no decimals for Site Colombia.
+* ENHANCEMENT - Color customization detailed documentation.
+* ENHANCEMENT - Loading improvements for visual payments (payment processor).
 
-## VERSION 2.3.2
+## VERSION 4.0.2
 
-_01-12-2016_
+_05_09_2018_
 
-* Fix: Tracking library update to 1.2.2
-* Fix: Strict mode compliance.
+* Fix: one tap with payment recovery
+* Fix: payment processor background support
+* Fix: added internal payment method change behaviour
 
-## VERSION 2.3.1
 
-_01-12-2016_
+## VERSION 4.0.1
 
-* New: Saved cards limit configuration in PaymentVaultActivity.
-* Fix: Google Play Services dependency removed.
-* Fix: Installments enabled flag not working in PaymentVaultActivity.
+_03_09_2018_
 
-## VERSION 2.3.0
+* Fix: dynamic id declaration
+* Fix: code discount
+* Fix: esc with one tap
 
-_30-11-2016_
+## VERSION 4.0.0
 
-* New: Black label support.
-* New: Checkout timer.
-* New: External tracking.
-* New: Customized error screen.
-
-## VERSION 2.2.0
-
-_25-11-2016_
-
-* New: UI Redesign
+_30_08_2018_

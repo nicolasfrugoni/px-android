@@ -286,12 +286,13 @@ public class SecurityCodeActivity extends MercadoPagoBaseActivity implements Sec
             .setVersion(BuildConfig.VERSION_NAME)
             .build();
 
+        final String screenId =
+            TrackingUtil.SCREEN_ID_PAYMENT_VAULT + "/" + mSecurityCodePresenter.getPaymentMethod().getPaymentTypeId() +
+                TrackingUtil.CARD_SECURITY_CODE;
         ScreenViewEvent event = new ScreenViewEvent.Builder()
             .setFlowId(FlowHandler.getInstance().getFlowId())
-            .setScreenId(
-                TrackingUtil.SCREEN_ID_CARD_FORM + mSecurityCodePresenter.getPaymentMethod().getPaymentTypeId() +
-                    TrackingUtil.CARD_SECURITY_CODE_VIEW)
-            .setScreenName(TrackingUtil.SCREEN_NAME_SECURITY_CODE)
+            .setScreenId(screenId)
+            .setScreenName(screenId)
             .addProperty(TrackingUtil.PROPERTY_SECURITY_CODE_REASON, mReason)
             .build();
 

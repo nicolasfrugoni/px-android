@@ -35,7 +35,6 @@ import com.mercadopago.android.px.model.PaymentMethodSearch;
 import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.PaymentType;
 import com.mercadopago.android.px.model.PaymentTypes;
-import com.mercadopago.android.px.model.SavedESCCardToken;
 import com.mercadopago.android.px.model.Token;
 import com.mercadopago.android.px.model.exceptions.ApiException;
 import com.mercadopago.android.px.model.exceptions.CardTokenException;
@@ -784,6 +783,12 @@ public class GuessingCardPaymentPresenterTest {
 
         @Override
         public void setPaymentMethod(final PaymentMethod paymentMethod) {
+            //Empty body
+        }
+
+        @Override
+        public void askForIssuer(final CardInfo cardInfo, final List<Issuer> issuers,
+            final PaymentMethod paymentMethod) {
             //Empty body
         }
 

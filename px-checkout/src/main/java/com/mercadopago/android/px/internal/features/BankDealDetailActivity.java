@@ -14,8 +14,10 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.mercadopago.android.px.R;
+import com.mercadopago.android.px.internal.tracker.Tracker;
 import com.mercadopago.android.px.internal.util.ViewUtils;
 import com.mercadopago.android.px.model.BankDeal;
+import com.mercadopago.android.px.tracking.internal.utils.TrackingUtil;
 import com.squareup.picasso.Callback;
 
 public class BankDealDetailActivity extends AppCompatActivity implements Callback {
@@ -105,6 +107,13 @@ public class BankDealDetailActivity extends AppCompatActivity implements Callbac
         setContentView(R.layout.px_activity_bank_deal_detail);
         BankDealDetailModel model = getIntent().getParcelableExtra(EXTRA_MODEL);
         initView(model);
+        trackScreen();
+    }
+
+    protected void trackScreen() {
+        Tracker.trackScreen(TrackingUtil.SCREEN_ID_PROMOTIONS_TERMS_AND_CONDITIONS,
+            TrackingUtil.SCREEN_ID_PROMOTIONS_TERMS_AND_CONDITIONS,
+            getApplicationContext());
     }
 
     private void initView(final BankDealDetailModel model) {

@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import com.mercadopago.android.px.internal.features.cardvault.CardVaultActivity;
-import com.mercadopago.android.px.internal.features.guessing_card.GuessingCardActivity;
 import com.mercadopago.android.px.internal.util.JsonUtil;
 import com.mercadopago.android.px.model.BankDeal;
 import com.mercadopago.android.px.model.Card;
@@ -158,6 +157,7 @@ public final class Constants {
         public static class IssuersActivityBuilder {
             private Activity activity;
             private CardInfo cardInformation;
+            private PaymentMethod paymentMethod;
             private List<Issuer> issuers;
 
             public IssuersActivityBuilder setActivity(final Activity activity) {
@@ -175,6 +175,11 @@ public final class Constants {
                 return this;
             }
 
+            public IssuersActivityBuilder setPaymentMethod(final PaymentMethod paymentMethod) {
+                this.paymentMethod = paymentMethod;
+                return this;
+            }
+
             public void startActivity() {
                 if (activity == null) {
                     throw new IllegalStateException("activity is null");
@@ -186,6 +191,7 @@ public final class Constants {
                 final Intent intent = new Intent(activity, IssuersActivity.class);
                 intent.putExtra("issuers", JsonUtil.getInstance().toJson(issuers));
                 intent.putExtra("cardInfo", JsonUtil.getInstance().toJson(cardInformation));
+                intent.putExtra("paymentMethod", JsonUtil.getInstance().toJson(paymentMethod));
                 activity.startActivityForResult(intent, ISSUERS_REQUEST_CODE);
             }
         }

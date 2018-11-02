@@ -203,15 +203,7 @@ public class CheckoutActivity extends MercadoPagoBaseActivity implements Checkou
 
     @Override
     public void trackScreen() {
-        final MPTrackingContext mpTrackingContext = new MPTrackingContext.Builder(this, merchantPublicKey)
-            .setVersion(BuildConfig.VERSION_NAME)
-            .build();
-        final ActionEvent event = new ActionEvent.Builder()
-            .setFlowId(FlowHandler.getInstance().getFlowId())
-            .setAction(TrackingUtil.SCREEN_ID_CHECKOUT)
-            .build();
-        mpTrackingContext.clearExpiredTracks();
-        mpTrackingContext.trackEvent(event);
+        //TODO Implement when Events definition is done.
     }
 
     @Override

@@ -8,6 +8,7 @@ import com.mercadopago.android.px.internal.constants.ProcessingModes;
 import com.mercadopago.android.px.internal.features.review_and_confirm.components.actions.ChangePaymentMethodAction;
 import com.mercadopago.android.px.internal.repository.InstructionsRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
+import com.mercadopago.android.px.internal.tracker.Tracker;
 import com.mercadopago.android.px.internal.util.ApiUtil;
 import com.mercadopago.android.px.internal.view.ActionsListener;
 import com.mercadopago.android.px.internal.view.LinkAction;
@@ -74,9 +75,10 @@ import java.util.List;
     }
 
     private void initializeTracking() {
+        final String screenId = Tracker.getScreenIdByPaymentResult(paymentResult);
         final ScreenViewEvent.Builder builder = new ScreenViewEvent.Builder()
-            .setScreenId(getScreenId())
-            .setScreenName(getScreenName())
+            .setScreenId(screenId)
+            .setScreenName(screenId)
             .addProperty(TrackingUtil.PROPERTY_PAYMENT_IS_EXPRESS, TrackingUtil.IS_EXPRESS_DEFAULT_VALUE)
             .addProperty(TrackingUtil.PROPERTY_PAYMENT_TYPE_ID,
                 paymentResult.getPaymentData().getPaymentMethod().getPaymentTypeId())
@@ -92,32 +94,6 @@ import java.util.List;
         }
 
         navigator.trackScreen(builder.build());
-    }
-
-    @NonNull
-    private String getScreenId() {
-        if (paymentResult.isApproved()) {
-            return TrackingUtil.SCREEN_ID_PAYMENT_RESULT_APPROVED;
-        } else if (paymentResult.isRejected()) {
-            return TrackingUtil.SCREEN_ID_PAYMENT_RESULT_REJECTED;
-        } else if (paymentResult.isInstructions()) {
-            return TrackingUtil.SCREEN_ID_PAYMENT_RESULT_INSTRUCTIONS;
-        } else if (paymentResult.isPending()) {
-            return TrackingUtil.SCREEN_ID_PAYMENT_RESULT_PENDING;
-        }
-        return "";
-    }
-
-    @NonNull
-    private String getScreenName() {
-        if (paymentResult.isRejected() || paymentResult.isPending() || paymentResult.isApproved()) {
-            return TrackingUtil.SCREEN_NAME_PAYMENT_RESULT;
-        } else if (paymentResult.isCallForAuthorize()) {
-            return TrackingUtil.SCREEN_NAME_PAYMENT_RESULT_CALL_FOR_AUTH;
-        } else if (paymentResult.isInstructions()) {
-            return TrackingUtil.SCREEN_NAME_PAYMENT_RESULT_INSTRUCTIONS;
-        }
-        return "";
     }
 
     private boolean isPaymentResultValid() {

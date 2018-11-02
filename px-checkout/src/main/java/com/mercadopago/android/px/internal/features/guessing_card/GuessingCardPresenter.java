@@ -70,6 +70,7 @@ public abstract class GuessingCardPresenter extends MvpPresenter<GuessingCardAct
     protected static final String IDENTIFICATION_TYPES_LIST_BUNDLE = "mIdTypesList";
     protected static final String PAYMENT_RECOVERY_BUNDLE = "mPaymentRecovery";
     protected static final String LOW_RES_BUNDLE = "mLowRes";
+    protected static final String TOKEN_BUNDLE = "tokenBundle";
     //Card Info
     protected String mBin;
     protected boolean mShowPaymentTypes;
@@ -124,10 +125,12 @@ public abstract class GuessingCardPresenter extends MvpPresenter<GuessingCardAct
     }
 
     protected void trackCardIdentification() {
+        final String screenId = String.format(Locale.US, "%s%s%s", TrackingUtil.SCREEN_ID_CARD_FORM, getPaymentTypeId(),
+            TrackingUtil.CARD_HOLDER_IDENTIFICATION);
         final ScreenViewEvent event = new ScreenViewEvent.Builder()
             .setFlowId(FlowHandler.getInstance().getFlowId())
-            .setScreenId(TrackingUtil.SCREEN_ID_IDENTIFICATION)
-            .setScreenName(TrackingUtil.SCREEN_NAME_CARD_FORM_IDENTIFICATION_NUMBER)
+            .setScreenId(screenId)
+            .setScreenName(screenId)
             .addProperty(TrackingUtil.PROPERTY_PAYMENT_TYPE_ID,
                 getPaymentTypeId() != null ? getPaymentTypeId() : "null")
             .addProperty(TrackingUtil.PROPERTY_PAYMENT_METHOD_ID, getPaymentMethod() != null ?
@@ -137,45 +140,47 @@ public abstract class GuessingCardPresenter extends MvpPresenter<GuessingCardAct
     }
 
     protected void trackCardNumber() {
+        final String screenId = String.format(Locale.US, "%s%s%s", TrackingUtil.SCREEN_ID_CARD_FORM, getPaymentTypeId(),
+            TrackingUtil.CARD_NUMBER);
         final ScreenViewEvent event = new ScreenViewEvent.Builder()
             .setFlowId(FlowHandler.getInstance().getFlowId())
-            .setScreenId(
-                String.format(Locale.US, "%s%s%s", TrackingUtil.SCREEN_ID_CARD_FORM, getPaymentTypeId(),
-                    TrackingUtil.CARD_NUMBER))
-            .setScreenName(TrackingUtil.SCREEN_NAME_CARD_FORM_NUMBER)
+            .setScreenId(screenId)
+            .setScreenName(screenId)
             .build();
         getTrackingContext().trackEvent(event);
     }
 
     protected void trackCardHolderName() {
+        final String screenId = String.format(Locale.US, "%s%s%s", TrackingUtil.SCREEN_ID_CARD_FORM, getPaymentTypeId(),
+            TrackingUtil.CARD_HOLDER_NAME);
         final ScreenViewEvent event = new ScreenViewEvent.Builder()
             .setFlowId(FlowHandler.getInstance().getFlowId())
-            .setScreenId(
-                String.format(Locale.US, "%s%s%s", TrackingUtil.SCREEN_ID_CARD_FORM, getPaymentTypeId(),
-                    TrackingUtil.CARD_HOLDER_NAME))
-            .setScreenName(TrackingUtil.SCREEN_NAME_CARD_FORM_NAME)
+            .setScreenId(screenId)
+            .setScreenName(screenId)
             .build();
         getTrackingContext().trackEvent(event);
     }
 
     protected void trackCardExpiryDate() {
+        final String screenId = String
+            .format(Locale.US, "%s%s%s", TrackingUtil.SCREEN_ID_CARD_FORM, getPaymentTypeId(),
+                TrackingUtil.CARD_EXPIRATION_DATE);
         final ScreenViewEvent event = new ScreenViewEvent.Builder()
             .setFlowId(FlowHandler.getInstance().getFlowId())
-            .setScreenId(String
-                .format(Locale.US, "%s%s%s", TrackingUtil.SCREEN_ID_CARD_FORM, getPaymentTypeId(),
-                    TrackingUtil.CARD_EXPIRATION_DATE))
-            .setScreenName(TrackingUtil.SCREEN_NAME_CARD_FORM_EXPIRY)
+            .setScreenId(screenId)
+            .setScreenName(screenId)
             .build();
         getTrackingContext().trackEvent(event);
     }
 
     protected void trackCardSecurityCode() {
+        final String screenId = String
+            .format(Locale.US, "%s%s%s", TrackingUtil.SCREEN_ID_CARD_FORM, getPaymentTypeId(),
+                TrackingUtil.CARD_SECURITY_CODE);
         final ScreenViewEvent event = new ScreenViewEvent.Builder()
             .setFlowId(FlowHandler.getInstance().getFlowId())
-            .setScreenId(String
-                .format(Locale.US, "%s%s%s", TrackingUtil.SCREEN_ID_CARD_FORM, getPaymentTypeId(),
-                    TrackingUtil.CARD_SECURITY_CODE))
-            .setScreenName(TrackingUtil.SCREEN_NAME_CARD_FORM_CVV)
+            .setScreenId(screenId)
+            .setScreenName(screenId)
             .build();
         getTrackingContext().trackEvent(event);
     }
@@ -698,17 +703,6 @@ public abstract class GuessingCardPresenter extends MvpPresenter<GuessingCardAct
         mBin = "";
     }
 
-    public void trackScreen() {
-        final String paymentTypeId = getPaymentTypeId();
-        final ScreenViewEvent event = new ScreenViewEvent.Builder()
-            .setFlowId(FlowHandler.getInstance().getFlowId())
-            .setScreenId(String.format(Locale.US, "%s%s", TrackingUtil.SCREEN_ID_CARD_FORM, paymentTypeId))
-            .setScreenName(TrackingUtil.SCREEN_NAME_CARD_FORM + " " + paymentTypeId)
-            .build();
-
-        getTrackingContext().trackEvent(event);
-    }
-
     public void resolvePaymentMethodCleared() {
         setPaymentMethod(null);
         getView().clearErrorView();
@@ -768,6 +762,8 @@ public abstract class GuessingCardPresenter extends MvpPresenter<GuessingCardAct
 
     public abstract List<BankDeal> getBankDealsList();
 
+    public abstract void onIssuerSelected(Long issuerId);
+
     public void onSaveInstanceState(final Bundle outState, final String cardSideState,
         final boolean lowResActive) {
         outState.putString(CARD_SIDE_STATE_BUNDLE, cardSideState);
@@ -790,6 +786,7 @@ public abstract class GuessingCardPresenter extends MvpPresenter<GuessingCardAct
         outState.putString(IDENTIFICATION_TYPES_LIST_BUNDLE,
             JsonUtil.getInstance().toJson(getIdentificationTypes()));
         outState.putBoolean(LOW_RES_BUNDLE, lowResActive);
+        outState.putString(TOKEN_BUNDLE, JsonUtil.getInstance().toJson(getToken()));
         getView().clearSecurityCodeEditText();
     }
 
@@ -816,6 +813,9 @@ public abstract class GuessingCardPresenter extends MvpPresenter<GuessingCardAct
                 setCardholderName(savedInstanceState.getString(CARD_NAME_BUNDLE));
                 setExpiryMonth(savedInstanceState.getString(EXPIRY_MONTH_BUNDLE));
                 setExpiryYear(savedInstanceState.getString(EXPIRY_YEAR_BUNDLE));
+                final Token token = JsonUtil.getInstance()
+                    .fromJson(savedInstanceState.getString(TOKEN_BUNDLE), Token.class);
+                setToken(token);
                 final String idNumber = savedInstanceState.getString(IDENTIFICATION_NUMBER_BUNDLE);
                 setIdentificationNumber(idNumber);
                 final Identification identification = JsonUtil.getInstance()
