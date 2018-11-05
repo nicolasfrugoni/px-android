@@ -26,5 +26,5 @@ public interface PaymentResultNavigator {
 
     void trackScreen(ScreenViewEvent event);
 
-    void copyToClipboard(final String content);
+    void copyToClipboard(@NonNull final String content);
 }

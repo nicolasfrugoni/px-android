@@ -569,7 +569,7 @@ public class PaymentResultTest {
         }
 
         @Override
-        public void copyToClipboard(final String content) {
+        public void copyToClipboard(@NonNull final String content) {
             // Intentionally empty
         }
     }

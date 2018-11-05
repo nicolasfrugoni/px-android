@@ -304,13 +304,14 @@ public class PaymentResultActivity extends AppCompatActivity implements PaymentR
     }
 
     @Override
-    public void copyToClipboard(final String content) {
+    public void copyToClipboard(@NonNull final String content) {
         final ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
         final ClipData clip = ClipData.newPlainText("", content);
         if (clipboard != null) {
             clipboard.setPrimaryClip(clip);
-            MeliSnackbar.make(findViewById(R.id.mpsdkPaymentResultContainer),getString(R.string.px_copied_to_clipboard_ack),
-                Snackbar.LENGTH_SHORT,MeliSnackbar.SnackbarType.SUCCESS).show();
+            MeliSnackbar.make(findViewById(R.id.mpsdkPaymentResultContainer),
+                getString(R.string.px_copied_to_clipboard_ack),
+                Snackbar.LENGTH_SHORT, MeliSnackbar.SnackbarType.SUCCESS).show();
         }
     }
 }
