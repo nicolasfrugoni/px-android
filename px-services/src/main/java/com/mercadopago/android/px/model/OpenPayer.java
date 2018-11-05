@@ -10,15 +10,15 @@ import android.support.annotation.Nullable;
  */
 public class OpenPayer extends Payer {
 
-    OpenPayer(@NonNull final Builder builder) {
+    /* default */ OpenPayer(@NonNull final Builder builder) {
         setIdentification(builder.identification);
         setEmail(builder.email);
         setFirstName(builder.firstName);
         setLastName(builder.lastName);
     }
 
-@SuppressWarnings("unused")
-public static class Builder {
+    @SuppressWarnings("unused")
+    public static class Builder {
 
         //region mandatory params
         /* default */ @NonNull String email;
