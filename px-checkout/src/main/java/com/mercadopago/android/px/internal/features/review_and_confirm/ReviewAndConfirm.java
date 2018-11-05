@@ -33,7 +33,7 @@ public interface ReviewAndConfirm {
 
         void cancelLoadingButton();
 
-        void showLoadingFor(@NonNull final ExplodeDecorator decorator,
+        void finishLoading(@NonNull final ExplodeDecorator decorator,
             @NonNull final ExplodingFragment.ExplodingAnimationListener explodingAnimationListener);
 
         void hideConfirmButton();

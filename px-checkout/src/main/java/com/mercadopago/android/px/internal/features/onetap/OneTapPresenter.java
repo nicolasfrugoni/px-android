@@ -9,7 +9,6 @@ import com.mercadopago.android.px.internal.repository.PaymentRepository;
 import com.mercadopago.android.px.model.BusinessPayment;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.GenericPayment;
-import com.mercadopago.android.px.model.IPayment;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
@@ -64,7 +63,8 @@ import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 
     @Override
     public void onPaymentFinished(@NonNull final Payment payment) {
-        getView().showLoadingFor(explodeDecoratorMapper.map(payment),
+        getView().hideConfirmButton();
+        getView().finishLoading(explodeDecoratorMapper.map(payment),
             new ExplodingFragment.ExplodingAnimationListener() {
                 @Override
                 public void onAnimationFinished() {
@@ -80,7 +80,8 @@ import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
      */
     @Override
     public void onPaymentFinished(@NonNull final GenericPayment genericPayment) {
-        getView().showLoadingFor(explodeDecoratorMapper.map(genericPayment),
+        getView().hideConfirmButton();
+        getView().finishLoading(explodeDecoratorMapper.map(genericPayment),
             new ExplodingFragment.ExplodingAnimationListener() {
                 @Override
                 public void onAnimationFinished() {
@@ -96,7 +97,8 @@ import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
      */
     @Override
     public void onPaymentFinished(@NonNull final BusinessPayment businessPayment) {
-        getView().showLoadingFor(explodeDecoratorMapper.map(businessPayment),
+        getView().hideConfirmButton();
+        getView().finishLoading(explodeDecoratorMapper.map(businessPayment),
             new ExplodingFragment.ExplodingAnimationListener() {
                 @Override
                 public void onAnimationFinished() {

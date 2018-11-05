@@ -47,7 +47,7 @@ public class BackWithExclusionFlowTest {
             .enterCreditCardNumber(card.cardNumber())
             .enterCardholderName(card.cardHolderName())
             .enterExpiryDate(card.expDate())
-            .enterSecurityCode(card.escNumber())
+            .enterSecurityCodeForNewCard(card.escNumber())
             .pressBackWithExclusions();
         assertNotNull(noCheckoutPage);
     }
@@ -96,7 +96,7 @@ public class BackWithExclusionFlowTest {
             .enterCreditCardNumber(card.cardNumber())
             .enterCardholderName(card.cardHolderName())
             .enterExpiryDate(card.expDate())
-            .enterSecurityCode(card.escNumber())
+            .enterSecurityCodeForNewCard(card.escNumber())
             .pressPrevious();
         assertNotNull(securityCodePage);
     }
@@ -138,7 +138,7 @@ public class BackWithExclusionFlowTest {
             .enterCreditCardNumber(card.cardNumber())
             .enterCardholderName(card.cardHolderName())
             .enterExpiryDate(card.expDate())
-            .enterSecurityCode(card.escNumber())
+            .enterSecurityCodeForNewCard(card.escNumber())
             .enterIdentificationNumberToIssuer(card.cardHolderIdentityNumber())
             .enterBankOptionToInstallments(0)
             .selectInstallments(0)

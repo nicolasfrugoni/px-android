@@ -31,7 +31,7 @@ public class SamplePaymentProcessorNoView implements PaymentProcessor {
     @Override
     public void startPayment(@NonNull final CheckoutData data, @NonNull final Context context,
         @NonNull final OnPaymentListener paymentListener) {
-        //This will never be called because shouldShowFragmentOnPayment is hardcoded
+//        This will never be called because shouldShowFragmentOnPayment is hardcoded
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {

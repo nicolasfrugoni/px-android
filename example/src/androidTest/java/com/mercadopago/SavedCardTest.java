@@ -16,6 +16,7 @@ import static org.junit.Assert.assertNotNull;
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class SavedCardTest {
+
     @Rule
     public HttpResource httpResource = new CheckoutResource();
 
@@ -39,4 +40,5 @@ public class SavedCardTest {
         CongratsPage congratsPageSavedCard = savedCardTestFlow.runInvalidDefaultCardIdPaymentFlow();
         assertNotNull(congratsPageSavedCard);
     }
+
 }

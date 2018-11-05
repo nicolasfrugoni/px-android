@@ -2,6 +2,8 @@ package com.mercadopago.android.px.testcheckout.pages;
 
 import android.support.test.espresso.action.ViewActions;
 import android.view.View;
+import com.mercadopago.android.px.internal.features.InstallmentsActivity;
+import com.mercadopago.android.px.internal.features.review_and_confirm.ReviewAndConfirm;
 import com.mercadopago.android.px.testcheckout.assertions.CheckoutValidator;
 import com.mercadopago.android.testlib.pages.PageObject;
 import org.hamcrest.Matcher;
@@ -11,6 +13,7 @@ import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.matcher.ViewMatchers.isRoot;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+
 
 public class SecurityCodePage extends PageObject<CheckoutValidator> {
 
@@ -27,12 +30,20 @@ public class SecurityCodePage extends PageObject<CheckoutValidator> {
         return this;
     }
 
-    public IdentificationPage enterSecurityCode(final String escNumber) {
+    public IdentificationPage enterSecurityCodeForNewCard(final String cvvNumber) {
         Matcher<View> cardSecurityCodeEditTextMatcher = withId(com.mercadopago.android.px.R.id.mpsdkCardSecurityCode);
         Matcher<View> cardNextButtonTextMatcher = withId(com.mercadopago.android.px.R.id.mpsdkNextButtonText);
-        onView(cardSecurityCodeEditTextMatcher).perform(typeText(escNumber));
+        onView(cardSecurityCodeEditTextMatcher).perform(typeText(cvvNumber));
         onView(cardNextButtonTextMatcher).perform(click());
         return new IdentificationPage(validator);
+    }
+
+    public ReviewAndConfirmPage enterSecurityCodeForSavedCard(final String cvvNumber) {
+        Matcher<View> cardSecurityCodeEditTextMatcher = withId(com.mercadopago.android.px.R.id.mpsdkCardSecurityCode);
+        Matcher<View> cardNextButtonTextMatcher = withId(com.mercadopago.android.px.R.id.mpsdkNextButtonText);
+        onView(cardSecurityCodeEditTextMatcher).perform(typeText(cvvNumber));
+        onView(cardNextButtonTextMatcher).perform(click());
+        return new ReviewAndConfirmPage(validator);
     }
 
     public NoCheckoutPage pressBackWithExclusion() {
@@ -49,4 +60,5 @@ public class SecurityCodePage extends PageObject<CheckoutValidator> {
         onView(withId(com.mercadopago.android.px.R.id.mpsdkBackButton)).perform(click());
         return new ExpiryDatePage(validator);
     }
+
 }

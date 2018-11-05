@@ -127,7 +127,8 @@ import com.mercadopago.android.px.preferences.CheckoutPreference;
 
     @Override
     public void onPaymentFinished(@NonNull final Payment payment) {
-        getView().showLoadingFor(explodeDecoratorMapper.map(payment),
+        getView().hideConfirmButton();
+        getView().finishLoading(explodeDecoratorMapper.map(payment),
             new ExplodingFragment.ExplodingAnimationListener() {
                 @Override
                 public void onAnimationFinished() {
@@ -138,7 +139,8 @@ import com.mercadopago.android.px.preferences.CheckoutPreference;
 
     @Override
     public void onPaymentFinished(@NonNull final GenericPayment genericPayment) {
-        getView().showLoadingFor(explodeDecoratorMapper.map(genericPayment),
+        getView().hideConfirmButton();
+        getView().finishLoading(explodeDecoratorMapper.map(genericPayment),
             new ExplodingFragment.ExplodingAnimationListener() {
                 @Override
                 public void onAnimationFinished() {
@@ -149,7 +151,8 @@ import com.mercadopago.android.px.preferences.CheckoutPreference;
 
     @Override
     public void onPaymentFinished(@NonNull final BusinessPayment businessPayment) {
-        getView().showLoadingFor(explodeDecoratorMapper.map(businessPayment),
+        getView().hideConfirmButton();
+        getView().finishLoading(explodeDecoratorMapper.map(businessPayment),
             new ExplodingFragment.ExplodingAnimationListener() {
                 @Override
                 public void onAnimationFinished() {

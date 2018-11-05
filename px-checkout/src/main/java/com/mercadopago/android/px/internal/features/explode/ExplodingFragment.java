@@ -143,23 +143,36 @@ public class ExplodingFragment extends Fragment {
         @NonNull final ExplodingAnimationListener listener) {
 
         this.explodeDecorator = explodeDecorator;
-        // now finish the remaining loading progress
-        final int progress = progressBar.getProgress();
-        animator.cancel();
-        animator = ObjectAnimator.ofInt(progressBar, "progress", progress, maxLoadingTime);
-        animator.setInterpolator(new AccelerateDecelerateInterpolator());
-        animator.setDuration(getResources().getInteger(R.integer.px_long_animation_time));
 
-        animator.addListener(new AnimatorListenerAdapter() {
+        // This is added because the view is still not created when the app comes back from background
+        getActivity().getWindow().getDecorView().post(new Runnable() {
             @Override
-            public void onAnimationEnd(final Animator animation) {
-                animator.removeListener(this);
+            public void run() {
+                // if exploding fragment is attached to activity
                 if (isAdded()) {
-                    createResultAnim(listener);
+                    // now finish the remaining loading progress
+                    final int progress = progressBar.getProgress();
+                    animator.cancel();
+                    animator = ObjectAnimator.ofInt(progressBar, "progress", progress, maxLoadingTime);
+                    animator.setInterpolator(new AccelerateDecelerateInterpolator());
+                    animator.setDuration(getResources().getInteger(R.integer.px_long_animation_time));
+
+                    animator.addListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(final Animator animation) {
+                            animator.removeListener(this);
+                            if (isAdded()) {
+                                createResultAnim(listener);
+                            }
+                        }
+                    });
+                    animator.start();
+                } else {
+                    // when not attached then show payment result without animations
+                    listener.onAnimationFinished();
                 }
             }
         });
-        animator.start();
     }
 
     /**
@@ -225,7 +238,7 @@ public class ExplodingFragment extends Fragment {
         a.setDuration(duration);
         a.start();
         text.setVisibility(View.GONE);
-}
+    }
 
     /**
      * @return the shape of the progress bar to transform

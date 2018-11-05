@@ -30,7 +30,7 @@ public interface OneTap {
 
         void showPaymentProcessor();
 
-        void showLoadingFor(@NonNull final ExplodeDecorator params,
+        void finishLoading(@NonNull final ExplodeDecorator params,
             @NonNull final ExplodingFragment.ExplodingAnimationListener explodingAnimationListener);
 
         void cancelLoading();

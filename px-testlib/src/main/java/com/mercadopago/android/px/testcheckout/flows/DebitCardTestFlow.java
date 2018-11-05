@@ -29,7 +29,7 @@ public class DebitCardTestFlow extends TestFlow {
             .enterCreditCardNumber(card.cardNumber())
             .enterCardholderName(card.cardHolderName())
             .enterExpiryDate(card.expDate())
-            .enterSecurityCode(card.escNumber())
+            .enterSecurityCodeForNewCard(card.escNumber())
             .enterIdentificationNumberToReviewAndConfirm(card.cardHolderIdentityNumber())
             .pressConfirmButton();
     }
@@ -48,7 +48,7 @@ public class DebitCardTestFlow extends TestFlow {
             .enterCreditCardNumber(card.cardNumber())
             .enterCardholderName(card.cardHolderName())
             .enterExpiryDate(card.expDate())
-            .enterSecurityCode(card.escNumber())
+            .enterSecurityCodeForNewCard(card.escNumber())
             .enterIdentificationNumberToReviewAndConfirm(card.cardHolderIdentityNumber())
             .pressConfirmButton();
     }

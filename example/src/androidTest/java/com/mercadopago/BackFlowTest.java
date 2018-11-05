@@ -46,7 +46,7 @@ public class BackFlowTest {
             .enterCreditCardNumber(card.cardNumber())
             .enterCardholderName(card.cardHolderName())
             .enterExpiryDate(card.expDate())
-            .enterSecurityCode(card.escNumber())
+            .enterSecurityCodeForNewCard(card.escNumber())
             .pressBack();
         assertNotNull(paymentMethodPage);
     }
@@ -105,7 +105,7 @@ public class BackFlowTest {
             .enterCreditCardNumber(card.cardNumber())
             .enterCardholderName(card.cardHolderName())
             .enterExpiryDate(card.expDate())
-            .enterSecurityCode(card.escNumber())
+            .enterSecurityCodeForNewCard(card.escNumber())
             .enterIdentificationNumberToIssuer(card.cardHolderIdentityNumber())
             .enterBankOptionToInstallments(0)
             .selectInstallments(0)
@@ -122,7 +122,7 @@ public class BackFlowTest {
             .enterCreditCardNumber(card.cardNumber())
             .enterCardholderName(card.cardHolderName())
             .enterExpiryDate(card.expDate())
-            .enterSecurityCode(card.escNumber())
+            .enterSecurityCodeForNewCard(card.escNumber())
             .enterIdentificationNumberToIssuer(card.cardHolderIdentityNumber())
             .pressBack();
         assertNotNull(paymentMethodPage);
@@ -137,7 +137,7 @@ public class BackFlowTest {
             .enterCreditCardNumber(card.cardNumber())
             .enterCardholderName(card.cardHolderName())
             .enterExpiryDate(card.expDate())
-            .enterSecurityCode(card.escNumber())
+            .enterSecurityCodeForNewCard(card.escNumber())
             .enterIdentificationNumberToIssuer(card.cardHolderIdentityNumber())
             .enterBankOptionToInstallments(0)
             .pressBack();
@@ -156,7 +156,7 @@ public class BackFlowTest {
             .enterCreditCardNumber(card.cardNumber())
             .enterCardholderName(card.cardHolderName())
             .enterExpiryDate(card.expDate())
-            .enterSecurityCode(card.escNumber())
+            .enterSecurityCodeForNewCard(card.escNumber())
             .enterIdentificationNumberToIssuer(card.cardHolderIdentityNumber())
             .enterBankOptionToInstallments(0)
             .selectInstallments(0)
