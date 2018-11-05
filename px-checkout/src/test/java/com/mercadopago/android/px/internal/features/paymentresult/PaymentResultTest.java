@@ -570,7 +570,7 @@ public class PaymentResultTest {
 
         @Override
         public void copyToClipboard(final String content) {
-
+            // Intentionally empty
         }
     }
 }

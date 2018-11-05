@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.mercadolibre.android.ui.widgets.MeliButton;
 import com.mercadopago.android.px.R;
-import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.internal.view.CopyAction;
 import com.mercadopago.android.px.internal.view.LinkAction;
 import com.mercadopago.android.px.internal.view.MPTextView;
@@ -15,7 +14,6 @@ import com.mercadopago.android.px.internal.view.Renderer;
 import com.mercadopago.android.px.model.Action;
 import com.mercadopago.android.px.model.InstructionAction;
 import com.mercadopago.android.px.model.Interaction;
-import org.w3c.dom.Text;
 
 import static com.mercadopago.android.px.model.InstructionAction.Tags.COPY;
 import static com.mercadopago.android.px.model.InstructionAction.Tags.LINK;
