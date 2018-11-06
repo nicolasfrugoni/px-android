@@ -88,7 +88,7 @@
     <string name="px_ending_in">terminado em</string>
     <string name="px_receipt">Número da operação %1$s</string>
     <string name="px_date_divider">de</string>
-    <string name="px_copied_to_clipboard_ack">Pronto! Você copiou o código</string>
+    <string name="px_copied_to_clipboard_ack">Pronto! Copiado.</string>
 
     <!-- CallForAuthorize -->
     <string name="px_title_activity_call_for_authorize">Você deve autorizar com %1$s o pagamento de %2$s ao Mercado Pago</string>
