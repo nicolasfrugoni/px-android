@@ -18,7 +18,7 @@ public class InstructionInteractions extends Component<InstructionInteractionsPr
     public List<InstructionInteractionComponent> getInteractionComponents() {
         final List<InstructionInteractionComponent> componentList = new ArrayList<>();
 
-        for (Interaction interaction : props.interactions) {
+        for (final Interaction interaction : props.interactions) {
             final InstructionInteractionComponent.Props interactionProps =
                 new InstructionInteractionComponent.Props.Builder()
                     .setInteraction(interaction)

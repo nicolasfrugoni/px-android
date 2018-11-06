@@ -4,6 +4,7 @@ public class InstructionAction {
     private String label;
     private String url;
     private String tag;
+    private String content;
 
     public String getLabel() {
         return label;
@@ -15,6 +16,10 @@ public class InstructionAction {
 
     public String getTag() {
         return tag;
+    }
+
+    public String getContent() {
+        return content;
     }
 
     public static class Tags {

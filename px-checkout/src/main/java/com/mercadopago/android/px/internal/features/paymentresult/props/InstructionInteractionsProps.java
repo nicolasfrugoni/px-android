@@ -20,7 +20,7 @@ public class InstructionInteractionsProps {
     public static class Builder {
         public List<Interaction> interactionsProps;
 
-        public Builder setInstructionInteractions(List<Interaction> interactionsProps) {
+        public Builder setInstructionInteractions(final List<Interaction> interactionsProps) {
             this.interactionsProps = interactionsProps;
             return this;
         }

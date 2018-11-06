@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout android:id="@+id/mpsdkInstructionInteractionContainer"
+              xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
@@ -29,11 +29,4 @@
         android:textSize="@dimen/px_l_text"
         tools:text="23793.38029 50302.092726 53006.333305 8 75070000010000"/>
 
-    <com.mercadolibre.android.ui.widgets.MeliButton
-        android:layout_width="match_parent"
-        android:id="@+id/mpsdkInteractionButton"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/px_s_margin"
-        app:type="optionPrimary"
-        tools:text="Copiar Código"/>
 </LinearLayout>

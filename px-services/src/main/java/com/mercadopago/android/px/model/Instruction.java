@@ -15,12 +15,6 @@ public class Instruction {
     private List<InstructionAction> actions;
     private List<InstructionReference> references;
 
-    public Instruction(final String title,
-        final List<Interaction> interactions) {
-        this.title = title;
-        this.interactions = interactions;
-    }
-
     public List<InstructionReference> getReferences() {
         return references;
     }
