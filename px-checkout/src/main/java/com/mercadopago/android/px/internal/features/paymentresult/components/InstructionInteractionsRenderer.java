@@ -17,8 +17,12 @@ public class InstructionInteractionsRenderer extends Renderer<InstructionInterac
         @Nullable final ViewGroup parent) {
         final LinearLayout instructionsView = new LinearLayout(context);
         instructionsView.setOrientation(LinearLayout.VERTICAL);
+        instructionsView.setBackgroundColor(context.getResources().getColor(R.color.px_white_background));
         instructionsView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT));
+        final int sideDimensionPadding = (int) context.getResources().getDimension(R.dimen.px_xl_margin);
+        final int bottomDimensionPadding = (int) context.getResources().getDimension(R.dimen.px_xxs_margin);
+        instructionsView.setPadding(sideDimensionPadding, 0, sideDimensionPadding, bottomDimensionPadding);
 
         final List<InstructionInteractionComponent> interactionComponentList = component.getInteractionComponents();
         for (final InstructionInteractionComponent instructionInteractionComponent : interactionComponentList) {
