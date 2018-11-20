@@ -176,7 +176,7 @@
     <string name="px_api_invalid_identification_number">O número de identificação é inválido</string>
 
     <!-- Utils -->
-    <string name="px_continue_shopping">Pronto!</string>
+    <string name="px_continue_shopping">Continuar</string>
     <string name="px_zero_rate">Sem juros</string>
     <string name="px_exit_label">Sair</string>
     <string name="px_cancel_payment">Cancelar pagamento</string>
